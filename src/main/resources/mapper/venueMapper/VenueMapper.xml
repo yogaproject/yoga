@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.yoga.venue.dao.VenueMapper">
+
+  <select id="queryCoachByVagueConditions" resultMap="BaseResultMap">
+    select
+    c.coach_id,
+    c.user_id,
+    c.start_time,
+    c.end_time,
+    t.dict_type_name coach_type,
+    s.dict_type_name coach_style,
+    c.coach_statu,
+    c.full_class,
+    c.expected_salary,
+    a.dict_type_name authentication,
+    c.deal_account,
+    c.not_completed,
+    c.good_comment,
+    c.bad_comment,
+    c.comment_comment
+    from
+    coach c left join
+    base_dict t on
+    c.coach_type = t.dict_id
+    left join base_dict s on
+    c.coach_style = s.dict_id
+    left join base_dict a on
+    c.coach_authentication = a.dict_id
+   /* where c.coach_type = #{coachType}*/
+   <where>
+     <if test="coach.coach_type != null and ''!=coach.coach_type" >
+        and coach.coach_type like concat('%',coach.coach_type,'%')
+     </if>
+     <if test="up_expected_salary !=null" >
+        <if test="down_expected_salary !=null">
+          and coach.expected_salary between down_expected_salary and up_expected_salary
+        </if>
+        <if test="down_expected_salary == null">
+          <![CDATA[and coach.expected_salary < up_expected_salary]]>
+        </if>
+     </if>
+     <if test="up_expected_salary == null">
+        <if test="down_expected_salary != null">
+          <![CDATA[and coach.expected < up_expected_salary]]>
+        </if>
+     </if>
+   </where>
+
+  </select>
+
+
+
+  <resultMap id="BaseResultMap" type="com.woniu.yoga.venue.pojo.Venue">
+    <id column="venue_id" jdbcType="INTEGER" property="venueId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="clicks" jdbcType="BIGINT" property="clicks" />
+    <result column="img1" jdbcType="VARCHAR" property="img1" />
+    <result column="img2" jdbcType="VARCHAR" property="img2" />
+    <result column="img3" jdbcType="VARCHAR" property="img3" />
+    <result column="venue_detail" jdbcType="VARCHAR" property="venueDetail" />
+    <result column="venue_flag" jdbcType="INTEGER" property="venueFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    venue_id, user_id, clicks, img1, img2, img3, venue_detail, venue_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from venue
+    where venue_id = #{venueId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from venue
+    where venue_id = #{venueId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.woniu.yoga.venue.pojo.Venue">
+    insert into venue (venue_id, user_id, clicks, 
+      img1, img2, img3, venue_detail, 
+      venue_flag)
+    values (#{venueId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{clicks,jdbcType=BIGINT}, 
+      #{img1,jdbcType=VARCHAR}, #{img2,jdbcType=VARCHAR}, #{img3,jdbcType=VARCHAR}, #{venueDetail,jdbcType=VARCHAR}, 
+      #{venueFlag,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.woniu.yoga.venue.pojo.Venue">
+    insert into venue
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="venueId != null">
+        venue_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="clicks != null">
+        clicks,
+      </if>
+      <if test="img1 != null">
+        img1,
+      </if>
+      <if test="img2 != null">
+        img2,
+      </if>
+      <if test="img3 != null">
+        img3,
+      </if>
+      <if test="venueDetail != null">
+        venue_detail,
+      </if>
+      <if test="venueFlag != null">
+        venue_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="venueId != null">
+        #{venueId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="clicks != null">
+        #{clicks,jdbcType=BIGINT},
+      </if>
+      <if test="img1 != null">
+        #{img1,jdbcType=VARCHAR},
+      </if>
+      <if test="img2 != null">
+        #{img2,jdbcType=VARCHAR},
+      </if>
+      <if test="img3 != null">
+        #{img3,jdbcType=VARCHAR},
+      </if>
+      <if test="venueDetail != null">
+        #{venueDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="venueFlag != null">
+        #{venueFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.woniu.yoga.venue.pojo.Venue">
+    update venue
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="clicks != null">
+        clicks = #{clicks,jdbcType=BIGINT},
+      </if>
+      <if test="img1 != null">
+        img1 = #{img1,jdbcType=VARCHAR},
+      </if>
+      <if test="img2 != null">
+        img2 = #{img2,jdbcType=VARCHAR},
+      </if>
+      <if test="img3 != null">
+        img3 = #{img3,jdbcType=VARCHAR},
+      </if>
+      <if test="venueDetail != null">
+        venue_detail = #{venueDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="venueFlag != null">
+        venue_flag = #{venueFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where venue_id = #{venueId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.woniu.yoga.venue.pojo.Venue">
+    update venue
+    set user_id = #{userId,jdbcType=INTEGER},
+      clicks = #{clicks,jdbcType=BIGINT},
+      img1 = #{img1,jdbcType=VARCHAR},
+      img2 = #{img2,jdbcType=VARCHAR},
+      img3 = #{img3,jdbcType=VARCHAR},
+      venue_detail = #{venueDetail,jdbcType=VARCHAR},
+      venue_flag = #{venueFlag,jdbcType=INTEGER}
+    where venue_id = #{venueId,jdbcType=INTEGER}
+  </update>
+</mapper>

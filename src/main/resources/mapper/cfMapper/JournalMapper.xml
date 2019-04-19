@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.yoga.cf.dao.JournalMapper">
+  <resultMap id="BaseResultMap" type="com.woniu.yoga.cf.pojo.Journal">
+    <id column="journal_id" jdbcType="INTEGER" property="journalId" />
+    <result column="cf_id" jdbcType="INTEGER" property="cfId" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="journal_flag" jdbcType="INTEGER" property="journalFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    journal_id, cf_id, description, create_date, journal_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from journal
+    where journal_id = #{journalId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from journal
+    where journal_id = #{journalId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.woniu.yoga.cf.pojo.Journal">
+    insert into journal (journal_id, cf_id, description, 
+      create_date, journal_flag)
+    values (#{journalId,jdbcType=INTEGER}, #{cfId,jdbcType=INTEGER}, #{description,jdbcType=VARCHAR}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{journalFlag,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.woniu.yoga.cf.pojo.Journal">
+    insert into journal
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="journalId != null">
+        journal_id,
+      </if>
+      <if test="cfId != null">
+        cf_id,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="journalFlag != null">
+        journal_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="journalId != null">
+        #{journalId,jdbcType=INTEGER},
+      </if>
+      <if test="cfId != null">
+        #{cfId,jdbcType=INTEGER},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="journalFlag != null">
+        #{journalFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.woniu.yoga.cf.pojo.Journal">
+    update journal
+    <set>
+      <if test="cfId != null">
+        cf_id = #{cfId,jdbcType=INTEGER},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="journalFlag != null">
+        journal_flag = #{journalFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where journal_id = #{journalId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.woniu.yoga.cf.pojo.Journal">
+    update journal
+    set cf_id = #{cfId,jdbcType=INTEGER},
+      description = #{description,jdbcType=VARCHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      journal_flag = #{journalFlag,jdbcType=INTEGER}
+    where journal_id = #{journalId,jdbcType=INTEGER}
+  </update>
+</mapper>

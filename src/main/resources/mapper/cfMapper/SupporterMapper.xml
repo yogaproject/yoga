@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.yoga.cf.dao.SupporterMapper">
+  <resultMap id="BaseResultMap" type="com.woniu.yoga.cf.pojo.Supporter">
+    <id column="sup_id" jdbcType="INTEGER" property="supId" />
+    <result column="cf_id" jdbcType="INTEGER" property="cfId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="sup_money" jdbcType="DECIMAL" property="supMoney" />
+    <result column="sup_comment" jdbcType="VARCHAR" property="supComment" />
+    <result column="sup_date" jdbcType="TIMESTAMP" property="supDate" />
+    <result column="sup_flag" jdbcType="INTEGER" property="supFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    sup_id, cf_id, user_id, sup_money, sup_comment, sup_date, sup_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from supporter
+    where sup_id = #{supId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from supporter
+    where sup_id = #{supId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.woniu.yoga.cf.pojo.Supporter">
+    insert into supporter (sup_id, cf_id, user_id, 
+      sup_money, sup_comment, sup_date, 
+      sup_flag)
+    values (#{supId,jdbcType=INTEGER}, #{cfId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
+      #{supMoney,jdbcType=DECIMAL}, #{supComment,jdbcType=VARCHAR}, #{supDate,jdbcType=TIMESTAMP}, 
+      #{supFlag,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.woniu.yoga.cf.pojo.Supporter">
+    insert into supporter
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="supId != null">
+        sup_id,
+      </if>
+      <if test="cfId != null">
+        cf_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="supMoney != null">
+        sup_money,
+      </if>
+      <if test="supComment != null">
+        sup_comment,
+      </if>
+      <if test="supDate != null">
+        sup_date,
+      </if>
+      <if test="supFlag != null">
+        sup_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="supId != null">
+        #{supId,jdbcType=INTEGER},
+      </if>
+      <if test="cfId != null">
+        #{cfId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="supMoney != null">
+        #{supMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="supComment != null">
+        #{supComment,jdbcType=VARCHAR},
+      </if>
+      <if test="supDate != null">
+        #{supDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="supFlag != null">
+        #{supFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.woniu.yoga.cf.pojo.Supporter">
+    update supporter
+    <set>
+      <if test="cfId != null">
+        cf_id = #{cfId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="supMoney != null">
+        sup_money = #{supMoney,jdbcType=DECIMAL},
+      </if>
+      <if test="supComment != null">
+        sup_comment = #{supComment,jdbcType=VARCHAR},
+      </if>
+      <if test="supDate != null">
+        sup_date = #{supDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="supFlag != null">
+        sup_flag = #{supFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where sup_id = #{supId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.woniu.yoga.cf.pojo.Supporter">
+    update supporter
+    set cf_id = #{cfId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      sup_money = #{supMoney,jdbcType=DECIMAL},
+      sup_comment = #{supComment,jdbcType=VARCHAR},
+      sup_date = #{supDate,jdbcType=TIMESTAMP},
+      sup_flag = #{supFlag,jdbcType=INTEGER}
+    where sup_id = #{supId,jdbcType=INTEGER}
+  </update>
+</mapper>

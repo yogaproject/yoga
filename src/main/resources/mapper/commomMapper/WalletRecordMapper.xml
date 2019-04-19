@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.yoga.commom.dao.WalletRecordMapper">
+  <resultMap id="BaseResultMap" type="com.woniu.yoga.commom.pojo.WalletRecord">
+    <id column="record_id" jdbcType="INTEGER" property="recordId" />
+    <result column="from_id" jdbcType="INTEGER" property="fromId" />
+    <result column="to_id" jdbcType="INTEGER" property="toId" />
+    <result column="record_type" jdbcType="INTEGER" property="recordType" />
+    <result column="money" jdbcType="DECIMAL" property="money" />
+    <result column="pay_type" jdbcType="INTEGER" property="payType" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="record_flag" jdbcType="INTEGER" property="recordFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    record_id, from_id, to_id, record_type, money, pay_type, remark, record_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from wallet_record
+    where record_id = #{recordId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from wallet_record
+    where record_id = #{recordId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.woniu.yoga.commom.pojo.WalletRecord">
+    insert into wallet_record (record_id, from_id, to_id, 
+      record_type, money, pay_type, 
+      remark, record_flag)
+    values (#{recordId,jdbcType=INTEGER}, #{fromId,jdbcType=INTEGER}, #{toId,jdbcType=INTEGER}, 
+      #{recordType,jdbcType=INTEGER}, #{money,jdbcType=DECIMAL}, #{payType,jdbcType=INTEGER}, 
+      #{remark,jdbcType=VARCHAR}, #{recordFlag,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.woniu.yoga.commom.pojo.WalletRecord">
+    insert into wallet_record
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="recordId != null">
+        record_id,
+      </if>
+      <if test="fromId != null">
+        from_id,
+      </if>
+      <if test="toId != null">
+        to_id,
+      </if>
+      <if test="recordType != null">
+        record_type,
+      </if>
+      <if test="money != null">
+        money,
+      </if>
+      <if test="payType != null">
+        pay_type,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="recordFlag != null">
+        record_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="recordId != null">
+        #{recordId,jdbcType=INTEGER},
+      </if>
+      <if test="fromId != null">
+        #{fromId,jdbcType=INTEGER},
+      </if>
+      <if test="toId != null">
+        #{toId,jdbcType=INTEGER},
+      </if>
+      <if test="recordType != null">
+        #{recordType,jdbcType=INTEGER},
+      </if>
+      <if test="money != null">
+        #{money,jdbcType=DECIMAL},
+      </if>
+      <if test="payType != null">
+        #{payType,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="recordFlag != null">
+        #{recordFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.woniu.yoga.commom.pojo.WalletRecord">
+    update wallet_record
+    <set>
+      <if test="fromId != null">
+        from_id = #{fromId,jdbcType=INTEGER},
+      </if>
+      <if test="toId != null">
+        to_id = #{toId,jdbcType=INTEGER},
+      </if>
+      <if test="recordType != null">
+        record_type = #{recordType,jdbcType=INTEGER},
+      </if>
+      <if test="money != null">
+        money = #{money,jdbcType=DECIMAL},
+      </if>
+      <if test="payType != null">
+        pay_type = #{payType,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="recordFlag != null">
+        record_flag = #{recordFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where record_id = #{recordId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.woniu.yoga.commom.pojo.WalletRecord">
+    update wallet_record
+    set from_id = #{fromId,jdbcType=INTEGER},
+      to_id = #{toId,jdbcType=INTEGER},
+      record_type = #{recordType,jdbcType=INTEGER},
+      money = #{money,jdbcType=DECIMAL},
+      pay_type = #{payType,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR},
+      record_flag = #{recordFlag,jdbcType=INTEGER}
+    where record_id = #{recordId,jdbcType=INTEGER}
+  </update>
+</mapper>

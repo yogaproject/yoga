@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.yoga.venue.dao.CoachMapper">
+
+
+
+  <resultMap id="BaseResultMap" type="com.woniu.yoga.venue.pojo.Coach">
+    <id column="coach_id" jdbcType="INTEGER" property="coachId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="coach_type" jdbcType="STRING" property="coachType" />
+    <result column="coach_style" jdbcType="STRING" property="coachStyle" />
+    <result column="coach_status" jdbcType="INTEGER" property="coachStatus" />
+    <result column="full_class" jdbcType="INTEGER" property="fullClass" />
+    <result column="expected_salary" jdbcType="DECIMAL" property="expectedSalary" />
+    <result column="authentication" jdbcType="STRING" property="authentication" />
+    <result column="deal_account" jdbcType="INTEGER" property="dealAccount" />
+    <result column="not_completed" jdbcType="INTEGER" property="notCompleted" />
+    <result column="good_comment" jdbcType="INTEGER" property="goodComment" />
+    <result column="bad_comment" jdbcType="INTEGER" property="badComment" />
+    <result column="common_comment" jdbcType="INTEGER" property="commonComment" />
+    <result column="coach_flag" jdbcType="INTEGER" property="coachFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    coach_id, user_id, start_time, end_time, coach_type, coach_style, coach_status, full_class, 
+    expected_salary, authentication, deal_account, not_completed, good_comment, bad_comment, 
+    common_comment, coach_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from coach
+    where coach_id = #{coachId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from coach
+    where coach_id = #{coachId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.woniu.yoga.venue.pojo.Coach">
+    insert into coach (coach_id, user_id, start_time, 
+      end_time, coach_type, coach_style, 
+      coach_status, full_class, expected_salary, 
+      authentication, deal_account, not_completed, 
+      good_comment, bad_comment, common_comment, 
+      coach_flag)
+    values (#{coachId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{startTime,jdbcType=TIMESTAMP}, 
+      #{endTime,jdbcType=TIMESTAMP}, #{coachType,jdbcType=INTEGER}, #{coachStyle,jdbcType=INTEGER}, 
+      #{coachStatus,jdbcType=INTEGER}, #{fullClass,jdbcType=INTEGER}, #{expectedSalary,jdbcType=DECIMAL}, 
+      #{authentication,jdbcType=INTEGER}, #{dealAccount,jdbcType=INTEGER}, #{notCompleted,jdbcType=INTEGER}, 
+      #{goodComment,jdbcType=INTEGER}, #{badComment,jdbcType=INTEGER}, #{commonComment,jdbcType=INTEGER}, 
+      #{coachFlag,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.woniu.yoga.venue.pojo.Coach">
+    insert into coach
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="coachId != null">
+        coach_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="startTime != null">
+        start_time,
+      </if>
+      <if test="endTime != null">
+        end_time,
+      </if>
+      <if test="coachType != null">
+        coach_type,
+      </if>
+      <if test="coachStyle != null">
+        coach_style,
+      </if>
+      <if test="coachStatus != null">
+        coach_status,
+      </if>
+      <if test="fullClass != null">
+        full_class,
+      </if>
+      <if test="expectedSalary != null">
+        expected_salary,
+      </if>
+      <if test="authentication != null">
+        authentication,
+      </if>
+      <if test="dealAccount != null">
+        deal_account,
+      </if>
+      <if test="notCompleted != null">
+        not_completed,
+      </if>
+      <if test="goodComment != null">
+        good_comment,
+      </if>
+      <if test="badComment != null">
+        bad_comment,
+      </if>
+      <if test="commonComment != null">
+        common_comment,
+      </if>
+      <if test="coachFlag != null">
+        coach_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="coachId != null">
+        #{coachId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="coachType != null">
+        #{coachType,jdbcType=INTEGER},
+      </if>
+      <if test="coachStyle != null">
+        #{coachStyle,jdbcType=INTEGER},
+      </if>
+      <if test="coachStatus != null">
+        #{coachStatus,jdbcType=INTEGER},
+      </if>
+      <if test="fullClass != null">
+        #{fullClass,jdbcType=INTEGER},
+      </if>
+      <if test="expectedSalary != null">
+        #{expectedSalary,jdbcType=DECIMAL},
+      </if>
+      <if test="authentication != null">
+        #{authentication,jdbcType=INTEGER},
+      </if>
+      <if test="dealAccount != null">
+        #{dealAccount,jdbcType=INTEGER},
+      </if>
+      <if test="notCompleted != null">
+        #{notCompleted,jdbcType=INTEGER},
+      </if>
+      <if test="goodComment != null">
+        #{goodComment,jdbcType=INTEGER},
+      </if>
+      <if test="badComment != null">
+        #{badComment,jdbcType=INTEGER},
+      </if>
+      <if test="commonComment != null">
+        #{commonComment,jdbcType=INTEGER},
+      </if>
+      <if test="coachFlag != null">
+        #{coachFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.woniu.yoga.venue.pojo.Coach">
+    update coach
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="startTime != null">
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endTime != null">
+        end_time = #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="coachType != null">
+        coach_type = #{coachType,jdbcType=INTEGER},
+      </if>
+      <if test="coachStyle != null">
+        coach_style = #{coachStyle,jdbcType=INTEGER},
+      </if>
+      <if test="coachStatus != null">
+        coach_status = #{coachStatus,jdbcType=INTEGER},
+      </if>
+      <if test="fullClass != null">
+        full_class = #{fullClass,jdbcType=INTEGER},
+      </if>
+      <if test="expectedSalary != null">
+        expected_salary = #{expectedSalary,jdbcType=DECIMAL},
+      </if>
+      <if test="authentication != null">
+        authentication = #{authentication,jdbcType=INTEGER},
+      </if>
+      <if test="dealAccount != null">
+        deal_account = #{dealAccount,jdbcType=INTEGER},
+      </if>
+      <if test="notCompleted != null">
+        not_completed = #{notCompleted,jdbcType=INTEGER},
+      </if>
+      <if test="goodComment != null">
+        good_comment = #{goodComment,jdbcType=INTEGER},
+      </if>
+      <if test="badComment != null">
+        bad_comment = #{badComment,jdbcType=INTEGER},
+      </if>
+      <if test="commonComment != null">
+        common_comment = #{commonComment,jdbcType=INTEGER},
+      </if>
+      <if test="coachFlag != null">
+        coach_flag = #{coachFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where coach_id = #{coachId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.woniu.yoga.venue.pojo.Coach">
+    update coach
+    set user_id = #{userId,jdbcType=INTEGER},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      end_time = #{endTime,jdbcType=TIMESTAMP},
+      coach_type = #{coachType,jdbcType=INTEGER},
+      coach_style = #{coachStyle,jdbcType=INTEGER},
+      coach_status = #{coachStatus,jdbcType=INTEGER},
+      full_class = #{fullClass,jdbcType=INTEGER},
+      expected_salary = #{expectedSalary,jdbcType=DECIMAL},
+      authentication = #{authentication,jdbcType=INTEGER},
+      deal_account = #{dealAccount,jdbcType=INTEGER},
+      not_completed = #{notCompleted,jdbcType=INTEGER},
+      good_comment = #{goodComment,jdbcType=INTEGER},
+      bad_comment = #{badComment,jdbcType=INTEGER},
+      common_comment = #{commonComment,jdbcType=INTEGER},
+      coach_flag = #{coachFlag,jdbcType=INTEGER}
+    where coach_id = #{coachId,jdbcType=INTEGER}
+  </update>
+</mapper>

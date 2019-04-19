@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <context id="crowdFunding" targetRuntime="Mybatis3">
+        <commentGenerator>
+            <property name="suppressDate" value="true"/>
+            <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+            <property name="suppressAllComments" value="true" />
+        </commentGenerator>
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/yoga"
+                        userId="root" password="123456">
+        </jdbcConnection>
+        <!--存放生成实体类的路径-->
+        <javaModelGenerator targetPackage="com.woniu.yoga.cf.pojo" targetProject="src/main/java"/>
+        <!--生成sql映射文件的路径-->
+        <sqlMapGenerator targetPackage="mapper.cfMapper" targetProject="src/main/resources"/>
+        <!--生成dao接口的目录-->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.woniu.yoga.cf.dao" targetProject="src/main/java"/>
+
+        <table tableName="crowdfunding" domainObjectName="CrowdFunding" enableDeleteByExample="false"
+        enableUpdateByExample="false"
+        enableSelectByExample="false"
+        enableCountByExample="false"
+        selectByExampleQueryId="false"></table>
+
+        <table tableName="cf_focus"  domainObjectName="Focus" enableDeleteByExample="false"
+        enableUpdateByExample="false"
+        enableSelectByExample="false"
+        enableCountByExample="false"
+        selectByExampleQueryId="false"></table>
+
+         <table tableName="journal"  domainObjectName="Journal" enableDeleteByExample="false"
+                enableUpdateByExample="false"
+                enableSelectByExample="false"
+                enableCountByExample="false"
+                selectByExampleQueryId="false"></table>
+
+        <table tableName="supporter"  domainObjectName="Supporter" enableDeleteByExample="false"
+               enableUpdateByExample="false"
+               enableSelectByExample="false"
+               enableCountByExample="false"
+               selectByExampleQueryId="false"></table>
+
+    </context>
+
+    <context id="venue" targetRuntime="Mybatis3">
+        <commentGenerator>
+            <property name="suppressDate" value="true"/>
+            <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+            <property name="suppressAllComments" value="true" />
+        </commentGenerator>
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/yoga"
+                        userId="root" password="123456">
+        </jdbcConnection>
+        <!--存放生成实体类的路径-->
+        <javaModelGenerator targetPackage="com.woniu.yoga.venue.pojo" targetProject="src/main/java"/>
+        <!--生成sql映射文件的路径-->
+        <sqlMapGenerator targetPackage="mapper.venueMapper" targetProject="src/main/resources"/>
+        <!--生成dao接口的目录-->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.woniu.yoga.venue.dao" targetProject="src/main/java"/>
+
+        <table tableName="coach" domainObjectName="Coach" enableDeleteByExample="false"
+               enableUpdateByExample="false"
+               enableSelectByExample="false"
+               enableCountByExample="false"
+               selectByExampleQueryId="false"></table>
+
+        <table tableName="venue"  domainObjectName="Venue" enableDeleteByExample="false"
+               enableUpdateByExample="false"
+               enableSelectByExample="false"
+               enableCountByExample="false"
+               selectByExampleQueryId="false"></table>
+
+        <table tableName="course_comment"  domainObjectName="CC" enableDeleteByExample="false"
+               enableUpdateByExample="false"
+               enableSelectByExample="false"
+               enableCountByExample="false"
+               selectByExampleQueryId="false"></table>
+
+        <table tableName="product"  domainObjectName="Product" enableDeleteByExample="false"
+               enableUpdateByExample="false"
+               enableSelectByExample="false"
+               enableCountByExample="false"
+               selectByExampleQueryId="false"></table>
+
+    </context>
+
+
+    <context id="manage" targetRuntime="Mybatis3">
+        <commentGenerator>
+            <property name="suppressDate" value="true"/>
+            <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+            <property name="suppressAllComments" value="true" />
+        </commentGenerator>
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/yoga"
+                        userId="root" password="123456">
+        </jdbcConnection>
+        <!--存放生成实体类的路径-->
+        <javaModelGenerator targetPackage="com.woniu.yoga.manage.pojo" targetProject="src/main/java"/>
+        <!--生成sql映射文件的路径-->
+        <sqlMapGenerator targetPackage="mapper.manageMapper" targetProject="src/main/resources"/>
+        <!--生成dao接口的目录-->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.woniu.yoga.manage.dao" targetProject="src/main/java"/>
+
+        <table tableName="advertisement" domainObjectName="Advertisement" enableDeleteByExample="false"
+               enableUpdateByExample="false"
+               enableSelectByExample="false"
+               enableCountByExample="false"
+               selectByExampleQueryId="false"></table>
+
+        <table tableName="coupon"  domainObjectName="Coupon" enableDeleteByExample="false"
+               enableUpdateByExample="false"
+               enableSelectByExample="false"
+               enableCountByExample="false"
+               selectByExampleQueryId="false"></table>
+
+    </context>
+
+    <context id="commom" targetRuntime="Mybatis3">
+        <commentGenerator>
+            <property name="suppressDate" value="true"/>
+            <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+            <property name="suppressAllComments" value="true" />
+        </commentGenerator>
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/yoga"
+                        userId="root" password="123456">
+        </jdbcConnection>
+        <!--存放生成实体类的路径-->
+        <javaModelGenerator targetPackage="com.woniu.yoga.commom.pojo" targetProject="src/main/java"/>
+        <!--生成sql映射文件的路径-->
+        <sqlMapGenerator targetPackage="mapper.commomMapper" targetProject="src/main/resources"/>
+        <!--生成dao接口的目录-->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.woniu.yoga.commom.dao" targetProject="src/main/java"/>
+
+        <table tableName="order"  domainObjectName="Order" enableDeleteByExample="false"
+               enableUpdateByExample="false"
+               enableSelectByExample="false"
+               enableCountByExample="false"
+               selectByExampleQueryId="false"></table>
+
+        <table tableName="user"  domainObjectName="User" enableDeleteByExample="false"
+               enableUpdateByExample="false"
+               enableSelectByExample="false"
+               enableCountByExample="false"
+               selectByExampleQueryId="false"></table>
+
+        <table tableName="message"  domainObjectName="Message" enableDeleteByExample="false"
+               enableUpdateByExample="false"
+               enableSelectByExample="false"
+               enableCountByExample="false"
+               selectByExampleQueryId="false"></table>
+
+        <table tableName="wallet"  domainObjectName="Wallet" enableDeleteByExample="false"
+               enableUpdateByExample="false"
+               enableSelectByExample="false"
+               enableCountByExample="false"
+               selectByExampleQueryId="false"></table>
+
+        <table tableName="wallet_record"  domainObjectName="WalletRecord" enableDeleteByExample="false"
+               enableUpdateByExample="false"
+               enableSelectByExample="false"
+               enableCountByExample="false"
+               selectByExampleQueryId="false"></table>
+
+    </context>
+</generatorConfiguration>
