@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.woniu.yoga.venue.dao.VenueMapper">
+<<<<<<< HEAD
 
   <select id="queryCoachByVagueConditions" resultMap="BaseResultMap">
     select
@@ -51,6 +52,8 @@
 
 
 
+=======
+>>>>>>> dev
   <resultMap id="BaseResultMap" type="com.woniu.yoga.venue.pojo.Venue">
     <id column="venue_id" jdbcType="INTEGER" property="venueId" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />

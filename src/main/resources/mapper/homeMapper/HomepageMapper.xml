@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.yoga.home.dao.HomepageMapper">
+  <resultMap id="BaseResultMap" type="com.woniu.yoga.home.pojo.Homepage">
+    <id column="m_id" jdbcType="INTEGER" property="mId" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="img" jdbcType="VARCHAR" property="img" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="comment_count" jdbcType="BIGINT" property="commentCount" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="homepage_flag" jdbcType="INTEGER" property="homepageFlag" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.woniu.yoga.home.pojo.Homepage">
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    m_id, title, img, user_id, comment_count, create_time, homepage_flag
+  </sql>
+  <sql id="Blob_Column_List">
+    content
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from homepage
+    where m_id = #{mId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from homepage
+    where m_id = #{mId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.woniu.yoga.home.pojo.Homepage">
+    insert into homepage (m_id, title, img, 
+      user_id, comment_count, create_time, 
+      homepage_flag, content)
+    values (#{mId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{img,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=INTEGER}, #{commentCount,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{homepageFlag,jdbcType=INTEGER}, #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.woniu.yoga.home.pojo.Homepage">
+    insert into homepage
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="mId != null">
+        m_id,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="img != null">
+        img,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="commentCount != null">
+        comment_count,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="homepageFlag != null">
+        homepage_flag,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="mId != null">
+        #{mId,jdbcType=INTEGER},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="img != null">
+        #{img,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="commentCount != null">
+        #{commentCount,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="homepageFlag != null">
+        #{homepageFlag,jdbcType=INTEGER},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.woniu.yoga.home.pojo.Homepage">
+    update homepage
+    <set>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="img != null">
+        img = #{img,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="commentCount != null">
+        comment_count = #{commentCount,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="homepageFlag != null">
+        homepage_flag = #{homepageFlag,jdbcType=INTEGER},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where m_id = #{mId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.woniu.yoga.home.pojo.Homepage">
+    update homepage
+    set title = #{title,jdbcType=VARCHAR},
+      img = #{img,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=INTEGER},
+      comment_count = #{commentCount,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      homepage_flag = #{homepageFlag,jdbcType=INTEGER},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where m_id = #{mId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.woniu.yoga.home.pojo.Homepage">
+    update homepage
+    set title = #{title,jdbcType=VARCHAR},
+      img = #{img,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=INTEGER},
+      comment_count = #{commentCount,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      homepage_flag = #{homepageFlag,jdbcType=INTEGER}
+    where m_id = #{mId,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -7,7 +7,11 @@ spring:
     date-format: yyyy-MM-dd
     time-zone: GMT+8
   datasource:
+<<<<<<< HEAD
     url: jdbc:mysql://localhost:3306/rbac_system?serverTimezone=GMT%2B8
+=======
+    url: jdbc:mysql://192.168.5.36:3306/yoga?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8
+>>>>>>> dev
     username: root
     password: 123456
     driver-class-name: com.mysql.jdbc.Driver
@@ -26,7 +30,11 @@ spring:
   thymeleaf:
     cache: false
 mybatis:
+<<<<<<< HEAD
   mapper-locations: classpath:/mapper/*.xml
+=======
+  mapper-locations: classpath:/mapper/*/*.xml
+>>>>>>> dev
   configuration:
     map-underscore-to-camel-case: true
 logging:

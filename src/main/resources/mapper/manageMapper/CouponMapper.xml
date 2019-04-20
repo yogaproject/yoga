@@ -3,16 +3,24 @@
 <mapper namespace="com.woniu.yoga.manage.dao.CouponMapper">
   <resultMap id="BaseResultMap" type="com.woniu.yoga.manage.pojo.Coupon">
     <id column="coupon_id" jdbcType="INTEGER" property="couponId" />
+<<<<<<< HEAD
     <result column="face_value" jdbcType="DECIMAL" property="faceValue" />
     <result column="verify_code" jdbcType="VARCHAR" property="verifyCode" />
+=======
+    <result column="face_value" jdbcType="INTEGER" property="faceValue" />
+>>>>>>> dev
     <result column="effective_date" jdbcType="TIMESTAMP" property="effectiveDate" />
     <result column="expiration_date" jdbcType="TIMESTAMP" property="expirationDate" />
     <result column="coupon_status" jdbcType="INTEGER" property="couponStatus" />
     <result column="coupon_flag" jdbcType="INTEGER" property="couponFlag" />
   </resultMap>
   <sql id="Base_Column_List">
+<<<<<<< HEAD
     coupon_id, face_value, verify_code, effective_date, expiration_date, coupon_status, 
     coupon_flag
+=======
+    coupon_id, face_value, effective_date, expiration_date, coupon_status, coupon_flag
+>>>>>>> dev
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -25,12 +33,21 @@
     where coupon_id = #{couponId,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.woniu.yoga.manage.pojo.Coupon">
+<<<<<<< HEAD
     insert into coupon (coupon_id, face_value, verify_code, 
       effective_date, expiration_date, coupon_status, 
       coupon_flag)
     values (#{couponId,jdbcType=INTEGER}, #{faceValue,jdbcType=DECIMAL}, #{verifyCode,jdbcType=VARCHAR}, 
       #{effectiveDate,jdbcType=TIMESTAMP}, #{expirationDate,jdbcType=TIMESTAMP}, #{couponStatus,jdbcType=INTEGER}, 
       #{couponFlag,jdbcType=INTEGER})
+=======
+    insert into coupon (coupon_id, face_value, effective_date, 
+      expiration_date, coupon_status, coupon_flag
+      )
+    values (#{couponId,jdbcType=INTEGER}, #{faceValue,jdbcType=INTEGER}, #{effectiveDate,jdbcType=TIMESTAMP}, 
+      #{expirationDate,jdbcType=TIMESTAMP}, #{couponStatus,jdbcType=INTEGER}, #{couponFlag,jdbcType=INTEGER}
+      )
+>>>>>>> dev
   </insert>
   <insert id="insertSelective" parameterType="com.woniu.yoga.manage.pojo.Coupon">
     insert into coupon
@@ -41,9 +58,12 @@
       <if test="faceValue != null">
         face_value,
       </if>
+<<<<<<< HEAD
       <if test="verifyCode != null">
         verify_code,
       </if>
+=======
+>>>>>>> dev
       <if test="effectiveDate != null">
         effective_date,
       </if>
@@ -62,10 +82,14 @@
         #{couponId,jdbcType=INTEGER},
       </if>
       <if test="faceValue != null">
+<<<<<<< HEAD
         #{faceValue,jdbcType=DECIMAL},
       </if>
       <if test="verifyCode != null">
         #{verifyCode,jdbcType=VARCHAR},
+=======
+        #{faceValue,jdbcType=INTEGER},
+>>>>>>> dev
       </if>
       <if test="effectiveDate != null">
         #{effectiveDate,jdbcType=TIMESTAMP},
@@ -85,10 +109,14 @@
     update coupon
     <set>
       <if test="faceValue != null">
+<<<<<<< HEAD
         face_value = #{faceValue,jdbcType=DECIMAL},
       </if>
       <if test="verifyCode != null">
         verify_code = #{verifyCode,jdbcType=VARCHAR},
+=======
+        face_value = #{faceValue,jdbcType=INTEGER},
+>>>>>>> dev
       </if>
       <if test="effectiveDate != null">
         effective_date = #{effectiveDate,jdbcType=TIMESTAMP},
@@ -107,8 +135,12 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.woniu.yoga.manage.pojo.Coupon">
     update coupon
+<<<<<<< HEAD
     set face_value = #{faceValue,jdbcType=DECIMAL},
       verify_code = #{verifyCode,jdbcType=VARCHAR},
+=======
+    set face_value = #{faceValue,jdbcType=INTEGER},
+>>>>>>> dev
       effective_date = #{effectiveDate,jdbcType=TIMESTAMP},
       expiration_date = #{expirationDate,jdbcType=TIMESTAMP},
       coupon_status = #{couponStatus,jdbcType=INTEGER},

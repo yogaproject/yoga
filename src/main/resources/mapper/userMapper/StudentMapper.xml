@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.yoga.user.dao.StudentMapper">
+  <resultMap id="BaseResultMap" type="com.woniu.yoga.user.pojo.Student">
+    <id column="student_id" jdbcType="INTEGER" property="studentId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="student_flag" jdbcType="INTEGER" property="studentFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    student_id, user_id, student_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from student
+    where student_id = #{studentId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from student
+    where student_id = #{studentId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.woniu.yoga.user.pojo.Student">
+    insert into student (student_id, user_id, student_flag
+      )
+    values (#{studentId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{studentFlag,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.woniu.yoga.user.pojo.Student">
+    insert into student
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="studentId != null">
+        student_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="studentFlag != null">
+        student_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="studentId != null">
+        #{studentId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="studentFlag != null">
+        #{studentFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.woniu.yoga.user.pojo.Student">
+    update student
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="studentFlag != null">
+        student_flag = #{studentFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where student_id = #{studentId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.woniu.yoga.user.pojo.Student">
+    update student
+    set user_id = #{userId,jdbcType=INTEGER},
+      student_flag = #{studentFlag,jdbcType=INTEGER}
+    where student_id = #{studentId,jdbcType=INTEGER}
+  </update>
+</mapper>

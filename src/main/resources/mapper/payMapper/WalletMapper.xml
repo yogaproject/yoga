@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.yoga.pay.dao.WalletMapper">
+  <resultMap id="BaseResultMap" type="com.woniu.yoga.pay.pojo.Wallet">
+    <id column="wallet_id" jdbcType="INTEGER" property="walletId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="balance" jdbcType="DECIMAL" property="balance" />
+    <result column="total_cost" jdbcType="DECIMAL" property="totalCost" />
+    <result column="bankcard" jdbcType="VARCHAR" property="bankcard" />
+    <result column="pay_pwd" jdbcType="INTEGER" property="payPwd" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    wallet_id, user_id, balance, total_cost, bankcard, pay_pwd
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from wallet
+    where wallet_id = #{walletId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from wallet
+    where wallet_id = #{walletId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.woniu.yoga.pay.pojo.Wallet">
+    insert into wallet (wallet_id, user_id, balance, 
+      total_cost, bankcard, pay_pwd
+      )
+    values (#{walletId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{balance,jdbcType=DECIMAL}, 
+      #{totalCost,jdbcType=DECIMAL}, #{bankcard,jdbcType=VARCHAR}, #{payPwd,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.woniu.yoga.pay.pojo.Wallet">
+    insert into wallet
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="walletId != null">
+        wallet_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="balance != null">
+        balance,
+      </if>
+      <if test="totalCost != null">
+        total_cost,
+      </if>
+      <if test="bankcard != null">
+        bankcard,
+      </if>
+      <if test="payPwd != null">
+        pay_pwd,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="walletId != null">
+        #{walletId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="balance != null">
+        #{balance,jdbcType=DECIMAL},
+      </if>
+      <if test="totalCost != null">
+        #{totalCost,jdbcType=DECIMAL},
+      </if>
+      <if test="bankcard != null">
+        #{bankcard,jdbcType=VARCHAR},
+      </if>
+      <if test="payPwd != null">
+        #{payPwd,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.woniu.yoga.pay.pojo.Wallet">
+    update wallet
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="balance != null">
+        balance = #{balance,jdbcType=DECIMAL},
+      </if>
+      <if test="totalCost != null">
+        total_cost = #{totalCost,jdbcType=DECIMAL},
+      </if>
+      <if test="bankcard != null">
+        bankcard = #{bankcard,jdbcType=VARCHAR},
+      </if>
+      <if test="payPwd != null">
+        pay_pwd = #{payPwd,jdbcType=INTEGER},
+      </if>
+    </set>
+    where wallet_id = #{walletId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.woniu.yoga.pay.pojo.Wallet">
+    update wallet
+    set user_id = #{userId,jdbcType=INTEGER},
+      balance = #{balance,jdbcType=DECIMAL},
+      total_cost = #{totalCost,jdbcType=DECIMAL},
+      bankcard = #{bankcard,jdbcType=VARCHAR},
+      pay_pwd = #{payPwd,jdbcType=INTEGER}
+    where wallet_id = #{walletId,jdbcType=INTEGER}
+  </update>
+</mapper>

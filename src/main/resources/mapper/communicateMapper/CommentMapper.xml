@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.yoga.communicate.dao.CommentMapper">
+  <resultMap id="BaseResultMap" type="com.woniu.yoga.communicate.pojo.Comment">
+    <id column="comment_id" jdbcType="BIGINT" property="commentId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="comment_detail" jdbcType="VARCHAR" property="commentDetail" />
+    <result column="entity_id" jdbcType="INTEGER" property="entityId" />
+    <result column="entity_type" jdbcType="INTEGER" property="entityType" />
+    <result column="comment_degree" jdbcType="INTEGER" property="commentDegree" />
+    <result column="comment_flag" jdbcType="INTEGER" property="commentFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    comment_id, user_id, comment_detail, entity_id, entity_type, comment_degree, comment_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from comment
+    where comment_id = #{commentId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from comment
+    where comment_id = #{commentId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.woniu.yoga.communicate.pojo.Comment">
+    insert into comment (comment_id, user_id, comment_detail, 
+      entity_id, entity_type, comment_degree, 
+      comment_flag)
+    values (#{commentId,jdbcType=BIGINT}, #{userId,jdbcType=INTEGER}, #{commentDetail,jdbcType=VARCHAR}, 
+      #{entityId,jdbcType=INTEGER}, #{entityType,jdbcType=INTEGER}, #{commentDegree,jdbcType=INTEGER}, 
+      #{commentFlag,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.woniu.yoga.communicate.pojo.Comment">
+    insert into comment
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="commentId != null">
+        comment_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="commentDetail != null">
+        comment_detail,
+      </if>
+      <if test="entityId != null">
+        entity_id,
+      </if>
+      <if test="entityType != null">
+        entity_type,
+      </if>
+      <if test="commentDegree != null">
+        comment_degree,
+      </if>
+      <if test="commentFlag != null">
+        comment_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="commentId != null">
+        #{commentId,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="commentDetail != null">
+        #{commentDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="entityId != null">
+        #{entityId,jdbcType=INTEGER},
+      </if>
+      <if test="entityType != null">
+        #{entityType,jdbcType=INTEGER},
+      </if>
+      <if test="commentDegree != null">
+        #{commentDegree,jdbcType=INTEGER},
+      </if>
+      <if test="commentFlag != null">
+        #{commentFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.woniu.yoga.communicate.pojo.Comment">
+    update comment
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="commentDetail != null">
+        comment_detail = #{commentDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="entityId != null">
+        entity_id = #{entityId,jdbcType=INTEGER},
+      </if>
+      <if test="entityType != null">
+        entity_type = #{entityType,jdbcType=INTEGER},
+      </if>
+      <if test="commentDegree != null">
+        comment_degree = #{commentDegree,jdbcType=INTEGER},
+      </if>
+      <if test="commentFlag != null">
+        comment_flag = #{commentFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where comment_id = #{commentId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.woniu.yoga.communicate.pojo.Comment">
+    update comment
+    set user_id = #{userId,jdbcType=INTEGER},
+      comment_detail = #{commentDetail,jdbcType=VARCHAR},
+      entity_id = #{entityId,jdbcType=INTEGER},
+      entity_type = #{entityType,jdbcType=INTEGER},
+      comment_degree = #{commentDegree,jdbcType=INTEGER},
+      comment_flag = #{commentFlag,jdbcType=INTEGER}
+    where comment_id = #{commentId,jdbcType=BIGINT}
+  </update>
+</mapper>
