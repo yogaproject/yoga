@@ -7,11 +7,7 @@ spring:
     date-format: yyyy-MM-dd
     time-zone: GMT+8
   datasource:
-<<<<<<< HEAD
     url: jdbc:mysql://localhost:3306/rbac_system?serverTimezone=GMT%2B8
-=======
-    url: jdbc:mysql://192.168.5.36:3306/yoga?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8
->>>>>>> dev
     username: root
     password: 123456
     driver-class-name: com.mysql.jdbc.Driver
@@ -29,12 +25,18 @@ spring:
       connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
   thymeleaf:
     cache: false
+  jpa:
+    show-sql: true
+    database: mysql
+    hibernate:
+      ddl-auto: update
+      dialect: org.hibernate.dialect.MySQL55Dialect
+#需要导包
+#      naming:
+#        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+#        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
 mybatis:
-<<<<<<< HEAD
-  mapper-locations: classpath:/mapper/*.xml
-=======
   mapper-locations: classpath:/mapper/*/*.xml
->>>>>>> dev
   configuration:
     map-underscore-to-camel-case: true
 logging:

@@ -1,6 +1,8 @@
 package com.woniu.yoga.user.controller;
 
 import com.woniu.yoga.user.pojo.Coach;
+import com.woniu.yoga.user.vo.Result;
+import com.woniu.yoga.user.vo.StudentDetailVO;
 import com.woniu.yoga.venue.pojo.Recruitment;
 import com.woniu.yoga.venue.pojo.Venue;
 import com.woniu.yoga.user.service.CoachService;
@@ -33,6 +35,44 @@ public class CoachController {
         return  null;
     }
 
+
+    /*
+     * @Author liufeng
+     * @Date
+     * @Description //教练对未处理订单进行处理，是否接受订单
+     * @Param
+     *  Integer orderId：订单编号
+     *  String result：是否接受约教；只能传入“接受”或“拒绝”
+     * @return
+     *  通用返回类型，附带订单更新后的详细信息
+     **/
+    public Result updateOrder(Integer orderId, String result) {
+        return coachService.updateOrder(orderId, result);
+    }
+
+    /*
+     * @Author liufeng
+     * @Date
+     * @Description //查询该瑜伽师的学员
+     * @Param
+     * @return
+     *  返回查询到的学员的结果集
+     **/
+    public List<StudentDetailVO> listStudentByCoachId(Integer coachId) {
+        return coachService.listStudentByCoachId(coachId);
+    }
+
+    /*
+     * @Author liufeng
+     * @Date
+     * @Description //查找所有的流派（教练）
+     * @Param
+     * @return
+     **/
+    public String listCoachStyles() {
+
+        return null;
+    }
 
 
 
