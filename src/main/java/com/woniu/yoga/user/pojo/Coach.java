@@ -1,5 +1,6 @@
 package com.woniu.yoga.user.pojo;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class Coach {
@@ -11,7 +12,7 @@ public class Coach {
 
     private Date endTime;
 
-    private Integer coachType;
+    private String coachType;
 
     private Integer coachStyle;
 
@@ -19,7 +20,7 @@ public class Coach {
 
     private Integer fullClass;
 
-    private Long expectedSalary;
+    private BigDecimal expectedSalary;
 
     private Integer authentication;
 
@@ -32,10 +33,6 @@ public class Coach {
     private Integer badComment;
 
     private Integer commonComment;
-
-    private String coachDetail;
-
-    private Integer venueId;
 
     private Integer coachFlag;
 
@@ -71,11 +68,11 @@ public class Coach {
         this.endTime = endTime;
     }
 
-    public Integer getCoachType() {
+    public String getCoachType() {
         return coachType;
     }
 
-    public void setCoachType(Integer coachType) {
+    public void setCoachType(String coachType) {
         this.coachType = coachType;
     }
 
@@ -103,11 +100,11 @@ public class Coach {
         this.fullClass = fullClass;
     }
 
-    public Long getExpectedSalary() {
+    public BigDecimal getExpectedSalary() {
         return expectedSalary;
     }
 
-    public void setExpectedSalary(Long expectedSalary) {
+    public void setExpectedSalary(BigDecimal expectedSalary) {
         this.expectedSalary = expectedSalary;
     }
 
@@ -157,22 +154,6 @@ public class Coach {
 
     public void setCommonComment(Integer commonComment) {
         this.commonComment = commonComment;
-    }
-
-    public String getCoachDetail() {
-        return coachDetail;
-    }
-
-    public void setCoachDetail(String coachDetail) {
-        this.coachDetail = coachDetail;
-    }
-
-    public Integer getVenueId() {
-        return venueId;
-    }
-
-    public void setVenueId(Integer venueId) {
-        this.venueId = venueId;
     }
 
     public Integer getCoachFlag() {
