@@ -1,30 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.woniu.yoga.user.dao.CoachMapper">
+
+  <select id="queryVenueByConditions" resultMap="BaseResultMap">
+    select * from recruit
+    <where>
+      <if test="recruit.coachType !=null and ''!=recruit.coachType">
+        and recruit.coach_type like concat('%',recruit.coach_type,'%')
+      </if>
+      <if test="recruit.coachStyle !=null and ''!=recruit.coachStyle">
+        and recruit.coach_style like concat('%',recruit.coach_style,'%')
+      </if>
+      <if test="recruit.salaryUp != null and ''!= recruit.salaryUp">
+        <if test="recruit.salaryDown != null and ''!= recruit.salaryDown">
+           <![CDATA[
+                      and recruit.salaryUp >= salary_up and recruit.salaryDown <= salary_down
+          ]]>
+        </if>
+
+      </if>
+    </where>
+  </select>
+
   <resultMap id="BaseResultMap" type="com.woniu.yoga.user.pojo.Coach">
     <id column="coach_id" jdbcType="INTEGER" property="coachId" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
     <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
-    <result column="coach_type" jdbcType="INTEGER" property="coachType" />
-    <result column="coach_style" jdbcType="INTEGER" property="coachStyle" />
+    <result column="coach_type" jdbcType="STRING" property="coachType" />
+    <result column="coach_style" jdbcType="STRING" property="coachStyle" />
     <result column="coach_status" jdbcType="INTEGER" property="coachStatus" />
     <result column="full_class" jdbcType="INTEGER" property="fullClass" />
     <result column="expected_salary" jdbcType="DECIMAL" property="expectedSalary" />
-    <result column="authentication" jdbcType="INTEGER" property="authentication" />
+    <result column="authentication" jdbcType="STRING" property="authentication" />
     <result column="deal_account" jdbcType="INTEGER" property="dealAccount" />
     <result column="not_completed" jdbcType="INTEGER" property="notCompleted" />
     <result column="good_comment" jdbcType="INTEGER" property="goodComment" />
     <result column="bad_comment" jdbcType="INTEGER" property="badComment" />
     <result column="common_comment" jdbcType="INTEGER" property="commonComment" />
-    <result column="coach_detail" jdbcType="VARCHAR" property="coachDetail" />
-    <result column="venue_id" jdbcType="INTEGER" property="venueId" />
     <result column="coach_flag" jdbcType="INTEGER" property="coachFlag" />
   </resultMap>
   <sql id="Base_Column_List">
     coach_id, user_id, start_time, end_time, coach_type, coach_style, coach_status, full_class, 
     expected_salary, authentication, deal_account, not_completed, good_comment, bad_comment, 
-    common_comment, coach_detail, venue_id, coach_flag
+    common_comment, coach_flag
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -42,15 +61,13 @@
       coach_status, full_class, expected_salary, 
       authentication, deal_account, not_completed, 
       good_comment, bad_comment, common_comment, 
-      coach_detail, venue_id, coach_flag
-      )
+      coach_flag)
     values (#{coachId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{startTime,jdbcType=TIMESTAMP}, 
       #{endTime,jdbcType=TIMESTAMP}, #{coachType,jdbcType=INTEGER}, #{coachStyle,jdbcType=INTEGER}, 
       #{coachStatus,jdbcType=INTEGER}, #{fullClass,jdbcType=INTEGER}, #{expectedSalary,jdbcType=DECIMAL}, 
       #{authentication,jdbcType=INTEGER}, #{dealAccount,jdbcType=INTEGER}, #{notCompleted,jdbcType=INTEGER}, 
       #{goodComment,jdbcType=INTEGER}, #{badComment,jdbcType=INTEGER}, #{commonComment,jdbcType=INTEGER}, 
-      #{coachDetail,jdbcType=VARCHAR}, #{venueId,jdbcType=INTEGER}, #{coachFlag,jdbcType=INTEGER}
-      )
+      #{coachFlag,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.woniu.yoga.user.pojo.Coach">
     insert into coach
@@ -99,12 +116,6 @@
       </if>
       <if test="commonComment != null">
         common_comment,
-      </if>
-      <if test="coachDetail != null">
-        coach_detail,
-      </if>
-      <if test="venueId != null">
-        venue_id,
       </if>
       <if test="coachFlag != null">
         coach_flag,
@@ -156,12 +167,6 @@
       <if test="commonComment != null">
         #{commonComment,jdbcType=INTEGER},
       </if>
-      <if test="coachDetail != null">
-        #{coachDetail,jdbcType=VARCHAR},
-      </if>
-      <if test="venueId != null">
-        #{venueId,jdbcType=INTEGER},
-      </if>
       <if test="coachFlag != null">
         #{coachFlag,jdbcType=INTEGER},
       </if>
@@ -212,12 +217,6 @@
       <if test="commonComment != null">
         common_comment = #{commonComment,jdbcType=INTEGER},
       </if>
-      <if test="coachDetail != null">
-        coach_detail = #{coachDetail,jdbcType=VARCHAR},
-      </if>
-      <if test="venueId != null">
-        venue_id = #{venueId,jdbcType=INTEGER},
-      </if>
       <if test="coachFlag != null">
         coach_flag = #{coachFlag,jdbcType=INTEGER},
       </if>
@@ -240,8 +239,6 @@
       good_comment = #{goodComment,jdbcType=INTEGER},
       bad_comment = #{badComment,jdbcType=INTEGER},
       common_comment = #{commonComment,jdbcType=INTEGER},
-      coach_detail = #{coachDetail,jdbcType=VARCHAR},
-      venue_id = #{venueId,jdbcType=INTEGER},
       coach_flag = #{coachFlag,jdbcType=INTEGER}
     where coach_id = #{coachId,jdbcType=INTEGER}
   </update>

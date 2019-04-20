@@ -1,15 +1,17 @@
 package com.woniu.yoga.venue.service.impl;
 
-import com.woniu.yoga.venue.dao.CoachMapper;
 import com.woniu.yoga.venue.dao.VenueMapper;
-import com.woniu.yoga.venue.pojo.Coach;
+import com.woniu.yoga.user.pojo.Coach;
+import com.woniu.yoga.venue.pojo.Recruitment;
+import com.woniu.yoga.venue.pojo.Venue;
 import com.woniu.yoga.venue.service.VenueService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
+@Service
 public class VenueServiceImpl implements VenueService {
     @Autowired
     private VenueMapper venueMapper;
@@ -21,6 +23,29 @@ public class VenueServiceImpl implements VenueService {
         return listcoach;
     }
 
-    //实现根据教练类型，模糊查询出教练集合
+    @Override
+    public Venue findVenueByVenueId(Integer venueId) {
+        return venueMapper.selectByPrimaryKey(venueId);
+    }
+
+    @Override
+    public int waitCoahForSign(Integer venueId, Integer coachId) {
+        return venueMapper.waitForSign(venueId,coachId);
+    }
+
+    @Override
+    public int coachSignService(int cv_id) {
+        return venueMapper.coachSignMapper(cv_id);
+    }
+
+    @Override
+    public int coachRefuseService(int cv_id) {
+        return venueMapper.coachRefuseMapper(cv_id);
+    }
+
+    @Override
+    public int venueAddRecruitService(Recruitment recruitment) {
+        return venueMapper.venueAddRecruitMapper(recruitment);
+    }
 
 }

@@ -1,10 +1,12 @@
-package com.woniu.yoga.venue.service.impl;
+package com.woniu.yoga.user.service.serviceImpl;
 
-import com.woniu.yoga.venue.dao.CoachMapper;
-import com.woniu.yoga.venue.pojo.Coach;
-import com.woniu.yoga.venue.service.CoachService;
+import com.woniu.yoga.user.dao.CoachMapper;
+import com.woniu.yoga.user.pojo.Coach;
+import com.woniu.yoga.user.service.CoachService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class CoachServiceImpl implements CoachService {
     @Autowired
     private CoachMapper coachMapper;
