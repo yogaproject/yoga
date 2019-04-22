@@ -4,7 +4,9 @@ import com.woniu.yoga.communicate.repository.MessageRepository;
 import com.woniu.yoga.communicate.pojo.Message;
 import com.woniu.yoga.communicate.service.MessageService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
@@ -18,14 +20,33 @@ import java.util.Map;
 @Slf4j
 public class MessageServiceImpl implements MessageService {
 
+    @Autowired
     private MessageRepository messageRepository;
+
     @Override
-    public Message save(Message message) {
-        return messageRepository.save(message);
+    @Transactional
+    public int updateMsgStatusByFromIdAndToId(Integer fromId, Integer toId) {
+        return messageRepository.updateMsgStatusByFromIdAndToId(fromId,toId);
     }
 
     @Override
-    public Map<String, Object> findByFromId(Integer fromId) {
+    @Transactional
+    public int delMessageByFromIdAndToId(Integer fromId, Integer toId) {
+        return messageRepository.updateMsgFlagByFromIdAndToId(fromId,toId);
+    }
+
+    @Override
+    public Message sendMessage(Message message) {
+        return null;
+    }
+
+    @Override
+    public Map<String, Object> findByToid() {
+        return null;
+    }
+
+    @Override
+    public Map<String, Object> getConversationDetail(String conversationId) {
         return null;
     }
 }
