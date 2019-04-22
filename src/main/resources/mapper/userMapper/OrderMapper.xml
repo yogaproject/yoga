@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.woniu.yoga.pay.dao.OrderMapper">
+<mapper namespace="com.woniu.yoga.user.dao.OrderMapper">
   <resultMap id="BaseResultMap" type="com.woniu.yoga.pay.pojo.Order">
     <id column="order_id" jdbcType="VARCHAR" property="orderId" />
     <result column="payer_id" jdbcType="INTEGER" property="payerId" />
