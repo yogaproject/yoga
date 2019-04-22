@@ -17,6 +17,7 @@ import com.woniu.yoga.user.util.OrderUtil;
 import com.woniu.yoga.user.util.ResultUtil;
 import com.woniu.yoga.user.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import java.util.List;
  * @Version 1.0
  * @Description 处理学员和后台的交互
  **/
+@Service
 public class StudentServiceImpl implements StudentService {
 //    @Autowired
 //    private UserRepository userRepository;

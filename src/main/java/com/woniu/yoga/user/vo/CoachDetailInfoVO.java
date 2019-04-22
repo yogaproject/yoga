@@ -132,4 +132,22 @@ public class CoachDetailInfoVO {
     public void setVenueName(String venueName) {
         this.venueName = venueName;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "realName:'" + realName + '\'' +
+                ", headImg:'" + headImg + '\'' +
+                ", phone:'" + phone + '\'' +
+                ", qq:'" + qq + '\'' +
+                ", wechat:'" + wechat + '\'' +
+                ", detail:'" + detail + '\'' +
+                ", style:'" + style + '\'' +
+                ", authentication:" + authentication +
+                ", courses:" + courses +
+                ", numberOfTrade:" + numberOfTrade +
+                ", goodCommentCount:" + goodCommentCount +
+                ", venueName:'" + venueName + '\'' +
+                '}';
+    }
 }

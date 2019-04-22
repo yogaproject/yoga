@@ -1,6 +1,6 @@
 package com.woniu.yoga.user.dao;
 
-import com.woniu.yoga.sign.entity.UserAndCoupon;
+import com.woniu.yoga.user.pojo.UserAndCoupon;
 
 public interface UserAndCouponMapper {
     int deleteByPrimaryKey(Integer ucId);

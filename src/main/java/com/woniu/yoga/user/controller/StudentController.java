@@ -5,8 +5,14 @@ import com.woniu.yoga.communicate.pojo.Comment;
 import com.woniu.yoga.user.pojo.Order;
 import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.service.serviceImpl.StudentServiceImpl;
+import com.woniu.yoga.user.util.ResultUtil;
 import com.woniu.yoga.user.vo.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.persistence.Table;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
@@ -17,7 +23,9 @@ import java.util.List;
  * @Version 1.0
  * @Description 用于处理学员与后台的交互
  **/
+@Controller
 public class StudentController {
+    @Autowired
     private StudentServiceImpl studentService;
     /*
      * @Author liufeng
@@ -123,5 +131,11 @@ public class StudentController {
      **/
     public Result listAllCourseAppoint() {
         return studentService.listAllCourseAppoint();
+    }
+
+    @RequestMapping("test")
+    @ResponseBody
+    public String test(){
+        return ResultUtil.connectDatabaseFail().toString();
     }
 }

@@ -1,6 +1,6 @@
 package com.woniu.yoga.user.util;
 
-import com.woniu.yoga.sign.dto.SearchConditionDTO;
+import com.woniu.yoga.user.dto.SearchConditionDTO;
 import org.apache.ibatis.jdbc.SQL;
 
 /**

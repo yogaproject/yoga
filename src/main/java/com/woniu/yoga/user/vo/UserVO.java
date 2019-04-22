@@ -64,4 +64,15 @@ public class UserVO {
     public void setLatitude(Float latitude) {
         this.latitude = latitude;
     }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "userId:" + userId +
+                ", realName:'" + realName + '\'' +
+                ", longitude:" + longitude +
+                ", latitude:" + latitude +
+                ", headImg:'" + headImg + '\'' +
+                '}';
+    }
 }
