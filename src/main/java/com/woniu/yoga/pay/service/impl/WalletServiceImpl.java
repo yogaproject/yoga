@@ -1,4 +1,6 @@
 package com.woniu.yoga.pay.service.impl;
 
-public class WalletServiceImpl {
+import com.woniu.yoga.pay.service.WalletService;
+
+public class WalletServiceImpl implements WalletService {
 }
