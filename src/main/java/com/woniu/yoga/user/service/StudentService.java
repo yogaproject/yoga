@@ -16,10 +16,10 @@ import java.util.List;
  **/
 public interface StudentService {
 
-    List<UserVO> listAroundUserByIdOrAddress(SearchConditionVO searchConditionVO);
+    Result listAroundUserByIdOrAddress(SearchConditionVO searchConditionVO);
 
 
-   CoachDetailInfoVO getDetailInfoByUserId(Integer userId,Integer coachId);
+    Result getDetailInfoByUserId(Integer userId, Integer coachId);
 
 
     Result saveOrder(Order order);
@@ -31,10 +31,11 @@ public interface StudentService {
     Result updateOrderForPay(String orderId);
 
 
-    Comment saveComment(Comment comment);
+    Result saveComment(Comment comment);
 
 
-    List<CourseAppoint> listAllCourseAppoint();
+    Result listAllCourseAppoint();
 
 
+    Result updateOrderForRefund(String orderId);
 }

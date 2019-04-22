@@ -19,7 +19,7 @@ public interface CoachService {
      * @Param
      * @return
      **/
-    Result updateOrder(Integer orderId, String result);
+    Result updateOrder(String orderId, String result);
     /*
      * @Author liufeng
      * @Date
@@ -27,7 +27,7 @@ public interface CoachService {
      * @Param
      * @return
      **/
-    List<StudentDetailVO> listStudentByCoachId(Integer coachId);
+    Result listStudentByCoachId(Integer userId);
     /*
      * @Author liufeng
      * @Date
@@ -35,16 +35,8 @@ public interface CoachService {
      * @Param
      * @return
      **/
-    List listCoachStyles();
+    Result listCoachStyles();
 
 
-
-
-
-
-
-
-
-
-
+    Result updateOrderForWaitToPay(String orderId);
 }

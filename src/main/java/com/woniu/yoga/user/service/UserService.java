@@ -1,7 +1,8 @@
 package com.woniu.yoga.user.service;
 
-import com.woniu.yoga.user.pojo.Coupon;
+import com.woniu.yoga.manage.pojo.Coupon;
 import com.woniu.yoga.user.pojo.Order;
+import com.woniu.yoga.user.vo.Result;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -22,7 +23,7 @@ public interface UserService {
      * @Param
      * @return
      **/
-    List<Order> listOrder(Integer userId, @RequestParam(required = false, defaultValue = "所有订单") String orderStatus);
+    Result listOrder(Integer userId, @RequestParam(required = false, defaultValue = "所有订单") String orderStatus);
 
     /*
      * @Author liufeng
@@ -31,5 +32,5 @@ public interface UserService {
      * @Param
      * @return
      **/
-    List<Coupon> listCouponsByUserId(Integer userId);
+    Result listCouponsByUserId(Integer userId);
 }

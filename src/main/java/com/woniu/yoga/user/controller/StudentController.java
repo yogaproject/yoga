@@ -39,7 +39,7 @@ public class StudentController {
      *   private String freeTime;
      * @return
      **/
-    public List<UserVO> listAroundUserByIdOrAddress(SearchConditionVO searchConditionVO) {
+    public Result listAroundUserByIdOrAddress(SearchConditionVO searchConditionVO) {
         return studentService.listAroundUserByIdOrAddress(searchConditionVO);
     }
     /*
@@ -51,7 +51,7 @@ public class StudentController {
      * @return
      *  封装了用户详细信息的数据类
      **/
-    public CoachDetailInfoVO getDetailInfoByUserId(HttpSession session,Integer coachId) {
+    public Result getDetailInfoByUserId(HttpSession session,Integer coachId) {
         User user = (User) session.getAttribute("user");
         Integer userId = user.getUserId();
         return studentService.getDetailInfoByUserId(userId,coachId);
@@ -95,13 +95,23 @@ public class StudentController {
     /*
      * @Author liufeng
      * @Date
+     * @Description //学员申请退款
+     * @Param
+     * @return
+     **/
+    public Result updateOrderForRefund(String orderId){
+        return studentService.updateOrderForRefund(orderId);
+    }
+    /*
+     * @Author liufeng
+     * @Date
      * @Description //保存并在前台显示评论，并对会员积分、等级等进行更新
      * @Param
      *  Comment：详细评论内容
      * @return
      *  处理完成的评论
      **/
-    public Comment saveComment(Comment comment) {
+    public Result saveComment(Comment comment) {
         return studentService.saveComment(comment);
     }
     /*
@@ -111,7 +121,7 @@ public class StudentController {
      * @return
      *  返回签约方式的集合
      **/
-    public List<CourseAppoint> listAllCourseAppoint() {
+    public Result listAllCourseAppoint() {
         return studentService.listAllCourseAppoint();
     }
 }

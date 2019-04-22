@@ -1,11 +1,12 @@
 package com.woniu.yoga.user.controller;
 
-import com.woniu.yoga.sign.entity.Coupon;
-import com.woniu.yoga.sign.entity.Order;
-import com.woniu.yoga.sign.entity.User;
-import com.woniu.yoga.sign.service.impl.UserServiceImpl;
+import com.woniu.yoga.manage.pojo.Coupon;
+import com.woniu.yoga.user.pojo.Order;
+import com.woniu.yoga.user.pojo.User;
+import com.woniu.yoga.user.service.serviceImpl.UserServiceImpl;
+import com.woniu.yoga.user.vo.Result;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -18,10 +19,9 @@ import java.util.List;
  * @Description 用于处理用户与后台的交互
  **/
 @Controller
-@RequestMapping("com/woniu/yoga/sign")
 public class UserController {
+    @Autowired
     private UserServiceImpl userService;
-
     /*
      * @Author liufeng
      * @Date
@@ -31,7 +31,7 @@ public class UserController {
      * @return
      *  返回查询到的订单结果集合，参数不合法返回空
      **/
-    public List<Order> listOrder(HttpSession session, String orderStatus) {
+    public Result listOrder(HttpSession session, String orderStatus) {
         User user = (User) session.getAttribute("user");
         Integer userId = user.getUserId();
         return userService.listOrder(userId,orderStatus);
@@ -46,7 +46,7 @@ public class UserController {
      * @return
      *  返回可用优惠券的集合
      **/
-    public List<Coupon> listCouponsByUserId(Integer userId) {
+    public Result listCouponsByUserId(Integer userId) {
 
         return userService.listCouponsByUserId(userId);
     }

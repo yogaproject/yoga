@@ -7,7 +7,7 @@ public class Wallet {
 
     private Integer userId;
 
-    private Long balance;
+    private BigDecimal balance;
 
     private BigDecimal totalCost;
 
@@ -31,11 +31,11 @@ public class Wallet {
         this.userId = userId;
     }
 
-    public Long getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(Long balance) {
+    public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 

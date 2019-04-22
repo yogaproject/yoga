@@ -1,6 +1,7 @@
 package com.woniu.yoga.user.controller;
 
 import com.woniu.yoga.user.pojo.Coach;
+import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.vo.Result;
 import com.woniu.yoga.user.vo.StudentDetailVO;
 import com.woniu.yoga.venue.pojo.Recruitment;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -46,7 +48,7 @@ public class CoachController {
      * @return
      *  通用返回类型，附带订单更新后的详细信息
      **/
-    public Result updateOrder(Integer orderId, String result) {
+    public Result updateOrder(String orderId, String result) {
         return coachService.updateOrder(orderId, result);
     }
 
@@ -58,10 +60,21 @@ public class CoachController {
      * @return
      *  返回查询到的学员的结果集
      **/
-    public List<StudentDetailVO> listStudentByCoachId(Integer coachId) {
-        return coachService.listStudentByCoachId(coachId);
+    public Result listStudentByCoachId(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        int userId = user.getUserId();
+        return coachService.listStudentByCoachId(userId);
     }
-
+    /*
+     * @Author liufeng
+     * @Date
+     * @Description //课程完结之后，教练更改订单状态为待付款
+     * @Param
+     * @return
+     **/
+    public Result updateOrderForWaitToPay(String orderId){
+        return coachService.updateOrderForWaitToPay(orderId);
+    }
     /*
      * @Author liufeng
      * @Date
@@ -69,9 +82,8 @@ public class CoachController {
      * @Param
      * @return
      **/
-    public String listCoachStyles() {
-
-        return null;
+    public Result listCoachStyles() {
+        return coachService.listCoachStyles();
     }
 
 
