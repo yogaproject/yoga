@@ -58,4 +58,27 @@ public interface UserMapper {
      **/
     @Select("select discount from level_discount where level_id = #{userLevel}")
     BigDecimal selectDiscountByLevel(Integer userLevel);
+
+
+    User saveUser(User user);
+
+    Integer activeUserByEamil(String userEmail);
+
+    Integer activeUserByPhone(String userPhone);
+
+    User queryUserByEmail(String userEmail);
+
+    User queryUserByEmailAndPwd(String userEmail,String userPwd);
+
+    User queryUserByPhone(String userPhone);
+
+    User queryUserByPhoneAndPwd(String userPhone, String userPwd);
+
+    User queryUserByPhoneAndCode(String userPhone, String userVerifyCode);
+
+    Integer updateCode(String userVerifyCode,String userPhone);
+
+    User queryUserByEmailAndCode(String userEmail, String userVerifyCode);
+
+
 }
