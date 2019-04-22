@@ -27,12 +27,12 @@
     <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
     <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
-    <result column="coach_type" jdbcType="STRING" property="coachType" />
-    <result column="coach_style" jdbcType="STRING" property="coachStyle" />
+    <result column="coach_type" jdbcType="INTEGER" property="coachType" />
+    <result column="coach_style" jdbcType="INTEGER" property="coachStyle" />
     <result column="coach_status" jdbcType="INTEGER" property="coachStatus" />
     <result column="full_class" jdbcType="INTEGER" property="fullClass" />
     <result column="expected_salary" jdbcType="DECIMAL" property="expectedSalary" />
-    <result column="authentication" jdbcType="STRING" property="authentication" />
+    <result column="authentication" jdbcType="INTEGER" property="authentication" />
     <result column="deal_account" jdbcType="INTEGER" property="dealAccount" />
     <result column="not_completed" jdbcType="INTEGER" property="notCompleted" />
     <result column="good_comment" jdbcType="INTEGER" property="goodComment" />

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.woniu.yoga.user.dao.OrderMapper">
-  <resultMap id="BaseResultMap" type="com.woniu.yoga.pay.pojo.Order">
+  <resultMap id="BaseResultMap" type="com.woniu.yoga.user.pojo.Order">
     <id column="order_id" jdbcType="VARCHAR" property="orderId" />
     <result column="payer_id" jdbcType="INTEGER" property="payerId" />
     <result column="accepter_id" jdbcType="INTEGER" property="accepterId" />
@@ -30,7 +30,7 @@
     delete from order
     where order_id = #{orderId,jdbcType=VARCHAR}
   </delete>
-  <insert id="insert" parameterType="com.woniu.yoga.pay.pojo.Order">
+  <insert id="insert" parameterType="com.woniu.yoga.user.pojo.Order">
     insert into order (order_id, payer_id, accepter_id, 
       course_id, order_money, order_status, 
       pay_status, course_count, update_time, 
@@ -42,7 +42,7 @@
       #{createTime,jdbcType=TIMESTAMP}, #{couponId,jdbcType=INTEGER}, #{discount,jdbcType=DECIMAL}, 
       #{orderFlag,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.woniu.yoga.pay.pojo.Order">
+  <insert id="insertSelective" parameterType="com.woniu.yoga.user.pojo.Order">
     insert into order
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="orderId != null">
@@ -127,7 +127,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.woniu.yoga.pay.pojo.Order">
+  <update id="updateByPrimaryKeySelective" parameterType="com.woniu.yoga.user.pojo.Order">
     update order
     <set>
       <if test="payerId != null">
@@ -169,7 +169,7 @@
     </set>
     where order_id = #{orderId,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.woniu.yoga.pay.pojo.Order">
+  <update id="updateByPrimaryKey" parameterType="com.woniu.yoga.user.pojo.Order">
     update order
     set payer_id = #{payerId,jdbcType=INTEGER},
       accepter_id = #{accepterId,jdbcType=INTEGER},

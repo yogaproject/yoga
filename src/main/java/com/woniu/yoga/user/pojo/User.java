@@ -1,6 +1,14 @@
 package com.woniu.yoga.user.pojo;
 
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "user")
 public class User {
+    @Id
     private Integer userId;
 
     private String userPwd;

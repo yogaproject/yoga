@@ -31,6 +31,8 @@ spring:
     hibernate:
       ddl-auto: update
       dialect: org.hibernate.dialect.MySQL55Dialect
+  main:
+    allow-bean-definition-overriding: true
 #需要导包
 #      naming:
 #        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl

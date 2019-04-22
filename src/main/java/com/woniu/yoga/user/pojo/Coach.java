@@ -12,7 +12,7 @@ public class Coach {
 
     private Date endTime;
 
-    private String coachType;
+    private Integer coachType;
 
     private Integer coachStyle;
 
@@ -68,11 +68,12 @@ public class Coach {
         this.endTime = endTime;
     }
 
-    public String getCoachType() {
+
+    public int getCoachType() {
         return coachType;
     }
 
-    public void setCoachType(String coachType) {
+    public void setCoachType(int coachType) {
         this.coachType = coachType;
     }
 
