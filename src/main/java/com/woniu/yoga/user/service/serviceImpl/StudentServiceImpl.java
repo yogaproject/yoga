@@ -1,5 +1,11 @@
 package com.woniu.yoga.user.service.serviceImpl;
 
+import com.woniu.yoga.communicate.dao.CommentMapper;
+import com.woniu.yoga.communicate.pojo.Comment;
+import com.woniu.yoga.manage.dao.CouponMapper;
+import com.woniu.yoga.manage.pojo.Coupon;
+import com.woniu.yoga.pay.dao.WalletMapper;
+import com.woniu.yoga.pay.pojo.Wallet;
 import com.woniu.yoga.user.dao.*;
 import com.woniu.yoga.user.dto.SearchConditionDTO;
 import com.woniu.yoga.user.pojo.*;
@@ -26,6 +32,8 @@ public class StudentServiceImpl implements StudentService {
 
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private CoachMapper coachMapper;
     @Autowired
     private WalletMapper walletMapper;
     @Autowired
@@ -63,22 +71,33 @@ public class StudentServiceImpl implements StudentService {
         return userVOs;
     }
 
-    //查看瑜伽师、场馆的详细信息
-    //mapper未书写
     //如果是教练，查找头像、姓名、简介、流派、认证方式（单击查看场馆）、课程（单击查看课程），交易次数，好评率
     //好友或者公开才能查看qq、微信、电话等信息
     //如果是场馆，查找头像，realName，简介，教练
     @Override
-    public UserDetailInfoVo getDetailInfoByUserId(Integer userId) {
-        UserDetailInfoVo userDetailInfoVo = new UserDetailInfoVo();
-
-        return userMapper.getDetailInfoByUserId(userId);
+    public CoachDetailInfoVO getDetailInfoByUserId(Integer userId, Integer coachId) {
+        CoachDetailInfoVO coachDetailInfoVO = userMapper.getDetailInfoByUserId(coachId);
+        //如果学员和瑜伽师不是好友，隐藏个人信息
+        if (!("学员和瑜伽师是好友" == "")) {
+            coachDetailInfoVO.setQq("secret");
+            coachDetailInfoVO.setWechat("secret");
+            coachDetailInfoVO.setPhone("secret");
+        }
+        //如果是场馆认证，设置venueName：场馆名
+        if (coachDetailInfoVO.getAuthentication()==1){
+            coachDetailInfoVO.setVenueName(coachMapper.getVenueByCoachId(coachId));
+        }
+        //如果是官方认证，设置venueName：平台认证
+        if (coachDetailInfoVO.getAuthentication()==1){
+            coachDetailInfoVO.setVenueName("平台认证");
+        }
+        return coachDetailInfoVO;
     }
 
     //学员下单
     @Override
     public Result saveOrder(Order order) {
-        Wallet wallet = walletMapper.findByUserId(order.getPayerId());
+        Wallet wallet = walletMapper.selectByPrimaryKey(order.getPayerId());
         Course course = courseMapper.selectByPrimaryKey(order.getCourseId());
         BigDecimal orderMoney = course.getCoursePrice().multiply(new BigDecimal(order.getCourseCount()));
         if (orderMoney.compareTo(BigDecimal.valueOf(wallet.getBalance())) < 0) {
@@ -110,14 +129,23 @@ public class StudentServiceImpl implements StudentService {
         Order order = orderMapper.selectByPrimaryKey(orderId);
         User user = userMapper.selectByPrimaryKey(order.getPayerId());
         //查询会员等级，打折，计算应付款
-        int discount =userMapper.selectDiscountByLevel(user.getUserLevel());
-//        BigDecimal discount = null;
-        return null;
+        BigDecimal VIPDiscount = userMapper.selectDiscountByLevel(user.getUserLevel());
+        BigDecimal discount = order.getOrderMoney().multiply(VIPDiscount).subtract(new BigDecimal(String.valueOf(faceValue)));
+        order.setDiscount(discount);
+        int row = orderMapper.insertSelective(order);
+        if (row == 1) {
+            return new Result(0, "订单信息更新，请确认...", order);
+        } else {
+            return new Result(1, "服务器连接错误，请稍后再试...");
+        }
     }
 
     @Override
-    public Result updateOrderForPay(Integer orderId) {
-        //学员钱包余额减少，添加钱包记录，更改订单、优惠券状态、
+    public Result updateOrderForPay(String orderId) {
+        //学员钱包余额减少，添加钱包记录，更改订单状态、优惠券状态、
+        Order order = orderMapper.selectByPrimaryKey(orderId);
+        User user  = userMapper.selectByPrimaryKey(order.getPayerId());
+        Wallet wallet = walletMapper.selectByUserId(user.getUserId());
         return null;
     }
 

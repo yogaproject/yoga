@@ -1,6 +1,6 @@
 package com.woniu.yoga.user.service;
 
-import com.woniu.yoga.user.pojo.Comment;
+import com.woniu.yoga.communicate.pojo.Comment;
 import com.woniu.yoga.user.pojo.Order;
 import com.woniu.yoga.user.vo.*;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,7 +19,7 @@ public interface StudentService {
     List<UserVO> listAroundUserByIdOrAddress(SearchConditionVO searchConditionVO);
 
 
-    UserDetailInfoVo getDetailInfoByUserId(Integer userId);
+   CoachDetailInfoVO getDetailInfoByUserId(Integer userId,Integer coachId);
 
 
     Result saveOrder(Order order);
@@ -28,7 +28,7 @@ public interface StudentService {
     Result updateOrderWithCoupon(String orderId, @RequestParam(required = false) Integer couponId);
 
 
-    Result updateOrderForPay(Integer orderId);
+    Result updateOrderForPay(String orderId);
 
 
     Comment saveComment(Comment comment);

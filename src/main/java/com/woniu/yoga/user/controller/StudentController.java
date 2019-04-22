@@ -1,7 +1,7 @@
 package com.woniu.yoga.user.controller;
 
 
-import com.woniu.yoga.user.pojo.Comment;
+import com.woniu.yoga.communicate.pojo.Comment;
 import com.woniu.yoga.user.pojo.Order;
 import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.service.serviceImpl.StudentServiceImpl;
@@ -45,16 +45,16 @@ public class StudentController {
     /*
      * @Author liufeng
      * @Date
-     * @Description //根据userId查询用户的详细信息
+     * @Description //根据userId查询用户(瑜伽师，场馆)的详细信息
      * @Param
      *  HttpSession session:
      * @return
      *  封装了用户详细信息的数据类
      **/
-    public UserDetailInfoVo getDetailInfoByUserId(HttpSession session) {
+    public CoachDetailInfoVO getDetailInfoByUserId(HttpSession session,Integer coachId) {
         User user = (User) session.getAttribute("user");
         Integer userId = user.getUserId();
-        return studentService.getDetailInfoByUserId(userId);
+        return studentService.getDetailInfoByUserId(userId,coachId);
     }
     /*
      * @Author liufeng
@@ -89,7 +89,7 @@ public class StudentController {
      * @Param
      * @return
      **/
-    public Result updateOrderForPay(Integer orderId) {
+    public Result updateOrderForPay(String orderId) {
         return studentService.updateOrderForPay(orderId);
     }
     /*
