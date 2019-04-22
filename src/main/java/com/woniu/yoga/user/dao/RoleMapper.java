@@ -1,6 +1,6 @@
 package com.woniu.yoga.user.dao;
 
-import com.woniu.yoga.sign.entity.Role;
+import com.woniu.yoga.user.pojo.Role;
 
 public interface RoleMapper {
     int deleteByPrimaryKey(Integer roleId);

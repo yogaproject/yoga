@@ -7,6 +7,7 @@ package com.woniu.yoga.commom.enums;
 public enum EntityTypeEnum {
     COURSE_ENTITY(7,"课程"),
     HOMEPAGE_ENTITY(8,"主页动态"),
+    PRIVATE_MSG(27,"私信"),
     ;
     private Integer code;
     private String msg;

@@ -1,6 +1,7 @@
 package com.woniu.yoga.user.dao;
 
-import com.woniu.yoga.sign.entity.StudentAndCoach;
+
+import com.woniu.yoga.user.pojo.StudentAndCoach;
 
 public interface StudentAndCoachMapper {
     int deleteByPrimaryKey(Integer scId);

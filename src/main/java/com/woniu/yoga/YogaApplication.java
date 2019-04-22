@@ -7,12 +7,7 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
-<<<<<<< HEAD
-@MapperScan(value = {"com.woniu.yoga.cf.dao","com.woniu.yoga.commom.dao",
-        "com.woniu.yoga.manage.dao","com.woniu.yoga.venue.dao"})
-=======
 @MapperScan(value = {"com.woniu.yoga"})
->>>>>>> dev
 @EnableTransactionManagement  //启动事物管理
 @ServletComponentScan
 public class YogaApplication {
