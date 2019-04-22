@@ -1,21 +1,13 @@
 package com.woniu.yoga.manage.pojo;
 
-<<<<<<< HEAD
-import java.math.BigDecimal;
-=======
->>>>>>> dev
 import java.util.Date;
 
 public class Coupon {
     private Integer couponId;
 
-<<<<<<< HEAD
-    private BigDecimal faceValue;
-
     private String verifyCode;
-=======
+
     private Integer faceValue;
->>>>>>> dev
 
     private Date effectiveDate;
 
@@ -33,24 +25,6 @@ public class Coupon {
         this.couponId = couponId;
     }
 
-<<<<<<< HEAD
-    public BigDecimal getFaceValue() {
-        return faceValue;
-    }
-
-    public void setFaceValue(BigDecimal faceValue) {
-        this.faceValue = faceValue;
-    }
-
-    public String getVerifyCode() {
-        return verifyCode;
-    }
-
-    public void setVerifyCode(String verifyCode) {
-        this.verifyCode = verifyCode;
-    }
-
-=======
     public Integer getFaceValue() {
         return faceValue;
     }
@@ -59,7 +33,6 @@ public class Coupon {
         this.faceValue = faceValue;
     }
 
->>>>>>> dev
     public Date getEffectiveDate() {
         return effectiveDate;
     }
