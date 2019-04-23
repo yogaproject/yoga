@@ -98,7 +98,7 @@ public class UserController {
      * 方法实现说明 注册邮箱，从邮箱中获取验证码，输入密码，验证密码和邮箱、验证码，
      * @author      lxy
      * @Param:      userVerifyCode，userPhone,activa
-     * @return      json String "0","1","3"
+     * @return      json String
      * @exception
      * @date        2019/4/19 17:22
      */
