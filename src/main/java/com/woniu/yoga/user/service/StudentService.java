@@ -16,7 +16,7 @@ import java.util.List;
  **/
 public interface StudentService {
 
-    Result listAroundUserByIdOrAddress(SearchConditionVO searchConditionVO);
+    Result listAroundUserByAddress(SearchConditionVO searchConditionVO);
 
 
     Result getDetailInfoByUserId(Integer userId, Integer coachId);
@@ -38,4 +38,8 @@ public interface StudentService {
 
 
     Result updateOrderForRefund(String orderId);
+
+    Result updateOrderForCancel(Integer userId, String orderId);
+
+    Result findCoachPhoneByUserId(Integer userId);
 }

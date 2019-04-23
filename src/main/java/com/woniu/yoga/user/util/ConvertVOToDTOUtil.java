@@ -20,20 +20,20 @@ public class ConvertVOToDTOUtil {
             searchConditionDTO.setFreeTimeEnd(null);
         }
         if (searchConditionVO.getFreeTime().equals("早")) {
-            searchConditionDTO.setFreeTimeStart("9:00:00");
-            searchConditionDTO.setFreeTimeEnd(null);
+            searchConditionDTO.setFreeTimeStart("8:00:00");
+            searchConditionDTO.setFreeTimeEnd("12:00:00");
         }
         if (searchConditionVO.getFreeTime().equals("中")) {
-            searchConditionDTO.setFreeTimeStart(null);
-            searchConditionDTO.setFreeTimeEnd(null);
+            searchConditionDTO.setFreeTimeStart("11:00:00");
+            searchConditionDTO.setFreeTimeEnd("18:00:00");
         }
         if (searchConditionVO.getFreeTime().equals("晚")) {
-            searchConditionDTO.setFreeTimeStart(null);
-            searchConditionDTO.setFreeTimeEnd(null);
+            searchConditionDTO.setFreeTimeStart("17:00:00");
+            searchConditionDTO.setFreeTimeEnd("22:00:00");
         }
         if (searchConditionVO.getFreeTime().equals("全天")) {
-            searchConditionDTO.setFreeTimeStart(null);
-            searchConditionDTO.setFreeTimeEnd(null);
+            searchConditionDTO.setFreeTimeStart("8:00:00");
+            searchConditionDTO.setFreeTimeEnd("22:00:00");
         }
         searchConditionDTO.setRoleId(searchConditionVO.getRoleId());
         searchConditionDTO.setEastLongitude(bounds[0]);
