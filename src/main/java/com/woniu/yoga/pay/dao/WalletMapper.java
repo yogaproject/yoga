@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 @Repository
 public interface WalletMapper {
@@ -25,11 +26,11 @@ public interface WalletMapper {
     @Select("select * from wallet where user_id=#{userid}")
     Wallet findWalletByUserId(@Param("userid") int userid);
 
-    //更新钱包余额
-    @Update("update wallet set balance=#{balance} where wallet_id=#{walletid}")
-    void updateBalanceByWalletId(@Param("walletid") int walletid,@Param("balance") double balance);
-
     //查询交易记录
     @Select("select * from wallet_record where from_id =#{userid}")
-    List<WalletRecord> selectOrderByWalletId(@Param("userid") int userid);
+    List<WalletRecord> selectOrderByUserId(@Param("userid") int userid);
+
+    //更新钱余额
+    @Update("update wallet set balance=balance-#{money} where wallet_id=#{walletId}")
+    int updateUserMoneyByWalletId(@Param("walletId") Integer walletId,@Param("money") BigDecimal money);
 }
