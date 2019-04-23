@@ -5,14 +5,17 @@ import com.woniu.yoga.manage.pojo.Coupon;
 import com.woniu.yoga.pay.pojo.Wallet;
 import com.woniu.yoga.pay.pojo.WalletRecord;
 
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 public interface WalletService {
     Wallet findWalletByUserId(int userid);
 
-    void updateBalanceByWalletId(int walletid, double balance);
+    List<WalletRecord> selectOrderByUserId(int userid);
 
-    List<WalletRecord> selectOrderByWalletId(int walletid);
+    int UpdateUserMoneyAndCreateRecord(Map<String, Object> map, HttpServletRequest request);
 
-
+    int updateUserMoneyByWalletId(int walletId, BigDecimal money);
 }
