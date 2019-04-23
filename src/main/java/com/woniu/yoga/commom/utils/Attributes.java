@@ -10,8 +10,6 @@ public class Attributes {
 
     public static final String CURRENT_USER_NAME = "currentUserName";
 
-    public static final String CURRENT_TEACHER_ID = "currentTeacherId";
-
     public static final String CURRENT_USER_ID = "currentUserId";
 
     public static final String CURRENT_USER = "currentUser";

@@ -48,21 +48,14 @@ public class WalletController {
         return walletService.findWalletByUserId(userid);
     }
 
-
     /**
-     * 更新钱包余额，生成订单记录
-     * @param map
+     *
+     * @param walletId
+     * @param money
      * @return
      */
-    @RequestMapping("/updateusermoneyAndcreaterecord")
+    @RequestMapping("/updateusermoney")
     @ResponseBody
-    public int UpdateUserMoneyAndCreateRecord(Map<String, Object> map, HttpServletRequest request) {
-        HttpSession session =request.getSession();
-        User user = (User) session.getAttribute(Attributes.CURRENT_USER);
-        map.put(Attributes.CURRENT_USER,user);
-     return   walletService.UpdateUserMoneyAndCreateRecord(map);
-    }
-
     public int updateUserMoneyByWalletId(int walletId, BigDecimal money){
 
         return walletService.updateUserMoneyByWalletId(walletId,money);
@@ -89,7 +82,7 @@ public class WalletController {
     @RequestMapping("/selectcoupon")
     @ResponseBody
     public List<Coupon> selectUserCouponByUserId(int userid ) {
-        return  null;
+        return null;
     }
 
 
@@ -170,7 +163,7 @@ public class WalletController {
         }
 
         boolean signVerified = AlipaySignature.rsaCheckV1(params, AlipayConfig.alipay_public_key, AlipayConfig.charset, AlipayConfig.sign_type); //调用SDK验证签名
-        int result = UpdateUserMoneyAndCreateRecord(map,request);
+        int result =walletService.UpdateUserMoneyAndCreateRecord(map,request);
         map = null;
         if (result >0){
             return "manager/paysuccess";

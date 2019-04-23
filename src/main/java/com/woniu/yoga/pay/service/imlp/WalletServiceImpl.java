@@ -9,9 +9,12 @@ import com.woniu.yoga.pay.service.WalletRecordService;
 import com.woniu.yoga.pay.service.WalletService;
 
 import com.woniu.yoga.user.pojo.User;
+import org.json.HTTP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +37,7 @@ public class WalletServiceImpl  implements WalletService {
     }
 
     @Override
-    public int UpdateUserMoneyAndCreateRecord(Map<String, Object> map) {
+    public int UpdateUserMoneyAndCreateRecord(Map<String, Object> map, HttpServletRequest request) {
         User user =(User) map.get(Attributes.CURRENT_USER);
         int allmoney = Integer.parseInt(map.get("allmoney").toString()) ;
         //根据用户id,找到对应钱包
