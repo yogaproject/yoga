@@ -117,7 +117,7 @@ public class WalletController {
         //订单名称，必填
         String subject = "商品";
         //商品描述，可空
-        String body = "物美价廉";
+        String body = "不错呦";
 
         alipayRequest.setBizContent("{\"out_trade_no\":\"" + out_trade_no + "\","
                 + "\"total_amount\":\"" + total_amount + "\","
@@ -149,6 +149,9 @@ public class WalletController {
     @RequestMapping("/success")
     public String success(HttpServletRequest request, HttpServletResponse response) throws AlipayApiException {
         //获取支付宝GET过来反馈信息
+        System.out.println("-----------------------------");
+        System.out.println("调用返回结果");
+        System.out.println("-----------------------------");
         Map<String,String> params = new HashMap<String,String>();
         Map requestParams = request.getParameterMap();
         for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext();) {
