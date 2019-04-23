@@ -41,7 +41,6 @@ public class PhoneUtil {
             ssender=new SmsSingleSender(appid, appkey);
             SmsSingleSenderResult result = ssender.sendWithParam("86", userPhone,
                     templateId, params, smsSign, "", "");  // 签名参数未提供或者为空时，会使用默认签名发送短信
-            System.out.println(result);
         } catch (HTTPException e) {
             e.printStackTrace();// HTTP响应码错误
         } catch (JSONException e) {
