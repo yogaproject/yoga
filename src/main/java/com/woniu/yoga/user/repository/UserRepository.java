@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
  * @time: 2019/4/16 19:44
  */
 @Transactional
-public interface UserRepository extends JpaRepository<User,Long> {
+public interface UserRepository extends JpaRepository<User,Integer> {
     //User findByUserPhoneAndActive(String userPhone,Integer active);
 
 

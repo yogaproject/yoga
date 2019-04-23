@@ -161,7 +161,7 @@ public class StudentServiceImpl implements StudentService {
             return ResultUtil.errorOperation( "订单状态错误，请联系管理员");
         }
         User user = userMapper.selectByPrimaryKey(order.getPayerId());
-        Wallet wallet = walletMapper.selectByUserId(user.getUserId());
+        Wallet wallet = walletMapper.findWalletByUserId(user.getUserId());
         //更新钱包余额
         wallet.setBalance(wallet.getBalance().subtract(order.getDiscount()));
         //保存钱包余额

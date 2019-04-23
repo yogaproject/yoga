@@ -31,6 +31,7 @@ public class MessageController {
     @GetMapping(value = "/{conversationId}/detail")
     public String getConversationDetail(@PathVariable("conversationId") String conversationId){
         try {
+            System.out.println("msg detail*****");
             Map<String,Object> details = messageService.getConversationDetail(conversationId);
             return JsonUtil.toJson(details);
         } catch (YogaException e){
