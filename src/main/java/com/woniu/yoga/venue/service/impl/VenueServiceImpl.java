@@ -5,6 +5,7 @@ import com.woniu.yoga.user.pojo.Coach;
 import com.woniu.yoga.venue.pojo.Recruitment;
 import com.woniu.yoga.venue.pojo.Venue;
 import com.woniu.yoga.venue.service.VenueService;
+import com.woniu.yoga.venue.vo.CoachInformationVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,12 +30,12 @@ public class VenueServiceImpl implements VenueService {
     }
 
     @Override
-    public int waitCoahForSign(Integer venueId, Integer coachId) {
+    public int waitCoachForSign(Integer venueId, Integer coachId) {
         return venueMapper.waitForSign(venueId,coachId);
     }
 
     @Override
-    public int coachSignService(int cv_id) {
+    public int coachSignService(Integer cv_id) {
         return venueMapper.coachSignMapper(cv_id);
     }
 
@@ -46,6 +47,23 @@ public class VenueServiceImpl implements VenueService {
     @Override
     public int venueAddRecruitService(Recruitment recruitment) {
         return venueMapper.venueAddRecruitMapper(recruitment);
+    }
+
+    @Override
+    public List<CoachInformationVO> venueFindCoach(CoachInformationVO coachInformationVO) {
+        List list = venueMapper.venueQueryCoach(coachInformationVO);
+        return list;
+    }
+
+    @Override
+    public int venueBreakCoachService(int coachId) {
+
+        return venueMapper.venueBreakCoachMapper(coachId);
+    }
+
+    @Override
+    public int venuePerfectInformationService(Venue venue) {
+        return 0;
     }
 
 }
