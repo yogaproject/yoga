@@ -1,10 +1,13 @@
 package com.woniu.yoga.venue.service.impl;
 
-import com.woniu.yoga.venue.dao.VenueMapper;
 import com.woniu.yoga.user.pojo.Coach;
+import com.woniu.yoga.user.pojo.Course;
+import com.woniu.yoga.user.pojo.User;
+import com.woniu.yoga.venue.dao.VenueMapper;
 import com.woniu.yoga.venue.pojo.Recruitment;
 import com.woniu.yoga.venue.pojo.Venue;
 import com.woniu.yoga.venue.service.VenueService;
+import com.woniu.yoga.venue.vo.CoachInformationVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +15,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 @Service
-public class VenueServiceImpl implements VenueService {
+public class VenueServiceImpl implements VenueService{
     @Autowired
     private VenueMapper venueMapper;
 
@@ -29,12 +32,12 @@ public class VenueServiceImpl implements VenueService {
     }
 
     @Override
-    public int waitCoahForSign(Integer venueId, Integer coachId) {
+    public int waitCoachForSign(Integer venueId, Integer coachId) {
         return venueMapper.waitForSign(venueId,coachId);
     }
 
     @Override
-    public int coachSignService(int cv_id) {
+    public int coachSignService(Integer cv_id) {
         return venueMapper.coachSignMapper(cv_id);
     }
 
@@ -47,5 +50,38 @@ public class VenueServiceImpl implements VenueService {
     public int venueAddRecruitService(Recruitment recruitment) {
         return venueMapper.venueAddRecruitMapper(recruitment);
     }
+
+    @Override
+    public List<CoachInformationVO> venueFindCoach(CoachInformationVO coachInformationVO) {
+        List list = venueMapper.venueQueryCoach(coachInformationVO);
+        return list;
+    }
+
+    @Override
+    public int venueBreakCoachService(int coachId) {
+
+        return venueMapper.venueBreakCoachMapper(coachId);
+    }
+
+    @Override
+    public int venuePerfectInformationService(Venue venue) {
+        return venueMapper.venuePerfectInformationMapper(venue);
+    }
+
+    @Override
+    public int addVenueUserInformationService(Integer userId, User user) {
+        return venueMapper.addVenueUserInformationMapper(userId,user);
+    }
+
+    @Override
+    public List<Coach> findCoachByVenueIdService(Integer venueId) {
+        return venueMapper.queryCoachByVenueId(venueId);
+    }
+
+    @Override
+    public int coachAddCourseService(Course course) {
+        return venueMapper.coachAddCourseMapper(course);
+    }
+
 
 }

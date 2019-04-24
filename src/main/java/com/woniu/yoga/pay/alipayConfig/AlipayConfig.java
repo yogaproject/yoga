@@ -26,10 +26,10 @@ public class AlipayConfig {
     public static String alipay_public_key = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArjuSs9nwc08usGChtO2Wq99UYNdQywtZR0q96KaBMzedi4uvP5n1jryEp8yM32dbHnsB4Ik7lxuxCbuH8cyrnSV39oCE7IjZa8bnX0AWj1W9Sho7LgCkxkyXV9gLYzMXoMrTA/iZfLfOHBlSH3fbEbuDOSQUujI7L43efv6jWa84iyW93fEarAvojJnjJxEeb/jXWZ3OUKWSTkuIKKSixqUFuFnCCTpE/EC1BhjwPQXoRPqxxWnRgAeoyTQR69v6fSG2oDlnB8SDeoJGbiR8aK3aPt+794jGB0rlB+IhoND5E5GsgQVt4unbj5aan8SjpHzD13rqvJEwTh88+fkpbwIDAQAB";
 
 	// 服务器异步通知页面路径  需http://格式的完整路径，不能加?id=123这类自定义参数，必须外网可以正常访问
-	public static String notify_url = "http://7i88ck.natappfree.cc/success.html";
+	public static String notify_url = "http://localhost/yoga/wallet/success";
 
 	// 页面跳转同步通知页面路径 需http://格式的完整路径，不能加?id=123这类自定义参数，必须外网可以正常访问
-	public static String return_url = "http://7i88ck.natappfree.cc/success.html";
+	public static String return_url = "http://localhost/wallet/success";
 
 	// 签名方式
 	public static String sign_type = "RSA2";

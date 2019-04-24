@@ -5,7 +5,7 @@ import org.apache.ibatis.jdbc.SQL;
 
 /**
  * @ClassName UserMapperProviderUtil
- * @Description TODO
+ * @Description 为UserMapper提供sql开发
  * @Author Administrator
  * @Date 2019/4/17 11:43
  * @Version 1.0
@@ -18,7 +18,7 @@ public class UserMapperProviderUtil {
         sql.WHERE(" coach.userId = user.userId and roleId = " + searchConditionDTO.getRoleId());
         //约束：姓名，模糊查询
         if (searchConditionDTO.getRealName() != null) {
-          sql.WHERE(" real_name like '%"+searchConditionDTO.getRealName()+"' ");
+          sql.WHERE(" real_name like '%"+searchConditionDTO.getRealName()+"%' ");
         }
         if (searchConditionDTO.getRoleId() == 2) {
             //约束：接受约教且未满课的瑜伽师

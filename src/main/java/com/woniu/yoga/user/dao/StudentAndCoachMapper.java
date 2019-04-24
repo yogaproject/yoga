@@ -2,7 +2,9 @@ package com.woniu.yoga.user.dao;
 
 
 import com.woniu.yoga.user.pojo.StudentAndCoach;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface StudentAndCoachMapper {
     int deleteByPrimaryKey(Integer scId);
 

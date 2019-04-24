@@ -30,7 +30,11 @@ public interface WalletMapper {
     @Select("select * from wallet_record where from_id =#{userid}")
     List<WalletRecord> selectOrderByUserId(@Param("userid") int userid);
 
-    //更新钱余额
+    //更新钱余额用于付款
     @Update("update wallet set balance=balance-#{money} where wallet_id=#{walletId}")
     int updateUserMoneyByWalletId(@Param("walletId") Integer walletId,@Param("money") BigDecimal money);
+
+    //更新钱余额用于充值
+    @Update("update wallet set balance=balance+#{money} where wallet_id=#{walletId}")
+    int saveMoney(int walletId, BigDecimal money);
 }
