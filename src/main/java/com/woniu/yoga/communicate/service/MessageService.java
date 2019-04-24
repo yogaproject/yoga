@@ -22,13 +22,13 @@ public interface MessageService {
     Message sendMessage(Message message);
 
     /**
-     * @Description 查找toId的所有消息并按时间排序
+     * @Description 查找userId的所有消息并按时间排序
      * @Author guochxi
      * @Date 18:47 2019/4/22
      * @Param []
      * @return java.util.Map<java.lang.String,java.lang.Object>
      **/
-    Map<String,Object> findByToid();
+    List<Message> getConversationListByUserIdAndEntityType(Integer userId,Integer entityType);
 
     /**
      * @Description 根据会话id查询消息详情
@@ -37,7 +37,7 @@ public interface MessageService {
      * @Param [conversationId]
      * @return java.util.Map<java.lang.String,java.lang.Object>
      **/
-    Map<String,Object> getConversationDetail(String conversationId);
+    List<Message> getConversationDetail(Integer fromId,Integer toId);
 
     /**
      * @Description 将fromId的消息状态设为已读
@@ -56,4 +56,13 @@ public interface MessageService {
      * @return int
      **/
     int delMessageByFromIdAndToId(Integer fromId,Integer toId);
+
+    /**
+     * @Description 查找与某人聊天的未读消息个数
+     * @Author guochxi
+     * @Date 15:11 2019/4/23
+     * @Param [fromId, toId]
+     * @return
+     **/
+    Integer getUnreadCount(Integer userId,String conversationId);
 }
