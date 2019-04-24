@@ -2,11 +2,10 @@ package com.woniu.yoga.user.controller;
 
 import com.woniu.yoga.user.pojo.Coach;
 import com.woniu.yoga.user.pojo.User;
+import com.woniu.yoga.user.service.CoachService;
 import com.woniu.yoga.user.vo.Result;
-import com.woniu.yoga.user.vo.StudentDetailVO;
 import com.woniu.yoga.venue.pojo.Recruitment;
 import com.woniu.yoga.venue.pojo.Venue;
-import com.woniu.yoga.user.service.CoachService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,9 +31,11 @@ public class CoachController {
 
     //-------------------------------------招聘------------------------------------------
     //模糊查询场馆list(是否需要招聘(需要场馆已经发布了招聘信息，从招聘表中去查)，招聘流派，工资待遇)
+   @RequestMapping("/selectVenueByConditions")
+   @ResponseBody
     public List<Venue> selectVenueByConditions(Recruitment recruitment){
-
-        return  null;
+        List venueList = coachService.findVenueByConditions(recruitment);
+        return  venueList;
     }
 
 

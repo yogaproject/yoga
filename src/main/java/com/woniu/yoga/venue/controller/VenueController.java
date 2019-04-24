@@ -2,8 +2,8 @@ package com.woniu.yoga.venue.controller;
 
 import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.user.pojo.Coach;
+import com.woniu.yoga.user.pojo.Course;
 import com.woniu.yoga.user.pojo.User;
-import com.woniu.yoga.venue.pojo.Product;
 import com.woniu.yoga.venue.pojo.Recruitment;
 import com.woniu.yoga.venue.pojo.Venue;
 import com.woniu.yoga.venue.service.VenueService;
@@ -25,23 +25,42 @@ public class VenueController {
     //---------------------------------------------信息完善-----------------------------------------
     //参数：Venue ，1.根据场馆id，添加图片、场馆详情 —》
     //              2.根据venue里面的userId，在user表添加场馆地址、场馆名称、场馆电话、qq
-    //              3.在option下拉框中显示此场馆已经签约的教练，并在文本框数据自定义课程内容，在课程表插入
-    public Result venuePerfectInformation(Venue venue, User user){
-        if (venueService.venuePerfectInformationService(venue)== 0){
+    //
+    @RequestMapping("/venuePerfectInformation")
+    @ResponseBody
+    public Result venuePerfectInformation(Venue venue, User user,Course course){
+        int num1 = venueService.venuePerfectInformationService(venue);
+        if (num1 == 0){
             //场馆信息添加失败
             return Result.error("场馆信息添加失败");
         }
         //场馆信息添加成功，根据userId，user表添加内容
-
-
-        return Result.success("场馆信息添加成功");
+        int num2 = venueService.addVenueUserInformationService(venue.getUserId(),user);
+          if (num2 == 0){
+              return Result.error("用户信息添加失败");
+          }
+            venueAllCoach(venue);//调用此方法，展示场馆所有教练
+        //根据多个文本款内容，传回来一个course对象，在课程表插入数据，代表场馆给教练安排课程
+            venueService.coachAddCourseService(course);
+        return Result.success("场馆添加信息成功");
+    }
+    //展示出场馆信息完善以后，下拉框自动调用此方法
+    //3.根据场馆id，在option下拉框中显示此场馆已经签约的教练，并在文本框数据自定义课程内容，在课程表插入
+    @RequestMapping("/venueAllCoach")
+    @ResponseBody
+    public List<Coach> venueAllCoach(Venue venue){
+        List coachList = venueService.findCoachByVenueIdService(venue.getVenueId());
+        return coachList;
     }
 
 
 
 
+
+
+
     //---------------------------------------------教练查看-----------------------------------------
-    //场馆根据选择（教练类型、期望薪资、流派）的id，查询符合条件的教练集合
+    //场馆根据选择（教练类型、期望薪资、流派），查询符合条件的教练集合
     @RequestMapping("/vagueConditions")
     @ResponseBody
     public List<Coach> selectCoachByVagueConditions(Coach coach, BigDecimal up_expected_salary,BigDecimal down_expected_salary){
@@ -57,6 +76,10 @@ public class VenueController {
         Venue venue = venueService.findVenueByVenueId(venueId);
         return venue;
     }
+
+
+
+
 // -------------------------------------------签约------------------------------------------------
     //签约教练--场馆找到教练后，在教练的详情页面中，可以选择发起请求，申请“场馆教练”。
     //必须要教练同意，确认后，即可成为该场馆的签约教练
@@ -125,12 +148,6 @@ public class VenueController {
         return Result.success("解约成功");
     }
 
-    //-------------------------------------我的产品-----------------------------------------
-    //根据场馆id，展示场馆所有拥有的卡的信息
-    public List<Product> venueAllProduct(Integer venueId){
-
-        return null;
-    }
 
 
 

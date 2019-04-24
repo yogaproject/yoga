@@ -1,12 +1,10 @@
 package com.woniu.yoga.user.service;
 
-import com.woniu.yoga.manage.pojo.Coupon;
-import com.woniu.yoga.user.pojo.Order;
 import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.vo.Result;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
 
 /**
  * @Author liufeng
@@ -59,9 +57,6 @@ public interface UserService {
     boolean sendLoginMessage(User user);
     //登录手机，查询验证手机和验证码 lxy
     User queryUserByPhoneAndCode(String userPhone, String userVerifyCode);
-
-
-
 
 
 }

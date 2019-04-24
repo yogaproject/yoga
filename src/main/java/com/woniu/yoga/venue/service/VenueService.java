@@ -1,6 +1,8 @@
 package com.woniu.yoga.venue.service;
 
 import com.woniu.yoga.user.pojo.Coach;
+import com.woniu.yoga.user.pojo.Course;
+import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.venue.pojo.Recruitment;
 import com.woniu.yoga.venue.pojo.Venue;
 import com.woniu.yoga.venue.vo.CoachInformationVO;
@@ -36,5 +38,16 @@ public interface VenueService {
 
     //根据场馆id，在场馆表中，添加照片、详情
     int venuePerfectInformationService(Venue venue);
+
+    //根据场馆id，在user表中添加场馆user的信息
+    int addVenueUserInformationService(Integer userId, User user);
+
+    //根据场馆id，查询与场馆签约的教练
+    List<Coach> findCoachByVenueIdService(Integer venueId);
+
+    //教练添加课程
+    int coachAddCourseService(Course course);
+
+
 
 }

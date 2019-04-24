@@ -1,7 +1,9 @@
 package com.woniu.yoga.venue.service.impl;
 
-import com.woniu.yoga.venue.dao.VenueMapper;
 import com.woniu.yoga.user.pojo.Coach;
+import com.woniu.yoga.user.pojo.Course;
+import com.woniu.yoga.user.pojo.User;
+import com.woniu.yoga.venue.dao.VenueMapper;
 import com.woniu.yoga.venue.pojo.Recruitment;
 import com.woniu.yoga.venue.pojo.Venue;
 import com.woniu.yoga.venue.service.VenueService;
@@ -13,7 +15,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 @Service
-public class VenueServiceImpl implements VenueService {
+public class VenueServiceImpl implements VenueService{
     @Autowired
     private VenueMapper venueMapper;
 
@@ -63,7 +65,23 @@ public class VenueServiceImpl implements VenueService {
 
     @Override
     public int venuePerfectInformationService(Venue venue) {
-        return 0;
+        return venueMapper.venuePerfectInformationMapper(venue);
     }
+
+    @Override
+    public int addVenueUserInformationService(Integer userId, User user) {
+        return venueMapper.addVenueUserInformationMapper(userId,user);
+    }
+
+    @Override
+    public List<Coach> findCoachByVenueIdService(Integer venueId) {
+        return venueMapper.queryCoachByVenueId(venueId);
+    }
+
+    @Override
+    public int coachAddCourseService(Course course) {
+        return venueMapper.coachAddCourseMapper(course);
+    }
+
 
 }

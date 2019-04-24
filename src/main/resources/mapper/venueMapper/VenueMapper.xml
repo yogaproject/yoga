@@ -46,7 +46,6 @@
         </if>
       </if>
     </where>
-
   </select>
 
   <insert id="waitForSign" >
@@ -64,6 +63,63 @@
   <insert id="venueAddRecruit">
     insert into recruitment values (default ,#{recruit.venue_id},#{recruit.coach_type},#{recruit.coach_style},#{recruit.salary_up},#{recruit.salary_down},0)
   </insert>
+
+  <select id="venueQueryCoach" resultMap="coachVOResultMap">
+    select
+      c.coach_type,
+      c.coach_style,
+      u.real_name,
+      u.user_phone,
+      u.user_qq
+     from oach c left  join `user` u on
+     c.user_id = u.user_id
+    <where>
+      <if test="coachInformationVO.realName != null and ''!=coachInformationVO.realName">
+          and real_name like  concat('%',coachInformationVO.realName,'%')
+      </if>
+      <if test="coachInformationVO.coachType != null and ''!=coachInformationVO.coachType">
+          and coach_type like concat('%',coachInformationVO.coachType,'%')
+      </if>
+      <if test="coachInformationVO.coachStyle != null ''!=coachInformationVO.coachStyle">
+          and coach_style like concat('%',coachInformationVO.coachStyle,'%')
+      </if>
+      and where c.venue_id = #{coachInformationVO.venueId}
+    </where>
+  </select>
+
+  <update id="venueBreakCoachMapper" >
+    update venue_coach set cv_status = 2 where coach_id = #{0}
+  </update>
+
+
+  <resultMap id="coachVOResultMap" type="com.woniu.yoga.venue.vo.CoachInformationVO">
+    <id column="coach_id" jdbcType="INTEGER" property="coachId"></id>
+    <result column="real_name" jdbcType="VARCHAR" property="realName" />
+    <result column="coach_type" jdbcType="VARCHAR" property="coachType" />
+    <result column="coach_style" jdbcType="VARCHAR" property="coachStyle" />
+    <result column="user_phone" jdbcType="VARCHAR" property="userPhone" />
+    <result column="user_qq" jdbcType="VARCHAR" property="userQq" />
+    <result column="venue_id" jdbcType="INTEGER" property="venueId" />
+  </resultMap>
+
+  <update id="venuePerfectInformationMapper">
+    update venue
+    <set>
+      <if test="venue.img1 != null and ''!= venue.img1">
+        img1 = #{venue.img1}
+      </if>
+      <if test="venue.img2 != null and ''!= venue.img2">
+        img2 = #{venue.img2}
+      </if>
+      <if test="venue.img3 != null and ''!= venue.img3">
+        img3 = #{venue.img3}
+      </if>
+      <if test="venue.venueDetail != null and ''!= venue.venueDetail">
+        venue_detail = #{venue.venueDetail}
+      </if>
+    </set>
+    where venue_id = #{venue.venueId}
+  </update>
 
 
 

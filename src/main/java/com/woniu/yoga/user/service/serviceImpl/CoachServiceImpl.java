@@ -9,6 +9,8 @@ import com.woniu.yoga.user.util.OrderUtil;
 import com.woniu.yoga.user.util.ResultUtil;
 import com.woniu.yoga.user.vo.Result;
 import com.woniu.yoga.user.vo.StudentVO;
+import com.woniu.yoga.venue.pojo.Recruitment;
+import com.woniu.yoga.venue.pojo.Venue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -110,4 +112,10 @@ public class CoachServiceImpl implements CoachService {
         return ResultUtil.connectDatabaseFail();
     }
 
+
+    @Override
+    public List<Venue> findVenueByConditions(Recruitment recruitment) {
+        List venueList = coachMapper.queryVenueByConditions(recruitment);
+        return venueList;
+    }
 }

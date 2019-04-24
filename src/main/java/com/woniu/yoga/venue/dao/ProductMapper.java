@@ -26,4 +26,6 @@ public interface ProductMapper {
     //场馆删除产品
     int venueDeleteProductMapper(Integer productId);
 
+
+
 }

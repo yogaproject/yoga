@@ -21,8 +21,8 @@ public class ProductController {
     @RequestMapping("/venueAllProduct")
     @ResponseBody
     public List<Product> venueAllProduct(Integer venueId){
-
-        return  productService.venueAllProductService(venueId);
+        List productList = productService.venueAllProductService(venueId);
+        return  productList;
     }
 
     //增删查改产品的详细信息
