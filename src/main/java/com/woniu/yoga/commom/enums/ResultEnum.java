@@ -6,7 +6,9 @@ package com.woniu.yoga.commom.enums;
  */
 public enum  ResultEnum {
     UNKNOWN_ERROR(-1,"异常不详"),
-    PARAM_ERROR(1,"参数不正确"),;
+    PARAM_ERROR(1,"参数不正确"),
+    SEND_MSG_ERROR(2,"消息发送失败"),
+    MSG_TYPE_ERROR(3,"消息格式错误"),;
     private Integer code;
     private String msg;
 

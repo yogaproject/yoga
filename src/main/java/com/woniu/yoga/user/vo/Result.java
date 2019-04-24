@@ -47,6 +47,6 @@ public class Result {
 
     @Override
     public String toString() {
-        return "{" + "code:" + code + ", message:'" + message + '\'' + ", data:" + object + '}';
+        return "{" + "code:" + code + ", message:'" + message + '\'' + ",' data"+"\':" + object + '}';
     }
 }

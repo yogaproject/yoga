@@ -19,7 +19,7 @@ public class SearchConditionVO {
     private int round;
     //搜索的条件：2为搜索教练，3为搜索场馆，其余不合法
     private int roleId;
-//    //最低课时费，限定整数；场馆无需此项
+    //    //最低课时费，限定整数；场馆无需此项
 //    private int lowPrice;
     //教练流派，需要从数据库字典查询，然后选择；场馆无需此项
     private int coachStyle;
@@ -27,6 +27,12 @@ public class SearchConditionVO {
     private String authenticationMethod;
     //教练空闲时间，值为不限、早、中、晚、全天5选一；场馆无需此项
     private String freeTime;
+
+    public SearchConditionVO() {
+        round = 5000;
+        roleId = 2;
+        coachStyle = 0;
+    }
 
     public String getRealName() {
         return realName;
