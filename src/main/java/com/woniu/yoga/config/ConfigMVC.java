@@ -12,7 +12,7 @@ import javax.sql.DataSource;
 public class ConfigMVC implements WebMvcConfigurer {
 
 
-    @Bean
+    @Bean(name = "transactionManager")
     public DataSourceTransactionManager manager(DataSource dataSource){
         DataSourceTransactionManager manager= new DataSourceTransactionManager();
         manager.setDataSource(dataSource);
