@@ -14,6 +14,7 @@ public class Attributes {
 
     public static final String CURRENT_USER = "currentUser";
 
-    public static final String currentUserId = "currentUserId";
+    public static final String CURRENTUSERID = "currentUserId";
+    public static final String AUTH_APP_ID = "2016092600598716";
 
 }

@@ -18,4 +18,6 @@ public interface WalletService {
     int UpdateUserMoneyAndCreateRecord(Map<String, Object> map, HttpServletRequest request);
 
     int updateUserMoneyByWalletId(int walletId, BigDecimal money);
+
+    int saveMoney(int walletId, BigDecimal money);
 }

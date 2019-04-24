@@ -59,7 +59,18 @@ public class WalletController {
     public int updateUserMoneyByWalletId(int walletId, BigDecimal money){
 
         return walletService.updateUserMoneyByWalletId(walletId,money);
-    };
+    }
+
+    /**
+     * 充值余额
+     * @param walletId
+     * @return
+     */
+    @RequestMapping("/saveMoney")
+    @ResponseBody
+    public int saveMoney(int walletId, BigDecimal money){
+        return walletService.saveMoney(walletId,money);
+    }
 
 /**
      * 查询交易记录
@@ -136,43 +147,40 @@ public class WalletController {
 
         //请求
         String result = alipayClient.pageExecute(alipayRequest).getBody();
-        //生成订单数据
-        map.put("out_trade_no",out_trade_no);
-        map.put("total_amount",total_amount);
-        map.put("goodsIds",goodsIds);
-        map.put("goodscount",goodscount);
-        map.put("allmoney",allmoney);
-        map.put("goodsprice",goodsprice);
         return result;
     }
 
+    //支付成功后，返回的订单数据
     @RequestMapping("/success")
     public String success(HttpServletRequest request, HttpServletResponse response) throws AlipayApiException {
-        //获取支付宝GET过来反馈信息
-        System.out.println("-----------------------------");
-        System.out.println("调用返回结果");
-        System.out.println("-----------------------------");
-        Map<String,String> params = new HashMap<String,String>();
+
+        Map<String,String> params = new HashMap<>();
         Map requestParams = request.getParameterMap();
         for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext();) {
             String name = (String) iter.next();
+            System.out.println(name);
             String[] values = (String[]) requestParams.get(name);
             String valueStr = "";
             for (int i = 0; i < values.length; i++) {
+
                 valueStr = (i == values.length - 1) ? valueStr + values[i]
                         : valueStr + values[i] + ",";
             }
+            System.out.println(valueStr);
             params.put(name, valueStr);
+            map.put(name, valueStr);
+
         }
 
         boolean signVerified = AlipaySignature.rsaCheckV1(params, AlipayConfig.alipay_public_key, AlipayConfig.charset, AlipayConfig.sign_type); //调用SDK验证签名
+        System.out.println(signVerified);
         int result =walletService.UpdateUserMoneyAndCreateRecord(map,request);
         map = null;
         if (result >0){
-            return "manager/paysuccess";
+            return "success";
         }
 
-        return "manager/paysuccess";
+        return "success";
     }
 
 }
