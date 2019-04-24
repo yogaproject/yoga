@@ -1,5 +1,7 @@
 package com.woniu.yoga.pay.pojo;
 
+import java.math.BigDecimal;
+
 public class WalletRecord {
     private Integer recordId;
 
@@ -9,7 +11,7 @@ public class WalletRecord {
 
     private Integer recordType;
 
-    private Long money;
+    private BigDecimal money;
 
     private Integer payType;
 
@@ -51,11 +53,11 @@ public class WalletRecord {
         this.recordType = recordType;
     }
 
-    public Long getMoney() {
+    public BigDecimal getMoney() {
         return money;
     }
 
-    public void setMoney(Long money) {
+    public void setMoney(BigDecimal money) {
         this.money = money;
     }
 
