@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class WalletRecordcontroller {
     private WalletRecordService walletRecordService;
 
+    /**
+     * 插入订单
+     * @param walletRecord
+     */
     public void insertRecord(WalletRecord walletRecord){
        walletRecordService.insertRecord(walletRecord);
     }

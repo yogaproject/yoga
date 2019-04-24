@@ -38,9 +38,6 @@
   <insert id="insertSelective" parameterType="com.woniu.yoga.pay.pojo.WalletRecord">
     insert into wallet_record
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="recordId != null">
-        record_id,
-      </if>
       <if test="fromId != null">
         from_id,
       </if>
@@ -67,9 +64,7 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="recordId != null">
-        #{recordId,jdbcType=INTEGER},
-      </if>
+
       <if test="fromId != null">
         #{fromId,jdbcType=INTEGER},
       </if>

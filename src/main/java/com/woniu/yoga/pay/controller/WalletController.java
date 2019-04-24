@@ -62,7 +62,7 @@ public class WalletController {
     }
 
     /**
-     * 充值余额
+     * 充值余额，修改数据库
      * @param walletId
      * @return
      */
@@ -150,6 +150,15 @@ public class WalletController {
         return result;
     }
 
+
+
+    /**
+     *  支付成功后，返回的订单数据,跳转到本地支付成功页面
+     * @param request
+     * @param response
+     * @return
+     * @throws AlipayApiException
+     */
     //支付成功后，返回的订单数据
     @RequestMapping("/success")
     public String success(HttpServletRequest request, HttpServletResponse response) throws AlipayApiException {
@@ -158,7 +167,7 @@ public class WalletController {
         Map requestParams = request.getParameterMap();
         for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext();) {
             String name = (String) iter.next();
-            System.out.println(name);
+         //   System.out.println(name);
             String[] values = (String[]) requestParams.get(name);
             String valueStr = "";
             for (int i = 0; i < values.length; i++) {
@@ -166,7 +175,7 @@ public class WalletController {
                 valueStr = (i == values.length - 1) ? valueStr + values[i]
                         : valueStr + values[i] + ",";
             }
-            System.out.println(valueStr);
+           // System.out.println(valueStr);
             params.put(name, valueStr);
             map.put(name, valueStr);
 
@@ -176,11 +185,8 @@ public class WalletController {
         System.out.println(signVerified);
         int result =walletService.UpdateUserMoneyAndCreateRecord(map,request);
         map = null;
-        if (result >0){
-            return "success";
-        }
 
-        return "success";
+        return "success";//本地支付成功页面
     }
 
 }
