@@ -8,15 +8,96 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="follow_status" jdbcType="INTEGER" property="followStatus" />
   </resultMap>
+  
+  <resultMap id="FollowVoResult" type="com.woniu.yoga.communicate.vo.FollowVo">
+    <id column="follow_id" jdbcType="INTEGER" property="followId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="followed_id" jdbcType="INTEGER" property="followedId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="follow_status" jdbcType="INTEGER" property="followStatus" />
+    <result column="user_level" jdbcType="INTEGER" property="userLevel" />
+    <result column="user_headimg" jdbcType="VARCHAR" property="userHeadimg" />
+    <result column="user_nickname" jdbcType="VARCHAR" property="userNickName" />
+  </resultMap>
+
+  <resultMap id="VoResultMap" type="com.woniu.yoga.home.vo.HomepageVo">
+    <id column="m_id" jdbcType="INTEGER" property="mId" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="img" jdbcType="VARCHAR" property="img" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="comment_count" jdbcType="BIGINT" property="commentCount" />
+    <result column="user_nickname" jdbcType="VARCHAR" property="userNickName" />
+    <result column="user_level" jdbcType="INTEGER" property="userLevel" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="user_privacy" jdbcType="INTEGER" property="userPrivacy" />
+    <result column="homepage_privacy" jdbcType="INTEGER" property="homepagePrivacy" />
+    <result column="follow_status" jdbcType="INTEGER" property="followStatus" />
+  </resultMap>
+
   <sql id="Base_Column_List">
     follow_id, user_id, followed_id, create_time, follow_status
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from follow
     where follow_id = #{followId,jdbcType=INTEGER}
   </select>
+  <select id="selectIfFollow" >
+    select
+    count(follow_id)
+    from follow
+    where user_id=#{userId} and followed_id=#{followedId}
+  </select>
+  <select id="queryFollowList" resultMap="FollowVoResult">
+    select
+      follow_id, f.user_id, followed_id, create_time, follow_status,
+      user_level, user_headimg, user_nickname
+    from follow as f, `user` as u
+    where f.user_id=#{userId} and followed_id=u.user_id
+  </select>
+
+  <select id="queryFans" resultMap="FollowVoResult">
+    select
+      follow_id, f.user_id, followed_id, create_time, follow_status,
+      user_level, user_headimg, user_nickname
+    from follow as f, `user` as u
+    where followed_id=#{userId} and u.user_id=f.user_id
+  </select>
+
+  <select id="queryFollowHomepages" resultMap="VoResultMap">
+    SELECT
+      m_id, title, img, h.user_id, comment_count
+            ,h.create_time,content, user_nickname, user_level,user_headimg,user_privacy,homepage_privacy,follow_status
+    FROM homepage as h, `user` as u, follow as f
+    where h.user_id in (select followed_id from follow where user_id=3)
+      and homepage_flag = 0 and u.user_id=h.user_id and user_flag=0 and user_privacy != 0 and f.followed_id=u.user_id
+      and homepage_privacy != 2
+    ORDER BY create_time desc
+  </select>
+  <update id="updateFollowStatus">
+    update follow
+    set follow_status=1
+    where user_id=#{user_id} and followed_id=#{followedId}
+  </update>
+  <select id="selectFollowStatus">
+    select
+    follow_status
+    from follow
+    where user_id=#{user_id} and followed_id=#{follwedId}
+  </select>
+  <update id="updateCancelFollowStatus">
+    update follow
+    set follow_status=0
+    where user_id=#{user_id} and followed_id=#{followedId}
+  </update>
+
+  <update id="deleteByFlag">
+    update follow
+    set follow_flag=1
+    where user_id=#{user_id} and followed_id=#{followedId}
+  </update>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from follow
     where follow_id = #{followId,jdbcType=INTEGER}

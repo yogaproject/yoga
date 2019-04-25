@@ -10,6 +10,49 @@
     <result column="comment_degree" jdbcType="INTEGER" property="commentDegree" />
     <result column="comment_flag" jdbcType="INTEGER" property="commentFlag" />
   </resultMap>
+  <resultMap id="CommentVo" type="com.woniu.yoga.communicate.vo.CommentVo">
+    <id column="comment_id" jdbcType="BIGINT" property="commentId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="comment_detail" jdbcType="VARCHAR" property="commentDetail" />
+    <result column="entity_id" jdbcType="INTEGER" property="entityId" />
+    <result column="entity_type" jdbcType="INTEGER" property="entityType" />
+    <result column="comment_degree" jdbcType="INTEGER" property="commentDegree" />
+    <result column="comment_createtime" jdbcType="TIMESTAMP" property="commentCreateTime" />
+    <result column="user_nickname" jdbcType="VARCHAR" property="userNickName" />
+    <result column="user_headimg" jdbcType="VARCHAR" property="userHeadimg" />
+    <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+    <collection property="children" column="comment_id" select="selectChildren"/>
+  </resultMap>
+
+  <resultMap id="CommentVoResult" type="com.woniu.yoga.communicate.vo.CommentVo">
+    <id column="comment_id" jdbcType="BIGINT" property="commentId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="comment_detail" jdbcType="VARCHAR" property="commentDetail" />
+    <result column="entity_id" jdbcType="INTEGER" property="entityId" />
+    <result column="entity_type" jdbcType="INTEGER" property="entityType" />
+    <result column="comment_degree" jdbcType="INTEGER" property="commentDegree" />
+    <result column="comment_createtime" jdbcType="TIMESTAMP" property="commentCreateTime" />
+    <result column="user_nickname" jdbcType="VARCHAR" property="userNickName" />
+    <result column="user_headimg" jdbcType="VARCHAR" property="userHeadimg" />
+    <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+  </resultMap>
+
+  <select id="queryComments" resultMap="CommentVo">
+    select
+      comment_id, c.user_id, comment_detail, entity_id, entity_type, comment_degree
+      ,comment_createtime,user_nickname,user_headimg,role_name
+    from comment as c, user as u, role as r
+    where entity_type=0 and entity_id=#{mid} and c.user_id=u.user_id and r.role_id=u.role_id
+  </select>
+
+  <select id="selectChildren" resultMap="CommentVoResult">
+    select
+      comment_id, c.user_id, comment_detail, entity_id, entity_type, comment_degree
+            ,comment_createtime,user_nickname,user_headimg, role_name
+    from comment as c, user as u, role as r
+    where entity_type=1 and entity_id=#{comment_id} and c.user_id=u.user_id
+  </select>
+
   <sql id="Base_Column_List">
     comment_id, user_id, comment_detail, entity_id, entity_type, comment_degree, comment_flag
   </sql>

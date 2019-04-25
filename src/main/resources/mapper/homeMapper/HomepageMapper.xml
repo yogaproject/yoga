@@ -4,22 +4,39 @@
   <resultMap id="BaseResultMap" type="com.woniu.yoga.home.pojo.Homepage">
     <id column="m_id" jdbcType="INTEGER" property="mId" />
     <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
     <result column="img" jdbcType="VARCHAR" property="img" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="comment_count" jdbcType="BIGINT" property="commentCount" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="homepage_flag" jdbcType="INTEGER" property="homepageFlag" />
   </resultMap>
-  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.woniu.yoga.home.pojo.Homepage">
-    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+
+  <resultMap id="VoResultMap" type="com.woniu.yoga.home.vo.HomepageVo">
+    <id column="m_id" jdbcType="INTEGER" property="mId" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="img" jdbcType="VARCHAR" property="img" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="comment_count" jdbcType="BIGINT" property="commentCount" />
+    <result column="user_nickname" jdbcType="VARCHAR" property="userNickName" />
+    <result column="user_level" jdbcType="INTEGER" property="userLevel" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="distance" jdbcType="FLOAT" property="distance"/>
   </resultMap>
+
+
   <sql id="Base_Column_List">
     m_id, title, img, user_id, comment_count, create_time, homepage_flag
   </sql>
   <sql id="Blob_Column_List">
     content
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+  <sql id="HomepageVo_Column_List">
+    m_id, title, img, user_id, comment_count,
+    user_nickname, user_level
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     ,
@@ -27,17 +44,60 @@
     from homepage
     where m_id = #{mId,jdbcType=INTEGER}
   </select>
+  <select id="selectHomepageDetail" resultMap="VoResultMap">
+    select
+      m_id, title, img, h.user_id, comment_count, create_time, homepage_flag
+    from homepage as h, `user` as u
+    where h.user_id=u.user_id and m_id=#{mid}
+  </select>
+  <select id="queryHomepages" resultMap="VoResultMap">
+    SELECT
+      m_id, title, img, h.user_id, comment_count,
+      user_nickname, user_level,create_time,content
+    ,(6371 * acos (
+              cos ( radians(#{latitude}) )
+              * cos( radians( u.latitude ) )
+              * cos( radians( u.longitude ) - radians(#{longitude}) )
+            + sin ( radians(#{latitude}) )
+                * sin( radians( u.latitude ) )
+        )
+      ) AS distance
+    FROM homepage as h,`user` as u
+    where h.user_id=u.user_id and homepage_flag = 0 and user_flag = 0 and user_privacy = 2
+    HAVING distance &lt; 10
+    ORDER BY create_time desc
+    </select>
+
+  <select id="queryOtherHomepages" resultMap="VoResultMap">
+    SELECT
+      m_id, title, img, h.user_id, comment_count,
+      user_nickname, user_level,create_time,content
+            ,(6371 * acos (
+                cos ( radians(#{latitude}) )
+                * cos( radians( u.latitude ) )
+                * cos( radians( u.longitude ) - radians(#{longitude}) )
+              + sin ( radians(#{latitude}) )
+                  * sin( radians( u.latitude ) )
+      )
+        ) AS distance
+    FROM homepage as h,`user` as u
+    where h.user_id=u.user_id and homepage_flag = 0 and user_flag = 0 and user_privacy = 2 and role_id=#{roleId}
+    HAVING distance &lt; 10
+    ORDER BY create_time desc
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from homepage
     where m_id = #{mId,jdbcType=INTEGER}
   </delete>
+
   <insert id="insert" parameterType="com.woniu.yoga.home.pojo.Homepage">
     insert into homepage (m_id, title, img, 
       user_id, comment_count, create_time, 
       homepage_flag, content)
-    values (#{mId,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{img,jdbcType=VARCHAR}, 
+    values (default, #{title,jdbcType=VARCHAR}, #{img,jdbcType=VARCHAR},
       #{userId,jdbcType=INTEGER}, #{commentCount,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{homepageFlag,jdbcType=INTEGER}, #{content,jdbcType=LONGVARCHAR})
+      default , #{content,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.woniu.yoga.home.pojo.Homepage">
     insert into homepage
@@ -119,17 +179,6 @@
         content = #{content,jdbcType=LONGVARCHAR},
       </if>
     </set>
-    where m_id = #{mId,jdbcType=INTEGER}
-  </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.woniu.yoga.home.pojo.Homepage">
-    update homepage
-    set title = #{title,jdbcType=VARCHAR},
-      img = #{img,jdbcType=VARCHAR},
-      user_id = #{userId,jdbcType=INTEGER},
-      comment_count = #{commentCount,jdbcType=BIGINT},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      homepage_flag = #{homepageFlag,jdbcType=INTEGER},
-      content = #{content,jdbcType=LONGVARCHAR}
     where m_id = #{mId,jdbcType=INTEGER}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.woniu.yoga.home.pojo.Homepage">
