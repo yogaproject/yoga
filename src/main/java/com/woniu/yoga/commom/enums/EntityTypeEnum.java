@@ -9,6 +9,7 @@ public enum EntityTypeEnum {
     HOMEPAGE_ENTITY(8,"主页动态"),
     PRIVATE_MSG(27,"私信"),
     NOTICE_MSG(28,"通知"),
+    CROWDFUNDING_ENTITY(34,"众筹项目"),
     ;
     private Integer code;
     private String msg;

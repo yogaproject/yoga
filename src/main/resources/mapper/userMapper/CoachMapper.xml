@@ -11,13 +11,24 @@
       <if test="recruit.coachStyle !=null and ''!=recruit.coachStyle">
         and recruit.coach_style like concat('%',recruit.coach_style,'%')
       </if>
-      <if test="recruit.salaryUp != null and ''!= recruit.salaryUp">
-        <if test="recruit.salaryDown != null and ''!= recruit.salaryDown">
+      <if test="recruit.salaryUp != 0">
+        <if test="recruit.salaryDown != 0">
            <![CDATA[
                       and recruit.salaryUp >= salary_up and recruit.salaryDown <= salary_down
           ]]>
         </if>
-
+        <if test="recruit.salaryDown == 0">
+          <![CDATA[
+                      and recruit.salaryUp >= salary_up
+         ]]>
+        </if>
+      </if>
+      <if test="recruit.salaryUp == 0">
+        <if test="recruit.salaryDown != 0">
+            <![CDATA[
+                      and recruit.salaryDown <= salary_down
+         ]]>
+        </if>
       </if>
     </where>
   </select>

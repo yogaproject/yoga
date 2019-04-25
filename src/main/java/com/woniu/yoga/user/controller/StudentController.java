@@ -7,6 +7,7 @@ import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.service.serviceImpl.StudentServiceImpl;
 import com.woniu.yoga.user.util.ResultUtil;
 import com.woniu.yoga.user.vo.*;
+import net.bytebuddy.asm.Advice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,7 +49,7 @@ public class StudentController {
      * @return
      **/
     public Result listAroundUserByIdOrAddress(SearchConditionVO searchConditionVO) {
-        return studentService.listAroundUserByIdOrAddress(searchConditionVO);
+        return studentService.listAroundUserByAddress(searchConditionVO);
     }
     /*
      * @Author liufeng
@@ -131,6 +132,29 @@ public class StudentController {
      **/
     public Result listAllCourseAppoint() {
         return studentService.listAllCourseAppoint();
+    }
+    /*
+     * @Author liufeng
+     * @Date
+     * @Description //处理用户取消订单的请求
+     * @Param
+     * @return
+     **/
+    public Result updateOrderForCancel(HttpSession session,String orderId){
+        User user = (User) session.getAttribute("user");
+        Integer userId = user.getUserId();
+        return studentService.updateOrderForCancel(userId,orderId);
+    }
+
+    /*
+     * @Author liufeng
+     * @Date
+     * @Description //处理用户线下签约的请求，查询瑜伽师的电话号码
+     * @Param
+     * @return
+     **/
+    public Result findCoachPhoneByUserId(Integer userId){
+        return studentService.findCoachPhoneByUserId(userId);
     }
 
     @RequestMapping("test")

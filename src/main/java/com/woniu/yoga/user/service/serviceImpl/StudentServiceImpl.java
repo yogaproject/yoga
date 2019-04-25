@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -32,14 +33,12 @@ import java.util.List;
  **/
 @Service
 public class StudentServiceImpl implements StudentService {
-//    @Autowired
-//    private UserRepository userRepository;
 
     @Autowired
     private UserMapper userMapper;
     @Autowired
     private CoachMapper coachMapper;
-    @Autowired
+    //    @Autowire
     private WalletMapper walletMapper;
     @Autowired
     private CourseMapper courseMapper;
@@ -49,38 +48,32 @@ public class StudentServiceImpl implements StudentService {
     private OrderMapper orderMapper;
     @Autowired
     private CommentMapper commentMapper;
-//    private CourseRepository courseRepository;
-//    @Autowired
-//    private CouponRepository couponRepository;
-//
-//    @Autowired
-//    private OrderRepository orderRepository;
-//    @Autowired
-//    private CommentRepository commentRepository;
 
     //查找学员周边的教练、场馆
     @Override
-    public Result listAroundUserByIdOrAddress(SearchConditionVO searchConditionVO) {
+    public Result listAroundUserByAddress(SearchConditionVO searchConditionVO) {
         //判断用户是否开发定位给app，null则没有开启定位，需要提示用户开启定位
         if (searchConditionVO.getLongitude() == null || searchConditionVO.getLongitude() == null) {
-            return null;
+            return ResultUtil.errorOperation("请开启定位！");
         }
         //判断角色id是否合法，2：教练；3：场馆；
         if (searchConditionVO.getRoleId() != 2 && searchConditionVO.getRoleId() != 3) {
-            return null;
+            return ResultUtil.errorOperation("请明确选择教练，或者场馆！");
         }
         //double[4] 西侧经度，东侧经度，南侧纬度，北侧纬度
         double bounds[] = GetBmapDistanceUtil.getRange(searchConditionVO.getLongitude(), searchConditionVO.getLatitude(), searchConditionVO.getRound());
         SearchConditionDTO searchConditionDTO = ConvertVOToDTOUtil.searchConditionConvert(bounds, searchConditionVO);
         List<UserVO> data = userMapper.listAroundUser(searchConditionDTO);
-        return ResultUtil.actionSuccess("查询成功",data);
+        return ResultUtil.actionSuccess("查询成功", data);
     }
 
-    //如果是教练，查找头像、姓名、简介、流派、认证方式（单击查看场馆）、课程（单击查看课程），交易次数，好评率
+    //如果是教练，查找头像、姓名、简介、流派、认证方式（单击查看场馆）、课程（单击查看课程），交易次数，好评数
     //好友或者公开才能查看qq、微信、电话等信息
-    //如果是场馆，查找头像，realName，简介，教练
     @Override
     public Result getDetailInfoByUserId(Integer userId, Integer coachId) {
+        if (coachId == null) {
+            return ResultUtil.errorOperation("请选择想了解的瑜伽师!");
+        }
         CoachDetailInfoVO coachDetailInfoVO = userMapper.getDetailInfoByUserId(coachId);
         //如果学员和瑜伽师不是好友，隐藏个人信息
         if (!("学员和瑜伽师是好友" == "")) {
@@ -98,7 +91,7 @@ public class StudentServiceImpl implements StudentService {
         }
         List data = new ArrayList();
         data.add(coachDetailInfoVO);
-        return ResultUtil.actionSuccess("查询成功",data);
+        return ResultUtil.actionSuccess("查询成功", data);
     }
 
     //学员下单
@@ -113,12 +106,13 @@ public class StudentServiceImpl implements StudentService {
         order.setOrderMoney(orderMoney);
         order.setOrderStatus(OrderUtil.NEWORDER);
         order.setOrderId(OrderIdUtil.getOrderId());
-        //插入订单
+        order.setCreateTime(new Date());
+        //插入订单，
         int row = orderMapper.insertSelective(order);
         if (row == 1) {
             List data = new ArrayList();
             data.add(order);
-            return ResultUtil.actionSuccess("已下单，等待处理中...",data);
+            return ResultUtil.actionSuccess("已下单，等待处理中...", data);
         }
         return ResultUtil.connectDatabaseFail();
     }
@@ -130,24 +124,25 @@ public class StudentServiceImpl implements StudentService {
         if (couponId != null) {
             Coupon coupon = couponMapper.selectByPrimaryKey(couponId);
             if (coupon == null) {
-                return ResultUtil.errorOperation( "优惠券状态错误，请联系管理员");
+                return ResultUtil.errorOperation("优惠券状态错误，请联系管理员");
             }
             faceValue = coupon.getFaceValue();
         }
         Order order = orderMapper.selectByPrimaryKey(orderId);
         if (order.getOrderStatus() != OrderUtil.WAITTOPAY) {
-            return ResultUtil.errorOperation( "订单状态错误，请联系管理员");
+            return ResultUtil.errorOperation("订单状态错误，请联系管理员");
         }
         User user = userMapper.selectByPrimaryKey(order.getPayerId());
         //查询会员等级，打折，计算应付款
         BigDecimal VIPDiscount = userMapper.selectDiscountByLevel(user.getUserLevel());
         BigDecimal discount = order.getOrderMoney().multiply(VIPDiscount).subtract(new BigDecimal(String.valueOf(faceValue)));
         order.setDiscount(discount);
-        int row = orderMapper.insertSelective(order);
+        order.setCouponId(couponId);
+        int row = orderMapper.updateByPrimaryKeySelective(order);
         if (row > 1) {
             List data = new ArrayList();
             data.add(order);
-            return ResultUtil.actionSuccess( "订单信息更新，请确认...", data);
+            return ResultUtil.actionSuccess("订单信息更新，请确认...", data);
         } else {
             return ResultUtil.connectDatabaseFail();
         }
@@ -158,12 +153,16 @@ public class StudentServiceImpl implements StudentService {
         //学员钱包余额减少，添加钱包记录，更改订单状态、优惠券状态、
         Order order = orderMapper.selectByPrimaryKey(orderId);
         if (order.getOrderStatus() != OrderUtil.WAITTOPAY) {
-            return ResultUtil.errorOperation( "订单状态错误，请联系管理员");
+            return ResultUtil.errorOperation("订单状态错误，请联系管理员");
         }
         User user = userMapper.selectByPrimaryKey(order.getPayerId());
         Wallet wallet = walletMapper.findWalletByUserId(user.getUserId());
-        //更新钱包余额
-        wallet.setBalance(wallet.getBalance().subtract(order.getDiscount()));
+        //更新并保存钱包余额
+        if (wallet.getBalance().compareTo(order.getDiscount()) > 0) {
+            wallet.setBalance(wallet.getBalance().subtract(order.getDiscount()));
+        } else {
+            return ResultUtil.errorOperation("余额不足");
+        }
         //保存钱包余额
 
         //添加钱包记录
@@ -189,22 +188,47 @@ public class StudentServiceImpl implements StudentService {
         List<CourseAppoint> data = new ArrayList<>();
         data.add(CourseAppoint.ONLINE);
         data.add(CourseAppoint.OFFLINE);
-        return ResultUtil.actionSuccess("查询成功",data);
+        return ResultUtil.actionSuccess("查询成功", data);
     }
 
     @Override
     public Result updateOrderForRefund(String orderId) {
         Order order = orderMapper.selectByPrimaryKey(orderId);
         if (order.getOrderStatus() != OrderUtil.PAIED) {
-            return ResultUtil.errorOperation( "订单状态出错，请与管理员联系");
+            return ResultUtil.errorOperation("订单状态出错，请与管理员联系");
         }
         order.setOrderStatus(OrderUtil.APPLICATIONFORDRAWBACK);
         int row = orderMapper.updateByPrimaryKeySelective(order);
         if (row > 0) {
             List data = new ArrayList();
             data.add(order);
-            return ResultUtil.actionSuccess( "已提交申请，等待客服处理中...",data);
+            return ResultUtil.actionSuccess("已提交申请，等待客服处理中...", data);
         }
         return ResultUtil.connectDatabaseFail();
+    }
+
+    @Override
+    public Result updateOrderForCancel(Integer userId, String orderId) {
+        Order order = orderMapper.selectByPrimaryKey(orderId);
+        if (order.getOrderStatus() != OrderUtil.NEWORDER) {
+            return ResultUtil.errorOperation("订单状态出错，请与管理员联系");
+        }
+        if (order.getPayerId() != userId) {
+            return ResultUtil.errorOperation("非法操作");
+        }
+        int row = orderMapper.updateStatusByOrderId(orderId, OrderUtil.CANCELED);
+        if (row > 0) {
+            List data = new ArrayList();
+            data.add(order);
+            return ResultUtil.actionSuccess("订单已取消", data);
+        }
+        return ResultUtil.connectDatabaseFail();
+    }
+
+    @Override
+    public Result findCoachPhoneByUserId(Integer userId) {
+        String data[] = new String[1];
+        data[0] = userMapper.selectPhoneByUserId(userId);
+        return ResultUtil.actionSuccess("查找成功", data);
     }
 }

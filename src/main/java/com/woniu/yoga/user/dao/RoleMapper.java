@@ -1,7 +1,9 @@
 package com.woniu.yoga.user.dao;
 
 import com.woniu.yoga.user.pojo.Role;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface RoleMapper {
     int deleteByPrimaryKey(Integer roleId);
 

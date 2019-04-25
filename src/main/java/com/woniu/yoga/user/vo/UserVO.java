@@ -75,4 +75,9 @@ public class UserVO {
                 ", headImg:'" + headImg + '\'' +
                 '}';
     }
+
+    public static void main(String[] args) {
+        UserVO userVO = new UserVO();
+        System.out.println(userVO);
+    }
 }

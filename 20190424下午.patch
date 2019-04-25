@@ -1,0 +1,375 @@
+Index: src/main/java/com/woniu/yoga/venue/controller/ProductController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/woniu/yoga/venue/controller/ProductController.java	(date 1556020450000)
++++ src/main/java/com/woniu/yoga/venue/controller/ProductController.java	(date 1556097761008)
+@@ -21,8 +21,8 @@
+     @RequestMapping("/venueAllProduct")
+     @ResponseBody
+     public List<Product> venueAllProduct(Integer venueId){
+-
+-        return  productService.venueAllProductService(venueId);
++        List productList = productService.venueAllProductService(venueId);
++        return  productList;
+     }
+ 
+     //增删查改产品的详细信息
+Index: src/main/java/com/woniu/yoga/user/service/serviceImpl/CoachServiceImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/woniu/yoga/user/service/serviceImpl/CoachServiceImpl.java	(date 1556020450000)
++++ src/main/java/com/woniu/yoga/user/service/serviceImpl/CoachServiceImpl.java	(date 1555987752596)
+@@ -5,6 +5,8 @@
+ import com.woniu.yoga.user.pojo.Coach;
+ import com.woniu.yoga.user.pojo.Order;
+ import com.woniu.yoga.user.service.CoachService;
++import com.woniu.yoga.venue.pojo.Recruitment;
++import com.woniu.yoga.venue.pojo.Venue;
+ import com.woniu.yoga.user.util.OrderUtil;
+ import com.woniu.yoga.user.util.ResultUtil;
+ import com.woniu.yoga.user.vo.Result;
+@@ -12,6 +14,8 @@
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.stereotype.Service;
+ 
++import java.util.List;
++
+ import java.util.ArrayList;
+ import java.util.List;
+ 
+@@ -110,4 +114,10 @@
+         return ResultUtil.connectDatabaseFail();
+     }
+ 
++
++    @Override
++    public List<Venue> findVenueByConditions(Recruitment recruitment) {
++        List venueList = coachMapper.queryVenueByConditions(recruitment);
++        return venueList;
++    }
+ }
+Index: src/main/java/com/woniu/yoga/venue/service/impl/VenueServiceImpl.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/woniu/yoga/venue/service/impl/VenueServiceImpl.java	(date 1556020450000)
++++ src/main/java/com/woniu/yoga/venue/service/impl/VenueServiceImpl.java	(date 1556095436757)
+@@ -1,7 +1,9 @@
+ package com.woniu.yoga.venue.service.impl;
+ 
+-import com.woniu.yoga.venue.dao.VenueMapper;
+ import com.woniu.yoga.user.pojo.Coach;
++import com.woniu.yoga.user.pojo.Course;
++import com.woniu.yoga.user.pojo.User;
++import com.woniu.yoga.venue.dao.VenueMapper;
+ import com.woniu.yoga.venue.pojo.Recruitment;
+ import com.woniu.yoga.venue.pojo.Venue;
+ import com.woniu.yoga.venue.service.VenueService;
+@@ -13,7 +15,7 @@
+ import java.util.ArrayList;
+ import java.util.List;
+ @Service
+-public class VenueServiceImpl implements VenueService {
++public class VenueServiceImpl implements VenueService{
+     @Autowired
+     private VenueMapper venueMapper;
+ 
+@@ -63,7 +65,23 @@
+ 
+     @Override
+     public int venuePerfectInformationService(Venue venue) {
+-        return 0;
++        return venueMapper.venuePerfectInformationMapper(venue);
++    }
++
++    @Override
++    public int addVenueUserInformationService(Integer userId, User user) {
++        return venueMapper.addVenueUserInformationMapper(userId,user);
+     }
++
++    @Override
++    public List<Coach> findCoachByVenueIdService(Integer venueId) {
++        return venueMapper.queryCoachByVenueId(venueId);
++    }
++
++    @Override
++    public int coachAddCourseService(Course course) {
++        return venueMapper.coachAddCourseMapper(course);
++    }
++
+ 
+ }
+Index: src/main/java/com/woniu/yoga/venue/service/VenueService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/woniu/yoga/venue/service/VenueService.java	(date 1556020450000)
++++ src/main/java/com/woniu/yoga/venue/service/VenueService.java	(date 1556095436878)
+@@ -1,6 +1,8 @@
+ package com.woniu.yoga.venue.service;
+ 
+ import com.woniu.yoga.user.pojo.Coach;
++import com.woniu.yoga.user.pojo.Course;
++import com.woniu.yoga.user.pojo.User;
+ import com.woniu.yoga.venue.pojo.Recruitment;
+ import com.woniu.yoga.venue.pojo.Venue;
+ import com.woniu.yoga.venue.vo.CoachInformationVO;
+@@ -37,4 +39,15 @@
+     //根据场馆id，在场馆表中，添加照片、详情
+     int venuePerfectInformationService(Venue venue);
+ 
++    //根据场馆id，在user表中添加场馆user的信息
++    int addVenueUserInformationService(Integer userId, User user);
++
++    //根据场馆id，查询与场馆签约的教练
++    List<Coach> findCoachByVenueIdService(Integer venueId);
++
++    //教练添加课程
++    int coachAddCourseService(Course course);
++
++
++
+ }
+Index: src/main/java/com/woniu/yoga/venue/controller/VenueController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/woniu/yoga/venue/controller/VenueController.java	(date 1556020450000)
++++ src/main/java/com/woniu/yoga/venue/controller/VenueController.java	(date 1556095436821)
+@@ -2,8 +2,8 @@
+ 
+ import com.woniu.yoga.commom.vo.Result;
+ import com.woniu.yoga.user.pojo.Coach;
++import com.woniu.yoga.user.pojo.Course;
+ import com.woniu.yoga.user.pojo.User;
+-import com.woniu.yoga.venue.pojo.Product;
+ import com.woniu.yoga.venue.pojo.Recruitment;
+ import com.woniu.yoga.venue.pojo.Venue;
+ import com.woniu.yoga.venue.service.VenueService;
+@@ -25,23 +25,42 @@
+     //---------------------------------------------信息完善-----------------------------------------
+     //参数：Venue ，1.根据场馆id，添加图片、场馆详情 —》
+     //              2.根据venue里面的userId，在user表添加场馆地址、场馆名称、场馆电话、qq
+-    //              3.在option下拉框中显示此场馆已经签约的教练，并在文本框数据自定义课程内容，在课程表插入
+-    public Result venuePerfectInformation(Venue venue, User user){
+-        if (venueService.venuePerfectInformationService(venue)== 0){
++    //
++    @RequestMapping("/venuePerfectInformation")
++    @ResponseBody
++    public Result venuePerfectInformation(Venue venue, User user,Course course){
++        int num1 = venueService.venuePerfectInformationService(venue);
++        if (num1 == 0){
+             //场馆信息添加失败
+             return Result.error("场馆信息添加失败");
+         }
+         //场馆信息添加成功，根据userId，user表添加内容
++        int num2 = venueService.addVenueUserInformationService(venue.getUserId(),user);
++          if (num2 == 0){
++              return Result.error("用户信息添加失败");
++          }
++            venueAllCoach(venue);//调用此方法，展示场馆所有教练
++        //根据多个文本款内容，传回来一个course对象，在课程表插入数据，代表场馆给教练安排课程
++            venueService.coachAddCourseService(course);
++        return Result.success("场馆添加信息成功");
++    }
++    //展示出场馆信息完善以后，下拉框自动调用此方法
++    //3.根据场馆id，在option下拉框中显示此场馆已经签约的教练，并在文本框数据自定义课程内容，在课程表插入
++    @RequestMapping("/venueAllCoach")
++    @ResponseBody
++    public List<Coach> venueAllCoach(Venue venue){
++        List coachList = venueService.findCoachByVenueIdService(venue.getVenueId());
++        return coachList;
++    }
+ 
+ 
+-        return Result.success("场馆信息添加成功");
+-    }
++
+ 
+ 
+ 
+ 
+     //---------------------------------------------教练查看-----------------------------------------
+-    //场馆根据选择（教练类型、期望薪资、流派）的id，查询符合条件的教练集合
++    //场馆根据选择（教练类型、期望薪资、流派），查询符合条件的教练集合
+     @RequestMapping("/vagueConditions")
+     @ResponseBody
+     public List<Coach> selectCoachByVagueConditions(Coach coach, BigDecimal up_expected_salary,BigDecimal down_expected_salary){
+@@ -57,6 +76,10 @@
+         Venue venue = venueService.findVenueByVenueId(venueId);
+         return venue;
+     }
++
++
++
++
+ // -------------------------------------------签约------------------------------------------------
+     //签约教练--场馆找到教练后，在教练的详情页面中，可以选择发起请求，申请“场馆教练”。
+     //必须要教练同意，确认后，即可成为该场馆的签约教练
+@@ -125,12 +148,6 @@
+         return Result.success("解约成功");
+     }
+ 
+-    //-------------------------------------我的产品-----------------------------------------
+-    //根据场馆id，展示场馆所有拥有的卡的信息
+-    public List<Product> venueAllProduct(Integer venueId){
+-
+-        return null;
+-    }
+ 
+ 
+ 
+Index: src/main/java/com/woniu/yoga/user/service/CoachService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/woniu/yoga/user/service/CoachService.java	(date 1556020450000)
++++ src/main/java/com/woniu/yoga/user/service/CoachService.java	(date 1555987752594)
+@@ -1,6 +1,8 @@
+ package com.woniu.yoga.user.service;
+ 
+ import com.woniu.yoga.user.pojo.Coach;
++import com.woniu.yoga.venue.pojo.Recruitment;
++import com.woniu.yoga.venue.pojo.Venue;
+ import com.woniu.yoga.user.vo.Result;
+ import com.woniu.yoga.user.vo.StudentDetailVO;
+ import org.springframework.stereotype.Service;
+@@ -36,6 +38,9 @@
+      * @return
+      **/
+     Result listCoachStyles();
++    //教练根据查询条件查询场馆list
++    List<Venue> findVenueByConditions(Recruitment recruitment);
++
+ 
+ 
+     Result updateOrderForWaitToPay(String orderId);
+Index: src/main/java/com/woniu/yoga/venue/dao/VenueMapper.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/woniu/yoga/venue/dao/VenueMapper.java	(date 1556020450000)
++++ src/main/java/com/woniu/yoga/venue/dao/VenueMapper.java	(date 1556095436846)
+@@ -1,9 +1,14 @@
+ package com.woniu.yoga.venue.dao;
+ 
+ import com.woniu.yoga.user.pojo.Coach;
++import com.woniu.yoga.user.pojo.Course;
++import com.woniu.yoga.user.pojo.User;
+ import com.woniu.yoga.venue.pojo.Recruitment;
+ import com.woniu.yoga.venue.pojo.Venue;
+ import com.woniu.yoga.venue.vo.CoachInformationVO;
++import org.apache.ibatis.annotations.Insert;
++import org.apache.ibatis.annotations.Param;
++import org.apache.ibatis.annotations.Select;
+ 
+ import java.math.BigDecimal;
+ import java.util.List;
+@@ -46,4 +51,17 @@
+     //根据场馆id，在场馆表中，添加照片、详情
+     int venuePerfectInformationMapper(Venue venue);
+ 
++    //根据场馆id，在user表中添加场馆user的信息
++    @Insert("update `user` set user_phone = #{user.userPhone},user_location=#{user.userLocation},user_nickname=#{user.userNickname} where user_id = #{userId}")
++    int addVenueUserInformationMapper(@Param("userId") Integer userId, @Param("user") User user);
++
++    //根据场馆id，查询与场馆签约的教练信息
++    @Select("select * from venue_coach where venueId = #{0}")
++    List<Coach> queryCoachByVenueId(Integer venueId);
++
++    //场馆给教练安排课程
++    int coachAddCourseMapper (Course course);
++
++
++
+ }
+\ No newline at end of file
+Index: src/main/java/com/woniu/yoga/user/service/UserService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/woniu/yoga/user/service/UserService.java	(date 1556020450000)
++++ src/main/java/com/woniu/yoga/user/service/UserService.java	(date 1556070226342)
+@@ -1,13 +1,11 @@
+ package com.woniu.yoga.user.service;
+ 
+-import com.woniu.yoga.manage.pojo.Coupon;
+-import com.woniu.yoga.user.pojo.Order;
+ import com.woniu.yoga.user.pojo.User;
+ import com.woniu.yoga.user.vo.Result;
++import org.apache.ibatis.annotations.Insert;
++import org.apache.ibatis.annotations.Param;
+ import org.springframework.web.bind.annotation.RequestParam;
+ 
+-import java.util.List;
+-
+ /**
+  * @Author liufeng
+  * @ClassName StudentService
+@@ -61,7 +59,4 @@
+     User queryUserByPhoneAndCode(String userPhone, String userVerifyCode);
+ 
+ 
+-
+-
+-
+ }
+Index: src/main/java/com/woniu/yoga/venue/dao/ProductMapper.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/woniu/yoga/venue/dao/ProductMapper.java	(date 1556020450000)
++++ src/main/java/com/woniu/yoga/venue/dao/ProductMapper.java	(date 1556095122327)
+@@ -26,4 +26,6 @@
+     //场馆删除产品
+     int venueDeleteProductMapper(Integer productId);
+ 
++
++
+ }
+\ No newline at end of file
+Index: src/main/java/com/woniu/yoga/user/controller/CoachController.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- src/main/java/com/woniu/yoga/user/controller/CoachController.java	(date 1556020450000)
++++ src/main/java/com/woniu/yoga/user/controller/CoachController.java	(date 1556020410325)
+@@ -2,11 +2,10 @@
+ 
+ import com.woniu.yoga.user.pojo.Coach;
+ import com.woniu.yoga.user.pojo.User;
++import com.woniu.yoga.user.service.CoachService;
+ import com.woniu.yoga.user.vo.Result;
+-import com.woniu.yoga.user.vo.StudentDetailVO;
+ import com.woniu.yoga.venue.pojo.Recruitment;
+ import com.woniu.yoga.venue.pojo.Venue;
+-import com.woniu.yoga.user.service.CoachService;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.stereotype.Controller;
+ import org.springframework.web.bind.annotation.RequestMapping;
+@@ -32,9 +31,11 @@
+ 
+     //-------------------------------------招聘------------------------------------------
+     //模糊查询场馆list(是否需要招聘(需要场馆已经发布了招聘信息，从招聘表中去查)，招聘流派，工资待遇)
++   @RequestMapping("/selectVenueByConditions")
++   @ResponseBody
+     public List<Venue> selectVenueByConditions(Recruitment recruitment){
+-
+-        return  null;
++        List venueList = coachService.findVenueByConditions(recruitment);
++        return  venueList;
+     }
+ 
+ 
