@@ -83,8 +83,8 @@ public class WalletServiceImpl  implements WalletService {
     }
 
     @Override
-    public void findWalletByWalletId(int walletId) {
-        walletMapper.selectByPrimaryKey(walletId);
+    public Wallet findWalletByWalletId(int walletId) {
+     return   walletMapper.selectByPrimaryKey(walletId);
     }
 
 }
