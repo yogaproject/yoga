@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<!--需要方法：找出数据库中所有的教练类型-->
+教练类型：<select id="selection1"></select>
+期望薪资大于：<input type="number">
+期望薪资小于：<input type="number">
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript">
+/*方法：找出数据库中所有教练类型的方法*/
+//所有教练类型的方法
+function allCoachType(uu){
+    $.ajax({
+        url : "/coach/allCoachType",
+        type : "get",
+        //dataType :"json",
+        contentType : "application/json;charset=utf-8",
+        success: function(result) {
+            for (var i = 0; i < result.length; i++) {
+                var coachType = result[i].coachType;
+                var option = $("<option></option>").text(coachType)
+                $("#"+uu).append(option);
+            }
+        }
+    });
+}
+
+</script>
+
+
+
+</body>
+</html>
