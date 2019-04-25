@@ -21,5 +21,7 @@ public interface WalletService {
 
     int saveMoney(int walletId, BigDecimal money);
 
-    int addBankcardByWalletId(Integer walletid, String pwd, String againPwd, String bankcard);
+    int addBankcardByUserId(Integer userid, String pwd, String againPwd, String bankcard);
+
+    Wallet findWalletByWalletId(int walletId);
 }

@@ -78,8 +78,13 @@ public class WalletServiceImpl  implements WalletService {
     }
 
     @Override
-    public int addBankcardByWalletId(Integer walletid, String pwd, String againPwd, String bankcard) {
-        return walletMapper.addBankcardByWalletId(walletid,pwd,againPwd,bankcard);
+    public int addBankcardByUserId(Integer userid, String pwd, String againPwd, String bankcard) {
+        return walletMapper.addBankcardByWalletId(userid,pwd,againPwd,bankcard);
+    }
+
+    @Override
+    public void findWalletByWalletId(int walletId) {
+        walletMapper.selectByPrimaryKey(walletId);
     }
 
 }

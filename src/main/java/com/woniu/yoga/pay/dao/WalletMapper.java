@@ -39,6 +39,6 @@ public interface WalletMapper {
     int saveMoney(@Param("walletId") int walletId, @Param("money") BigDecimal money);
 
     //添加银行卡
-    @Update("update wallet set bankcard=#{bankcard},pay_pwd=#{pwd} where wallet_id=#{walletid}")
-    int addBankcardByWalletId(@Param("walletid") Integer walletid,@Param("pwd") String pwd, String againPwd,@Param("bankcard") String bankcard);
+    @Update("update wallet set bankcard=#{bankcard},pay_pwd=#{pwd} where user_id=#{userid}")
+    int addBankcardByWalletId(@Param("userid") Integer walletid,@Param("pwd") String pwd, String againPwd,@Param("bankcard") String bankcard);
 }

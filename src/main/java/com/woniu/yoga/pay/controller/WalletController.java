@@ -45,8 +45,12 @@ public class WalletController {
 
     @RequestMapping("/selectwallet")
     @ResponseBody
-    public Wallet findWalletByUserId(int userid) {
-        return walletService.findWalletByUserId(userid);
+    public Result findWalletByUserId(int userid) {
+        Wallet wallet =walletService.findWalletByUserId(userid);
+        if (wallet!=null){
+            return Result.success("我的钱包",wallet) ;
+        }
+        return Result.error("该用户没有钱包") ;
     }
 
     /**
@@ -57,14 +61,17 @@ public class WalletController {
      */
     @RequestMapping("/updateusermoney")
     @ResponseBody
-    public int updateUserMoneyByWalletId(int walletId, BigDecimal money){
-
-        return walletService.updateUserMoneyByWalletId(walletId,money);
+    public Result updateUserMoneyByWalletId(int walletId, BigDecimal money){
+          if ((walletService.findWalletByWalletId(walletId).getBalance().compareTo(money))<0){
+              return  Result.error("余额不足");
+          }
+        walletService.updateUserMoneyByWalletId(walletId,money);
+        return Result.success("操作成功");
     }
 
     /**
      * 添加银行卡
-     * @param walletid
+     * @param userid
      * @param pwd
      * @param againPwd
      * @param bankcard
@@ -72,11 +79,11 @@ public class WalletController {
      */
     @RequestMapping("addBankcard")
     @ResponseBody
-    public Result addBankcardByWalletId(Integer walletid, String pwd, String againPwd, String bankcard){
+    public Result addBankcardByUserId(Integer userid, String pwd, String againPwd, String bankcard){
         if (!pwd.equals(againPwd)){
             return Result.error("两次密码不匹配");
         }
-        int n= walletService.addBankcardByWalletId(walletid,pwd,againPwd,bankcard);
+        int n= walletService.addBankcardByUserId(userid,pwd,againPwd,bankcard);
         if (n>0){
             return Result.success("添加银行卡成功");
         }
@@ -86,12 +93,16 @@ public class WalletController {
     /**
      * 充值余额，用于余额的增加
      * @param walletId
-     * @return
+     * @return 返回余额
      */
     @RequestMapping("/saveMoney")
     @ResponseBody
-    public int saveMoney(int walletId, BigDecimal money){
-        return walletService.saveMoney(walletId,money);
+    public Result saveMoney(int walletId, BigDecimal money){
+
+        if (walletService.saveMoney(walletId,money)>0){
+            return Result.success("充值成功",walletService.findWalletByWalletId(walletId).getBalance());
+        }
+        return Result.error("充值失败");
     }
 
 /**
@@ -102,8 +113,12 @@ public class WalletController {
 
     @RequestMapping("/selectorder")
     @ResponseBody
-    public List<WalletRecord> selectOrderByUserId(int userid ) {
-     return  walletService.selectOrderByUserId(userid);
+    public Result selectOrderByUserId(int userid ) {
+        List<WalletRecord> walletRecords =walletService.selectOrderByUserId(userid);
+        if (walletRecords!=null){
+            return Result.success("交易记录",walletRecords);
+        }
+     return Result.error("没有交易记录") ;
     }
 
 /**
@@ -120,7 +135,7 @@ public class WalletController {
 
 
     /**
-     *
+     *付款操作
      * @param allmoney
      * @param goodsIds
      * @param goodscount
