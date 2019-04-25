@@ -1,6 +1,7 @@
 package com.woniu.yoga.user.service;
 
 import com.woniu.yoga.user.pojo.Coach;
+import com.woniu.yoga.user.pojo.Course;
 import com.woniu.yoga.venue.pojo.Recruitment;
 import com.woniu.yoga.venue.pojo.Venue;
 import com.woniu.yoga.user.vo.Result;
@@ -44,4 +45,6 @@ public interface CoachService {
 
 
     Result updateOrderForWaitToPay(String orderId);
+
+    Result insertCourse(int userId,Course course);
 }

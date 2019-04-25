@@ -1,12 +1,16 @@
 package com.woniu.yoga.user.service.serviceImpl;
 
+import com.woniu.yoga.commom.utils.Attributes;
 import com.woniu.yoga.commom.utils.OrderIdUtil;
+import com.woniu.yoga.commom.utils.UserLevelUtil;
 import com.woniu.yoga.communicate.dao.CommentMapper;
 import com.woniu.yoga.communicate.pojo.Comment;
 import com.woniu.yoga.manage.dao.CouponMapper;
 import com.woniu.yoga.manage.pojo.Coupon;
 import com.woniu.yoga.pay.dao.WalletMapper;
+import com.woniu.yoga.pay.dao.WalletRecordMapper;
 import com.woniu.yoga.pay.pojo.Wallet;
+import com.woniu.yoga.pay.pojo.WalletRecord;
 import com.woniu.yoga.user.dao.*;
 import com.woniu.yoga.user.dto.SearchConditionDTO;
 import com.woniu.yoga.user.pojo.*;
@@ -18,7 +22,6 @@ import com.woniu.yoga.user.util.ResultUtil;
 import com.woniu.yoga.user.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,12 +51,13 @@ public class StudentServiceImpl implements StudentService {
     private OrderMapper orderMapper;
     @Autowired
     private CommentMapper commentMapper;
+    private WalletRecordMapper walletRecordMapper;
 
     //查找学员周边的教练、场馆
     @Override
     public Result listAroundUserByAddress(SearchConditionVO searchConditionVO) {
         //判断用户是否开发定位给app，null则没有开启定位，需要提示用户开启定位
-        if (searchConditionVO.getLongitude() == null || searchConditionVO.getLongitude() == null) {
+        if (searchConditionVO.getLongitude() == null || searchConditionVO.getLatitude() == null) {
             return ResultUtil.errorOperation("请开启定位！");
         }
         //判断角色id是否合法，2：教练；3：场馆；
@@ -75,8 +79,8 @@ public class StudentServiceImpl implements StudentService {
             return ResultUtil.errorOperation("请选择想了解的瑜伽师!");
         }
         CoachDetailInfoVO coachDetailInfoVO = userMapper.getDetailInfoByUserId(coachId);
-        //如果学员和瑜伽师不是好友，隐藏个人信息
-        if (!("学员和瑜伽师是好友" == "")) {
+        //如果学员和瑜伽师不是好友，隐藏个人信息；或者瑜伽师设置保密
+        if ((coachDetailInfoVO.getPrivacy()==0)||(coachDetailInfoVO.getPrivacy() == 1 && !("学员和瑜伽师是好友" == ""))) {
             coachDetailInfoVO.setQq("secret");
             coachDetailInfoVO.setWechat("secret");
             coachDetailInfoVO.setPhone("secret");
@@ -101,7 +105,7 @@ public class StudentServiceImpl implements StudentService {
         Course course = courseMapper.selectByPrimaryKey(order.getCourseId());
         BigDecimal orderMoney = course.getCoursePrice().multiply(new BigDecimal(order.getCourseCount()));
         if (orderMoney.compareTo(wallet.getBalance()) < 0) {
-            return new Result(1, "余额不足，请充值");
+            return ResultUtil.errorOperation("余额不足，请充值");
         }
         order.setOrderMoney(orderMoney);
         order.setOrderStatus(OrderUtil.NEWORDER);
@@ -156,31 +160,72 @@ public class StudentServiceImpl implements StudentService {
             return ResultUtil.errorOperation("订单状态错误，请联系管理员");
         }
         User user = userMapper.selectByPrimaryKey(order.getPayerId());
-        Wallet wallet = walletMapper.findWalletByUserId(user.getUserId());
-        //更新并保存钱包余额
-        if (wallet.getBalance().compareTo(order.getDiscount()) > 0) {
-            wallet.setBalance(wallet.getBalance().subtract(order.getDiscount()));
+        Wallet studentWallet = walletMapper.findWalletByUserId(user.getUserId());
+        //更新钱包余额
+        if (studentWallet.getBalance().compareTo(order.getDiscount()) > 0) {
+            studentWallet.setBalance(studentWallet.getBalance().subtract(order.getDiscount()));
         } else {
             return ResultUtil.errorOperation("余额不足");
         }
-        //保存钱包余额
-
-        //添加钱包记录
-
+        //添加钱包记录：共2条；1：学员付款给平台；2：平台付款给瑜伽师或教练；
+        WalletRecord studentPayCourseRecord = this.getStudentPayCourseRecord(order);
+        WalletRecord platfotmPayCourseRecord = this.getPlatfotmPayCourseRecord(order);
+        WalletRecord coachCourseRecord = this.getCoachCourseRecord(order);
+        platfotmPayCourseRecord.setFromId(Attributes.PLATFORMNUMBER);
+        //更新瑜伽师（场馆）钱包余额
+        Wallet acceptWallet = walletMapper.selectByPrimaryKey(platfotmPayCourseRecord.getToId());
+        acceptWallet.setBalance(acceptWallet.getBalance().add(platfotmPayCourseRecord.getMoney()));
         //更新订单状态
         order.setOrderStatus(OrderUtil.PAIED);
         //更新优惠券状态
-
-        return null;
+        if (order.getCouponId() != null) {
+            Coupon coupon = couponMapper.selectByPrimaryKey(order.getCouponId());
+            coupon.setCouponStatus(2);
+            couponMapper.updateByPrimaryKeySelective(coupon);
+        }
+        //保存钱包余额
+        walletMapper.updateByPrimaryKeySelective(studentWallet);
+        walletMapper.updateByPrimaryKeySelective(acceptWallet);
+        walletRecordMapper.insertSelective(studentPayCourseRecord);
+        walletRecordMapper.insertSelective(platfotmPayCourseRecord);
+        walletRecordMapper.insertSelective(coachCourseRecord);
+        List data = new ArrayList();
+        data.add(order);
+        return ResultUtil.actionSuccess("支付成功", data);
     }
 
     @Override
-    public Result saveComment(Comment comment) {
+    public Result saveComment(String orderId, Comment comment) {
+        if (comment.getEntityType() == 1) {
+            return ResultUtil.illegalOperation();
+        }
         int row = commentMapper.insertSelective(comment);
         //学员、瑜伽师 会员等级，积分变化，交易记录，并返回评论详细信息
         //根据金额转换积分，修改积分
         //根据积分转换等级
-        return null;
+        User student = userMapper.selectByPrimaryKey(comment.getUserId());
+        student.setUserScore(student.getUserScore() + Attributes.INTEGRALADDWITHCOMMENT);
+        student.setUserLevel(UserLevelUtil.getUserLevel(student.getUserScore()));
+        Coach coach = coachMapper.selectByCourseId(comment.getEntityId());
+        if (comment.getCommentDegree() == 0) {
+            coach.setGoodComment(coach.getGoodComment() + 1);
+        }
+        if (comment.getCommentDegree() == 1) {
+            coach.setCommonComment(coach.getCommonComment() + 1);
+        }
+        if (comment.getCommentDegree() == 2) {
+            coach.setBadComment(coach.getBadComment() + 1);
+        }
+        User cUser = userMapper.selectByPrimaryKey(coach.getUserId());
+        cUser.setUserScore(cUser.getUserScore() + Attributes.INTEGRALADDWITHCOMMENT);
+        cUser.setUserLevel(UserLevelUtil.getUserLevel(cUser.getUserScore()));
+        coachMapper.updateByPrimaryKeySelective(coach);
+        userMapper.updateByPrimaryKeySelective(student);
+        userMapper.updateByPrimaryKeySelective(cUser);
+        orderMapper.updateStatusByOrderId(orderId, OrderUtil.END);
+        List data = new ArrayList();
+        data.add(comment);
+        return ResultUtil.actionSuccess("评论成功", data);
     }
 
     @Override
@@ -231,4 +276,63 @@ public class StudentServiceImpl implements StudentService {
         data[0] = userMapper.selectPhoneByUserId(userId);
         return ResultUtil.actionSuccess("查找成功", data);
     }
+
+    @Override
+    public Result repeatOrder(Integer userId, String orderId) {
+        Order order = orderMapper.selectByPrimaryKey(orderId);
+        if (order.getPayerId() != userId) {
+            return ResultUtil.illegalOperation();
+        }
+        Order repeatOrder = OrderUtil.getRepeatOrder(order);
+        int row = orderMapper.insertSelective(repeatOrder);
+        if (row > 0) {
+            return ResultUtil.actionSuccess("已下单，等待瑜伽师处理中...", repeatOrder);
+        }
+        return ResultUtil.connectDatabaseFail();
+    }
+
+    /*
+     * @Author liufeng
+     * @Description //生成一条钱包记录，处理学员为课程付款的订单的记录
+     **/
+    WalletRecord getStudentPayCourseRecord(Order order) {
+        WalletRecord studentPayCourseRecord = new WalletRecord();
+        studentPayCourseRecord.setFromId(order.getPayerId());
+        studentPayCourseRecord.setToId(Attributes.PLATFORMNUMBER);//平台id
+        studentPayCourseRecord.setMoney(order.getDiscount());
+        studentPayCourseRecord.setPayType(0);
+        studentPayCourseRecord.setRemark("课程付款，订单号为：" + order.getOrderId());
+        return studentPayCourseRecord;
+    }
+
+    /*
+     * @Author liufeng
+     * @Description //生成一条钱包记录：学员付款后，平台为瑜伽师或所在平台付款
+     **/
+    WalletRecord getPlatfotmPayCourseRecord(Order order) {
+        WalletRecord platfotmPayCourseRecord = new WalletRecord();
+        platfotmPayCourseRecord.setFromId(Attributes.PLATFORMNUMBER);
+        Integer acceptId = order.getAccepterId();
+        Integer venueId = coachMapper.findVenueBycoachId(acceptId);
+        if (venueId != null) {
+            acceptId = coachMapper.findVenueByVenueId(venueId);
+        }
+        platfotmPayCourseRecord.setToId(acceptId);//瑜伽师或场馆
+        platfotmPayCourseRecord.setMoney(order.getDiscount().subtract(new BigDecimal(Attributes.COMMISSION)));
+        platfotmPayCourseRecord.setPayType(0);
+        platfotmPayCourseRecord.setRemark("学员课程付款，转账给瑜伽师，订单号为：" + order.getOrderId());
+        return platfotmPayCourseRecord;
+    }
+
+    WalletRecord getCoachCourseRecord(Order order) {
+        WalletRecord coachCourseRecord = new WalletRecord();
+        coachCourseRecord.setFromId(Attributes.PLATFORMNUMBER);
+        coachCourseRecord.setToId(order.getAccepterId());
+        coachCourseRecord.setMoney(order.getDiscount().subtract(new BigDecimal(Attributes.COMMISSION)));
+        coachCourseRecord.setPayType(0);
+        coachCourseRecord.setRemark("学员课程付款，订单号为：" + order.getOrderId());
+        return coachCourseRecord;
+    }
+
+
 }

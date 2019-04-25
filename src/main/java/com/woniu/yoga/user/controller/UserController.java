@@ -51,8 +51,9 @@ public class UserController {
      * @return
      *  返回可用优惠券的集合
      **/
-    public Result listCouponsByUserId(Integer userId) {
-
+    public Result listCouponsByUserId(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        Integer userId = user.getUserId();
         return userService.listCouponsByUserId(userId);
     }
     /**

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.woniu.yoga.CourseMapper">
+  <resultMap id="BaseResultMap" type="com.woniu.yoga.Course">
+    <id column="course_id" jdbcType="INTEGER" property="courseId" />
+    <result column="course_name" jdbcType="VARCHAR" property="courseName" />
+    <result column="coach_id" jdbcType="INTEGER" property="coachId" />
+    <result column="course_img" jdbcType="VARCHAR" property="courseImg" />
+    <result column="course_detail" jdbcType="VARCHAR" property="courseDetail" />
+    <result column="course_price" jdbcType="DECIMAL" property="coursePrice" />
+    <result column="course_flag" jdbcType="INTEGER" property="courseFlag" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    course_id, course_name, coach_id, course_img, course_detail, course_price, course_flag
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from course
+    where course_id = #{courseId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from course
+    where course_id = #{courseId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.woniu.yoga.Course">
+    insert into course (course_id, course_name, coach_id, 
+      course_img, course_detail, course_price, 
+      course_flag)
+    values (#{courseId,jdbcType=INTEGER}, #{courseName,jdbcType=VARCHAR}, #{coachId,jdbcType=INTEGER}, 
+      #{courseImg,jdbcType=VARCHAR}, #{courseDetail,jdbcType=VARCHAR}, #{coursePrice,jdbcType=DECIMAL}, 
+      #{courseFlag,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.woniu.yoga.Course">
+    insert into course
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="courseId != null">
+        course_id,
+      </if>
+      <if test="courseName != null">
+        course_name,
+      </if>
+      <if test="coachId != null">
+        coach_id,
+      </if>
+      <if test="courseImg != null">
+        course_img,
+      </if>
+      <if test="courseDetail != null">
+        course_detail,
+      </if>
+      <if test="coursePrice != null">
+        course_price,
+      </if>
+      <if test="courseFlag != null">
+        course_flag,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="courseId != null">
+        #{courseId,jdbcType=INTEGER},
+      </if>
+      <if test="courseName != null">
+        #{courseName,jdbcType=VARCHAR},
+      </if>
+      <if test="coachId != null">
+        #{coachId,jdbcType=INTEGER},
+      </if>
+      <if test="courseImg != null">
+        #{courseImg,jdbcType=VARCHAR},
+      </if>
+      <if test="courseDetail != null">
+        #{courseDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="coursePrice != null">
+        #{coursePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="courseFlag != null">
+        #{courseFlag,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.woniu.yoga.Course">
+    update course
+    <set>
+      <if test="courseName != null">
+        course_name = #{courseName,jdbcType=VARCHAR},
+      </if>
+      <if test="coachId != null">
+        coach_id = #{coachId,jdbcType=INTEGER},
+      </if>
+      <if test="courseImg != null">
+        course_img = #{courseImg,jdbcType=VARCHAR},
+      </if>
+      <if test="courseDetail != null">
+        course_detail = #{courseDetail,jdbcType=VARCHAR},
+      </if>
+      <if test="coursePrice != null">
+        course_price = #{coursePrice,jdbcType=DECIMAL},
+      </if>
+      <if test="courseFlag != null">
+        course_flag = #{courseFlag,jdbcType=INTEGER},
+      </if>
+    </set>
+    where course_id = #{courseId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.woniu.yoga.Course">
+    update course
+    set course_name = #{courseName,jdbcType=VARCHAR},
+      coach_id = #{coachId,jdbcType=INTEGER},
+      course_img = #{courseImg,jdbcType=VARCHAR},
+      course_detail = #{courseDetail,jdbcType=VARCHAR},
+      course_price = #{coursePrice,jdbcType=DECIMAL},
+      course_flag = #{courseFlag,jdbcType=INTEGER}
+    where course_id = #{courseId,jdbcType=INTEGER}
+  </update>
+</mapper>

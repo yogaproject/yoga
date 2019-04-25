@@ -9,7 +9,7 @@ import java.util.List;
  * @ClassName CoachDetailInfoVO
  * @Date 2019/4/22 11:32
  * @Version 1.0
- * @Description TODO
+ * @Description 保存瑜伽师个人的详细信息
  **/
 public class CoachDetailInfoVO {
     //    真实姓名
@@ -36,6 +36,9 @@ public class CoachDetailInfoVO {
     private int goodCommentCount;
     //    场馆名
     private String venueName;
+
+    //是否保密
+    private int privacy;
 
     public String getRealName() {
         return realName;
@@ -131,6 +134,14 @@ public class CoachDetailInfoVO {
 
     public void setVenueName(String venueName) {
         this.venueName = venueName;
+    }
+
+    public int getPrivacy() {
+        return privacy;
+    }
+
+    public void setPrivacy(int privacy) {
+        this.privacy = privacy;
     }
 
     @Override

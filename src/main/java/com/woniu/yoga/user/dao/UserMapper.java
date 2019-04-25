@@ -39,7 +39,7 @@ public interface UserMapper {
      * @Author liufeng
      * @Description //查询瑜伽师的详细信息
      **/
-    @Select("select real_name,user_headimg,user_phone,user_qq,user_wechat,coach_detail,coach_id,coach_style,authentication,deal_account,good_comment where user.user_id = coach.user_id and user.user_id = #{userId}")
+    @Select("select real_name,user_headimg,user_phone,user_qq,user_wechat,coach_detail,coach_id,coach_style,authentication,deal_account,good_comment,user_privacy where user.user_id = coach.user_id and user.user_id = #{userId}")
     @Results(value = {
             @Result(column = "real_name", property = "realName"),
             @Result(column = "user_headimg", property = "headImg"),
@@ -51,6 +51,7 @@ public interface UserMapper {
             @Result(column = "authentication", property = "authentication"),
             @Result(column = "deal_account", property = "numberOfTrade"),
             @Result(column = "good_comment", property = "goodCommentCount"),
+            @Result(column = "user_privacy",property = "privacy"),
             @Result(column = "coach_id", property = "courses", one = @One(
                     select = "com.woniu.yoga.user.dao.CoachMapper.findCourseByCoachId"
             )),

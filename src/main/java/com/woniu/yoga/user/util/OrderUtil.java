@@ -1,5 +1,11 @@
 package com.woniu.yoga.user.util;
 
+import com.woniu.yoga.commom.utils.OrderIdUtil;
+import com.woniu.yoga.user.pojo.Order;
+import org.springframework.beans.BeanUtils;
+
+import java.util.Date;
+
 /**
  * @Author liufeng
  * @ClassName OrderUtil
@@ -47,5 +53,15 @@ public class OrderUtil {
             return REFUNDFAILURE;
         }
         return -1;
+    }
+    public static Order getRepeatOrder(Order order){
+        Order repeatOrder = new Order();
+        BeanUtils.copyProperties(order,repeatOrder);
+        repeatOrder.setOrderStatus(NEWORDER);
+        repeatOrder.setCouponId(null);
+        repeatOrder.setCreateTime(new Date());
+        repeatOrder.setOrderId(OrderIdUtil.getOrderId());
+        repeatOrder.setDiscount(null);
+        return repeatOrder;
     }
 }

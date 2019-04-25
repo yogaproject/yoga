@@ -43,9 +43,9 @@ public class User {
 
     private String userHeadimg;
 
-    private Float longitude;
+    private double longitude;
 
-    private Float latitude;
+    private double latitude;
 
     private String userLocation;
 
