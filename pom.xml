@@ -151,6 +151,7 @@
             <artifactId>alipay-sdk-java</artifactId>
             <version>3.7.4.ALL</version>
         </dependency>
+
     </dependencies>
 
     <build>

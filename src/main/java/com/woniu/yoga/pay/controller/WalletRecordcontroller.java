@@ -6,7 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/Record")
+@RequestMapping("/WalletRecord")
 public class WalletRecordcontroller {
     private WalletRecordService walletRecordService;
 
@@ -17,4 +17,11 @@ public class WalletRecordcontroller {
     public void insertRecord(WalletRecord walletRecord){
        walletRecordService.insertRecord(walletRecord);
     }
+
+//    @RequestMapping("/OrderRate")
+//    public String OrderRate(){
+//
+//        return null;
+//    }
 }
+

@@ -49,7 +49,7 @@ public class WalletController {
     }
 
     /**
-     *
+     *更新钱包余额，用于余额的减少
      * @param walletId
      * @param money
      * @return
@@ -62,7 +62,7 @@ public class WalletController {
     }
 
     /**
-     * 充值余额，修改数据库
+     * 充值余额，用于余额的增加
      * @param walletId
      * @return
      */
@@ -153,13 +153,13 @@ public class WalletController {
 
 
     /**
-     *  支付成功后，返回的订单数据,跳转到本地支付成功页面
+     *  回调
      * @param request
      * @param response
      * @return
      * @throws AlipayApiException
      */
-    //支付成功后，返回的订单数据
+    //返回的订单数据
     @RequestMapping("/success")
     public String success(HttpServletRequest request, HttpServletResponse response) throws AlipayApiException {
 
@@ -184,9 +184,14 @@ public class WalletController {
         boolean signVerified = AlipaySignature.rsaCheckV1(params, AlipayConfig.alipay_public_key, AlipayConfig.charset, AlipayConfig.sign_type); //调用SDK验证签名
         System.out.println(signVerified);
         int result =walletService.UpdateUserMoneyAndCreateRecord(map,request);
-        map = null;
-
+        if(!signVerified){
+            return "payerror";//本地支付失败页面
+        }
+        if (result>0){
+            map = null;
+        }
         return "success";//本地支付成功页面
+
     }
 
 }
