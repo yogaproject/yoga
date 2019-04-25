@@ -5,6 +5,7 @@ import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.woniu.yoga.commom.utils.Attributes;
+import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.manage.pojo.Coupon;
 import com.woniu.yoga.pay.alipayConfig.AlipayConfig;
 import com.woniu.yoga.pay.pojo.Wallet;
@@ -59,6 +60,27 @@ public class WalletController {
     public int updateUserMoneyByWalletId(int walletId, BigDecimal money){
 
         return walletService.updateUserMoneyByWalletId(walletId,money);
+    }
+
+    /**
+     * 添加银行卡
+     * @param walletid
+     * @param pwd
+     * @param againPwd
+     * @param bankcard
+     * @return
+     */
+    @RequestMapping("addBankcard")
+    @ResponseBody
+    public Result addBankcardByWalletId(Integer walletid, String pwd, String againPwd, String bankcard){
+        if (!pwd.equals(againPwd)){
+            return Result.error("两次密码不匹配");
+        }
+        int n= walletService.addBankcardByWalletId(walletid,pwd,againPwd,bankcard);
+        if (n>0){
+            return Result.success("添加银行卡成功");
+        }
+        return Result.error("添加失败，请联系客服");
     }
 
     /**

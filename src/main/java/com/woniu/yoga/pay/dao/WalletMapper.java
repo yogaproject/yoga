@@ -36,5 +36,9 @@ public interface WalletMapper {
 
     //更新钱余额用于充值
     @Update("update wallet set balance=balance+#{money} where wallet_id=#{walletId}")
-    int saveMoney(int walletId, BigDecimal money);
+    int saveMoney(@Param("walletId") int walletId, @Param("money") BigDecimal money);
+
+    //添加银行卡
+    @Update("update wallet set bankcard=#{bankcard},pay_pwd=#{pwd} where wallet_id=#{walletid}")
+    int addBankcardByWalletId(@Param("walletid") Integer walletid,@Param("pwd") String pwd, String againPwd,@Param("bankcard") String bankcard);
 }

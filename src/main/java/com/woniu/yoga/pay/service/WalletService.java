@@ -20,4 +20,6 @@ public interface WalletService {
     int updateUserMoneyByWalletId(int walletId, BigDecimal money);
 
     int saveMoney(int walletId, BigDecimal money);
+
+    int addBankcardByWalletId(Integer walletid, String pwd, String againPwd, String bankcard);
 }
