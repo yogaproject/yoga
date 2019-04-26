@@ -9,11 +9,13 @@ import com.woniu.yoga.user.pojo.Order;
 import com.woniu.yoga.user.service.CoachService;
 import com.woniu.yoga.user.util.OrderUtil;
 import com.woniu.yoga.user.util.ResultUtil;
+import com.woniu.yoga.user.util.StudentVOUtil;
 import com.woniu.yoga.user.vo.Result;
 import com.woniu.yoga.user.vo.StudentVO;
 import com.woniu.yoga.venue.pojo.Recruitment;
 import com.woniu.yoga.venue.pojo.Venue;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,6 +30,8 @@ public class CoachServiceImpl implements CoachService {
 
     @Autowired
     private CourseMapper courseMapper;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     public Coach findCoachByCoachId(Integer coachId) {
@@ -80,7 +84,14 @@ public class CoachServiceImpl implements CoachService {
     public Result listStudentByCoachId(Integer userId) {
         //联合student_coach,coach,user查找学生信息
         int coachId = coachMapper.selectCoachIdByUserId(userId);
-        List<StudentVO> data = coachMapper.findStudentByUserId(userId);
+//        int coachId = 3;//test
+        List<StudentVO> data = (List<StudentVO>) redisTemplate.opsForValue().get("studentsOfCoach" + coachId);
+        if (data == null) {
+            System.out.println("从数据库获取数据");
+//            data = StudentVOUtil.getStudents();//test
+            data = coachMapper.findStudentByUserId(userId);
+            redisTemplate.opsForValue().set("studentsOfCoach" + coachId, data);
+        }
         return ResultUtil.actionSuccess("查询成功", data);
     }
 

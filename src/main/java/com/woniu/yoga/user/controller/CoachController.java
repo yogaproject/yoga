@@ -62,9 +62,12 @@ public class CoachController {
      * @return
      *  返回查询到的学员的结果集
      **/
+    @RequestMapping("listStudentByCoachId")
+    @ResponseBody
     public Result listStudentByCoachId(HttpSession session) {
-        User user = (User) session.getAttribute("user");
-        int userId = user.getUserId();
+//        User user = (User) session.getAttribute("user");
+//        int userId = user.getUserId();
+        int userId = 1;
         return coachService.listStudentByCoachId(userId);
     }
     /*
@@ -97,9 +100,8 @@ public class CoachController {
     @RequestMapping("insertCourse")
     @ResponseBody
     public Result insertCourse(HttpSession session,Course course){
-//        User user = (User) session.getAttribute("user");
-//        int userId = user.getUserId();
-        Integer userId = 3;
+        User user = (User) session.getAttribute("user");
+        int userId = user.getUserId();
         return coachService.insertCourse(userId,course);
     }
 

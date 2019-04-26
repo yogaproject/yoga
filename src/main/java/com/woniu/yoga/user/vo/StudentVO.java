@@ -1,5 +1,7 @@
 package com.woniu.yoga.user.vo;
 
+import java.io.Serializable;
+
 /**
  * @Author liufeng
  * @ClassName StudentVO
@@ -7,7 +9,7 @@ package com.woniu.yoga.user.vo;
  * @Version 1.0
  * @Description 记录学生的简要信息
  **/
-public class StudentVO {
+public class StudentVO implements Serializable {
     //昵称
     private String nickName;
     //头像
