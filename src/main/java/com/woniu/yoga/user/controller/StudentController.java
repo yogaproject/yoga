@@ -120,8 +120,8 @@ public class StudentController {
      * @return
      *  处理完成的评论
      **/
-    public Result saveComment(Comment comment) {
-        return studentService.saveComment(comment);
+    public Result saveComment(String orderId,Comment comment) {
+        return studentService.saveComment(orderId,comment);
     }
     /*
      * @Description //查询学员期望上课的所有的签约方式，因为数据比较少，因此保存在文件中；
@@ -156,7 +156,18 @@ public class StudentController {
     public Result findCoachPhoneByUserId(Integer userId){
         return studentService.findCoachPhoneByUserId(userId);
     }
-
+    /*
+     * @Author liufeng
+     * @Date
+     * @Description //处理学员重复下单的请求
+     * @Param
+     * @return
+     **/
+    public Result repeatOrder(HttpSession session,String orderId){
+        User user = (User) session.getAttribute("user");
+        Integer userId = user.getUserId();
+        return studentService.repeatOrder(userId,orderId);
+    }
     @RequestMapping("test")
     @ResponseBody
     public String test(){

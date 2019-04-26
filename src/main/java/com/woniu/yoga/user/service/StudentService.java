@@ -31,7 +31,7 @@ public interface StudentService {
     Result updateOrderForPay(String orderId);
 
 
-    Result saveComment(Comment comment);
+    Result saveComment(String orderId,Comment comment);
 
 
     Result listAllCourseAppoint();
@@ -42,4 +42,6 @@ public interface StudentService {
     Result updateOrderForCancel(Integer userId, String orderId);
 
     Result findCoachPhoneByUserId(Integer userId);
+
+    Result repeatOrder(Integer userId, String orderId);
 }

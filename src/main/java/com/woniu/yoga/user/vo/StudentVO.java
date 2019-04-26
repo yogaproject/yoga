@@ -8,8 +8,18 @@ package com.woniu.yoga.user.vo;
  * @Description 记录学生的简要信息
  **/
 public class StudentVO {
-    //    昵称
+    //昵称
     private String nickName;
+    //头像
+    private String headImg;
+
+    public String getHeadImg() {
+        return headImg;
+    }
+
+    public void setHeadImg(String headImg) {
+        this.headImg = headImg;
+    }
 
     public String getNickName() {
         return nickName;
@@ -17,12 +27,5 @@ public class StudentVO {
 
     public void setNickName(String nickName) {
         this.nickName = nickName;
-    }
-
-    @Override
-    public String toString() {
-        return "{" +
-                "nickName:'" + nickName + '\'' +
-                '}';
     }
 }

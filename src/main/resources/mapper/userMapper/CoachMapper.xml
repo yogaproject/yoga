@@ -253,4 +253,8 @@
       coach_flag = #{coachFlag,jdbcType=INTEGER}
     where coach_id = #{coachId,jdbcType=INTEGER}
   </update>
+
+  <select id="selectByCourseId" resultMap="BaseResultMap">
+    select * from coach where coach_id = (select coach_id from course where course_id = #{courseId})
+  </select>
 </mapper>
