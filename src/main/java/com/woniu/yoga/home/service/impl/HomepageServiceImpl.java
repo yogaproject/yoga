@@ -26,27 +26,20 @@ public class HomepageServiceImpl implements HomepageService {
 
     @Override
     public Result selectHomepages(Float latitude, Float longitude, Integer currentPage, Integer pageSize) {
-        if (latitude == 0 || longitude == 0){
-            return Result.error("未获取到地址，请重新定位");
-        }
         List<HomepageVo> list = homepageMapper.queryHomepages(latitude, longitude, currentPage, pageSize);
         return dealWithList(list);
     }
 
     @Override
     public Result showHomepageDetail(Integer mid) {
-        if (mid == 0){
-            return Result.error("未获取到动态内容id:m_id");
-        }
+
         HomepageVo vo = homepageMapper.selectHomepageDetail(mid);
         return Result.success("成功",vo);
     }
 
     @Override
-    public Result pushHomepage(Homepage homepage) {
-        if (homepage.getUserId() == 0){
-            return Result.error("未获取到用户id");
-        }
+    public Result pushHomepage(Homepage homepage, Integer userId) {
+        homepage.setUserId(userId);
         int num = homepageMapper.insertSelective(homepage);
         if (num == 1){
             return Result.success("发布成功");
@@ -68,5 +61,11 @@ public class HomepageServiceImpl implements HomepageService {
             vo.setPublishTime(publishTime);
         }
         return Result.success("成功",list);
+    }
+
+    @Override
+    public Result deleteHomepage(Integer mid) {
+        homepageMapper.deleteByPrimaryKey(mid);
+        return Result.success("删除成功");
     }
 }

@@ -70,4 +70,17 @@ public class CommentServiceImpl implements CommentService {
         commentMapper.insertSelective(comment);
         return Result.success("添加成功");
     }
+
+    /**
+    * @Description 删除评论
+    * @param commentId
+    * @author huijie yan
+    * @date 2019/4/26
+    * @return com.woniu.yoga.commom.vo.Result
+    */
+    @Override
+    public Result deleteComment(Integer commentId) {
+        commentMapper.deleteByPrimaryKey(commentId);
+        return Result.success("删除成功");
+    }
 }

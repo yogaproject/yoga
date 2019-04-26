@@ -12,6 +12,7 @@ import com.woniu.yoga.home.vo.HomepageVo;
 import com.woniu.yoga.user.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
@@ -78,6 +79,7 @@ public class FollowServiceImpl implements FollowService {
     }
 
     @Override
+    @Transactional
     public Result addFollow(Integer userId, HttpSession session) {
         User user = (User) session.getAttribute(SysConstant.CURRENT_USER);
         if (user == null){
@@ -103,6 +105,7 @@ public class FollowServiceImpl implements FollowService {
     }
 
     @Override
+    @Transactional
     public Result cancelFollow(Integer userId, HttpSession session) {
         User user = (User) session.getAttribute(SysConstant.CURRENT_USER);
         if (user == null){

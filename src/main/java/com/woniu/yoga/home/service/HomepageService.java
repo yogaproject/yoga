@@ -9,7 +9,9 @@ public interface HomepageService {
 
     Result showHomepageDetail(Integer mid);
 
-    Result pushHomepage(Homepage homepage);
+    Result pushHomepage(Homepage homepage, Integer userId);
 
     Result showOtherHomepage(Integer roleId, Float latitude, Float longitude, Integer currentPage, Integer pageSize);
+
+    Result deleteHomepage(Integer mid);
 }
