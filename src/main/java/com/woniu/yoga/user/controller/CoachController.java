@@ -94,7 +94,7 @@ public class CoachController {
      * @Param
      * @return
      **/
-    @RequestMapping("insetCourse")
+    @RequestMapping("insertCourse")
     @ResponseBody
     public Result insertCourse(HttpSession session,Course course){
 //        User user = (User) session.getAttribute("user");

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
+@Service
 public interface CoachService {
     //根据教练id，查询教练详细信息
     Coach findCoachByCoachId(Integer coachId);

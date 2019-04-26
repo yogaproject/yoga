@@ -88,6 +88,6 @@ public interface CoachMapper {
      * @Author liufeng
      * @Description //根据瑜伽师的userId，查询coachId
      **/
-//    @Select("select coach_id from coach,user where user.user_id = coach.user_id and coach.user_id = #{userId}")
-//    int findCoachIdByUserId(int userId);
+    @Select("select coach_id from coach,user where user.user_id = coach.user_id and coach.user_id = #{userId}")
+    int findCoachIdByUserId(int userId);
 }

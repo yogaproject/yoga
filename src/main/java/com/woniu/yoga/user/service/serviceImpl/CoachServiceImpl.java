@@ -110,20 +110,20 @@ public class CoachServiceImpl implements CoachService {
         order.setOrderStatus(OrderUtil.WAITTOPAY);
         int row = orderMapper.updateStatusByOrderId(order.getOrderId(), order.getOrderStatus());
         if (row > 0) {
-            List data = new ArrayList();
-            data.add(order);
-            return ResultUtil.actionSuccess("更新成功", data);
+            return ResultUtil.actionSuccess("更新成功", order);
         }
         return ResultUtil.connectDatabaseFail();
     }
 
     @Override
     public Result insertCourse(int userId, Course course) {
-//        int coachId = coachRepository.findCoachIdByUserId(userId);
-        Integer coachId = 1;
+        int coachId = coachMapper.findCoachIdByUserId(userId);
         course.setCoachId(coachId);
-        courseMapper.insertSelective(course);
-        return ResultUtil.actionSuccess("新建课程成功", course);
+        int row = courseMapper.insertSelective(course);
+        if (row > 0) {
+            return ResultUtil.actionSuccess("新建课程成功", course);
+        }
+        return ResultUtil.connectDatabaseFail();
     }
 
 

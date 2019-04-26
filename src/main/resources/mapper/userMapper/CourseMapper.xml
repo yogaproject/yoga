@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.woniu.yoga.CourseMapper">
-  <resultMap id="BaseResultMap" type="com.woniu.yoga.Course">
+<mapper namespace="com.woniu.yoga.user.dao.CourseMapper">
+  <resultMap id="BaseResultMap" type="com.woniu.yoga.user.pojo.Course">
     <id column="course_id" jdbcType="INTEGER" property="courseId" />
     <result column="course_name" jdbcType="VARCHAR" property="courseName" />
     <result column="coach_id" jdbcType="INTEGER" property="coachId" />
@@ -23,7 +23,7 @@
     delete from course
     where course_id = #{courseId,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.woniu.yoga.Course">
+  <insert id="insert" parameterType="com.woniu.yoga.user.pojo.Course">
     insert into course (course_id, course_name, coach_id, 
       course_img, course_detail, course_price, 
       course_flag)
@@ -31,7 +31,7 @@
       #{courseImg,jdbcType=VARCHAR}, #{courseDetail,jdbcType=VARCHAR}, #{coursePrice,jdbcType=DECIMAL}, 
       #{courseFlag,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.woniu.yoga.Course">
+  <insert id="insertSelective" parameterType="com.woniu.yoga.user.pojo.Course"  useGeneratedKeys="true" keyProperty="courseId">
     insert into course
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="courseId != null">
@@ -80,7 +80,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.woniu.yoga.Course">
+  <update id="updateByPrimaryKeySelective" parameterType="com.woniu.yoga.user.pojo.Course">
     update course
     <set>
       <if test="courseName != null">
@@ -104,7 +104,7 @@
     </set>
     where course_id = #{courseId,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.woniu.yoga.Course">
+  <update id="updateByPrimaryKey" parameterType="com.woniu.yoga.user.pojo.Course">
     update course
     set course_name = #{courseName,jdbcType=VARCHAR},
       coach_id = #{coachId,jdbcType=INTEGER},
