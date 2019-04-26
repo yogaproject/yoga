@@ -49,7 +49,37 @@
       </where>
   </select>
 
+  <!--更新项目募集资金-->
+  <update id="updateCurMoney" parameterType="com.woniu.yoga.crowdfunding.pojo.Supporter">
+  update crowdfunding set cf_cur_money = cf_cur_money + #{supMoney} where cf_id = #{cfId}
+ </update>
 
+  <!--增加支持者数量1-->
+    <update id="updateSupCount" parameterType="com.woniu.yoga.crowdfunding.pojo.Supporter">
+  update crowdfunding set cf_sup_count = cf_sup_count + 1 where cf_id = #{cfId}
+ </update>
+
+
+  <!--查询某一项目-->
+<select id="selOneCf" parameterType="java.lang.Integer" resultType="com.woniu.yoga.crowdfunding.pojo.CrowdFunding">
+  select  * from crowdfunding where cf_id = #{param}
+</select>
+
+  <!--查询个人关注的所有项目-->
+  <select id="getMyFoc" resultType="com.woniu.yoga.crowdfunding.pojo.CrowdFunding" >
+    select * from crowdfunding where cf_id in (select cf_id from cf_focus where foucs_id = #{param} and cf_foc_flag = 0 order by cf_foc_id desc )
+  </select>
+
+
+  <!--新增关注-->
+  <insert id="insertFoc" >
+    insert into cf_focus values (default,#{cfId},#{userId},default)
+  </insert>
+
+  <!--修改关注-->
+<update id="updateFoc" >
+  update cf_focus set cf_foc_flag = 1 where cf_id = #{cfId} and foucs_id = #{userId}
+</update>
 
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
@@ -62,7 +92,7 @@
     where cf_id = #{cfId,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.woniu.yoga.crowdfunding.pojo.CrowdFunding">
-    insert into crowdfunding (cf_id, cf_title, cf_img, 
+    insert into crowdfunding (cf_id, cf_title, cf_img,
       cf_sup_count, cf_describe, cf_type, 
       cf_foc_count, cf_sponsor, cf_target_money, 
       cf_cur_money, cf_status, cf_light, 
@@ -79,16 +109,16 @@
       <if test="cfId != null">
         cf_id,
       </if>
-      <if test="cfTitle != null">
+      <if test="cfTitle != null and cfTitle != ''">
         cf_title,
       </if>
-      <if test="cfImg != null">
+      <if test="cfImg != null and cfImg != ''">
         cf_img,
       </if>
       <if test="cfSupCount != null">
         cf_sup_count,
       </if>
-      <if test="cfDescribe != null">
+      <if test="cfDescribe != null and cfDescribe != ''">
         cf_describe,
       </if>
       <if test="cfType != null">

@@ -11,6 +11,17 @@
   <sql id="Base_Column_List">
     journal_id, cf_id, description, create_date, journal_flag
   </sql>
+
+  <!--查询某一项目的所有日报信息-->
+  <select id="getJournals" resultMap="BaseResultMap" >
+    select * from journal where cf_id = #{param} order by journal_id desc
+  </select>
+
+
+
+
+
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />

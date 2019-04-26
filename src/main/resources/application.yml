@@ -7,7 +7,7 @@ spring:
     date-format: yyyy-MM-dd
     time-zone: GMT+8
   datasource:
-    url: jdbc:mysql://192.168.5.58:3306/yoga?serverTimezone=GMT%2B8
+    url: jdbc:mysql://192.168.5.58:3306/yoga?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8
     username: root
     password: 123456
     driver-class-name: com.mysql.jdbc.Driver

@@ -1,8 +1,16 @@
 package com.woniu.yoga.crowdfunding.dao;
 
 import com.woniu.yoga.crowdfunding.pojo.Supporter;
+import com.woniu.yoga.crowdfunding.vo.MySupVO;
+import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
+@Repository
 public interface SupporterMapper {
+
+    List<Supporter> querySupByIds(Supporter supporter);
+
     int deleteByPrimaryKey(Integer supId);
 
     int insert(Supporter record);
@@ -14,4 +22,6 @@ public interface SupporterMapper {
     int updateByPrimaryKeySelective(Supporter record);
 
     int updateByPrimaryKey(Supporter record);
+
+    List<MySupVO> selMySup(Integer userId);
 }
