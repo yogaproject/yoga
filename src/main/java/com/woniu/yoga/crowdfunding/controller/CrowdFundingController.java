@@ -221,6 +221,7 @@ public class CrowdFundingController {
     public Result myFoc(Integer userId){
         userId = 1008;
         List<CrowdFunding> crowdFundings = crowdFundingService.getMyFoc(userId);
+        System.out.println(crowdFundings);
         if (crowdFundings == null){
             return Result.success("您还未关注任何众筹项目");
         }

@@ -16,13 +16,14 @@ import javax.servlet.http.HttpServletResponse;
 public class ResourceInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String uri = request.getRequestURI();
-        if ( uri.endsWith(".js") || uri.endsWith(".css") ||
+        return true;
+       // String uri = request.getRequestURI();
+     /*   if ( uri.endsWith(".js") || uri.endsWith(".css") ||
                 uri.endsWith(".png") || uri.endsWith(".jpg") ||
                     uri.endsWith(".html") || uri.endsWith(".jpeg") ||
                         uri.endsWith(".gif")){
             return true;
-        }
-        return false;
+        }*/
+
     }
 }
