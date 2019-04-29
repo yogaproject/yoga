@@ -30,7 +30,7 @@ public class CallBackController {
 
     @RequestMapping("/callback")
     @ResponseBody
-    public String  callback(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+    public String callback(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         System.out.println("回调--------------");
         LogUtil.writeLog("BackRcvResponse接收后台通知开始");
 
@@ -48,7 +48,7 @@ public class CallBackController {
             LogUtil.writeLog("验证签名结果[成功].");
             //【注：为了安全验签成功才应该写商户的成功处理逻辑】交易成功，更新商户订单状态
 
-            String orderId =reqParam.get("orderId"); //获取后台通知的数据，其他字段也可用类似方式获取
+            String orderId = reqParam.get("orderId"); //获取后台通知的数据，其他字段也可用类似方式获取
             String respCode = reqParam.get("respCode");
             //判断respCode=00、A6后，对涉及资金类的交易，请再发起查询接口查询，确定交易成功后更新数据库。
         }
@@ -58,11 +58,11 @@ public class CallBackController {
     }
 
 
-
     /**
      * 获取请求参数中所有的信息
      * 当商户上送frontUrl或backUrl地址中带有参数信息的时候，
      * 这种方式会将url地址中的参数读到map中，会导多出来这些信息从而致验签失败，这个时候可以自行修改过滤掉url中的参数或者使用getAllRequestParamStream方法。
+     *
      * @param request
      * @return
      */
@@ -92,6 +92,7 @@ public class CallBackController {
      * 非struts可以改用此方法获取，好处是可以过滤掉request.getParameter方法过滤不掉的url中的参数。
      * struts可能对某些content-type会提前读取参数导致从inputstream读不到信息，所以可能用不了这个方法。理论应该可以调整struts配置使不影响，但请自己去研究。
      * 调用本方法之前不能调用req.getParameter("key");这种方法，否则会导致request取不到输入流。
+     *
      * @param request
      * @return
      */
@@ -99,12 +100,12 @@ public class CallBackController {
             final HttpServletRequest request) {
         Map<String, String> res = new HashMap<String, String>();
         try {
-            String notifyStr = new String(IOUtils.toByteArray(request.getInputStream()),DemoBase.encoding);
+            String notifyStr = new String(IOUtils.toByteArray(request.getInputStream()), DemoBase.encoding);
             LogUtil.writeLog("收到通知报文：" + notifyStr);
-            String[] kvs= notifyStr.split("&");
-            for(String kv : kvs){
+            String[] kvs = notifyStr.split("&");
+            for (String kv : kvs) {
                 String[] tmp = kv.split("=");
-                if(tmp.length >= 2){
+                if (tmp.length >= 2) {
                     String key = tmp[0];
                     String value = URLDecoder.decode(tmp[1], DemoBase.encoding);
                     res.put(key, value);
