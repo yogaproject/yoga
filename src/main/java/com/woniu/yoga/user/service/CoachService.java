@@ -1,6 +1,7 @@
 package com.woniu.yoga.user.service;
 
 import com.woniu.yoga.user.pojo.Coach;
+import com.woniu.yoga.user.pojo.Course;
 import com.woniu.yoga.venue.pojo.Recruitment;
 import com.woniu.yoga.venue.pojo.Venue;
 import com.woniu.yoga.user.vo.Result;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-
+@Service
 public interface CoachService {
     //根据教练id，查询教练详细信息
     Coach findCoachByCoachId(Integer coachId);
@@ -44,4 +45,6 @@ public interface CoachService {
 
 
     Result updateOrderForWaitToPay(String orderId);
+
+    Result insertCourse(int userId,Course course);
 }

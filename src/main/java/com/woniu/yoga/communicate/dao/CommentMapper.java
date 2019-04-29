@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface CommentMapper {
-    int deleteByPrimaryKey(Long commentId);
+    int deleteByPrimaryKey(Integer commentId);
 
     int insert(Comment record);
 

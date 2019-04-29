@@ -13,7 +13,7 @@ import java.util.List;
  */
 @Data
 public class CommentVo {
-    private Long commentId;
+    private Integer commentId;
 
     private Integer userId;
 

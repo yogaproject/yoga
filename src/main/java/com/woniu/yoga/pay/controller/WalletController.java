@@ -3,13 +3,16 @@ import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.internal.util.AlipaySignature;
+import com.alipay.api.request.AlipayFundTransToaccountTransferRequest;
 import com.alipay.api.request.AlipayTradePagePayRequest;
+import com.alipay.api.response.AlipayFundTransToaccountTransferResponse;
 import com.woniu.yoga.commom.utils.Attributes;
 import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.manage.pojo.Coupon;
 import com.woniu.yoga.pay.alipayConfig.AlipayConfig;
 import com.woniu.yoga.pay.pojo.Wallet;
 import com.woniu.yoga.pay.pojo.WalletRecord;
+import com.woniu.yoga.pay.service.WalletRecordService;
 import com.woniu.yoga.pay.service.WalletService;
 import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.service.UserService;
@@ -34,6 +37,8 @@ public class WalletController {
     private WalletService walletService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private WalletRecordService walletRecordService;
 
 
 /**
@@ -70,6 +75,63 @@ public class WalletController {
     }
 
     /**
+     * 提现操作,生成订单
+     * @param userid
+     * @param account
+     * @param money
+     * @param pwd
+     * @throws AlipayApiException
+     */
+    @RequestMapping("/withdrawDeposit")
+    @ResponseBody
+    public Result withdrawDeposit(Integer userid,String account,BigDecimal money,String pwd)  {
+        Wallet wallet =walletService.findWalletByUserId(userid);
+        if (!(wallet.getPayPwd().toString()).equals(pwd)){
+            return Result.error("密码错误，请重新输入密码");
+        }
+        if (wallet.getBalance().compareTo(money)<0){
+            return Result.error("余额不足，请重新输入金额");
+        }
+
+        AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.gatewayUrl, AlipayConfig.app_id, AlipayConfig.merchant_private_key, "json", AlipayConfig.charset, AlipayConfig.alipay_public_key, AlipayConfig.sign_type);
+        AlipayFundTransToaccountTransferRequest request = new AlipayFundTransToaccountTransferRequest();
+        //商户订单号，商户网站订单系统中唯一订单号，必填
+        String out_trade_no = UUID.randomUUID().toString().replace("-", "").toLowerCase();
+        request.setBizContent("{" +
+                "\"out_biz_no\":\""+out_trade_no+"\"," +
+                "\"payee_type\":\"ALIPAY_LOGONID\"," +
+                "\"payee_account\":\""+account+"\"," +
+                "\"amount\":\""+money+"\"," +
+                "\"payer_show_name\":\"沙箱环境\"," +
+                "\"payee_real_name\":\"沙箱环境\"," +
+                "\"remark\":\"转账备注\"" +
+                "  }");
+        AlipayFundTransToaccountTransferResponse response = null;
+       int n=-1;
+        try {
+            response = alipayClient.execute(request);
+            n= walletService.updateUserMoneyByWalletId(wallet.getWalletId(),money);
+        } catch (AlipayApiException e) {
+            e.printStackTrace();
+            return Result.error("请检查用户名是否正确！请重新操作");
+        }
+        if(response.isSuccess()&&n>0){
+            WalletRecord walletRecord =new WalletRecord();
+            walletRecord.setFromId(Integer.MAX_VALUE);
+            walletRecord.setMoney(money);
+            walletRecord.setPayType(0);
+            walletRecord.setRecordType(2);
+            walletRecord.setToId(userid);
+            walletRecordService.insertRecord(walletRecord);
+            System.out.println("调用成功");
+            return Result.success("提现成功！提现金额为:"+money+"");
+        } else {
+            System.out.println("调用失败");
+            return Result.error("提现提现失败！请重新操作");
+        }
+    }
+
+    /**
      * 添加银行卡
      * @param userid
      * @param pwd
@@ -87,7 +149,7 @@ public class WalletController {
         if (n>0){
             return Result.success("添加银行卡成功");
         }
-        return Result.error("添加失败，请联系客服");
+        return Result.error("系统异常");
     }
 
     /**
@@ -126,7 +188,6 @@ public class WalletController {
      * @param userid
      * @return
      */
-
     @RequestMapping("/selectcoupon")
     @ResponseBody
     public List<Coupon> selectUserCouponByUserId(int userid ) {
@@ -154,6 +215,7 @@ public class WalletController {
         AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.gatewayUrl, AlipayConfig.app_id, AlipayConfig.merchant_private_key, "json", AlipayConfig.charset, AlipayConfig.alipay_public_key, AlipayConfig.sign_type);
 
         //设置请求参数
+
         AlipayTradePagePayRequest alipayRequest = new AlipayTradePagePayRequest();
         alipayRequest.setReturnUrl(AlipayConfig.return_url);
         alipayRequest.setNotifyUrl(AlipayConfig.notify_url);
@@ -196,9 +258,10 @@ public class WalletController {
      * @return
      * @throws AlipayApiException
      */
-    //返回的订单数据
+
     @RequestMapping("/success")
-    public String success(HttpServletRequest request, HttpServletResponse response) throws AlipayApiException {
+    @ResponseBody
+    public Result success(HttpServletRequest request, HttpServletResponse response) throws AlipayApiException {
 
         Map<String,String> params = new HashMap<>();
         Map requestParams = request.getParameterMap();
@@ -222,12 +285,12 @@ public class WalletController {
         System.out.println(signVerified);
         int result =walletService.UpdateUserMoneyAndCreateRecord(map,request);
         if(!signVerified){
-            return "payerror";//本地支付失败页面
+            return Result.error("支付异常");//本地支付异常页面
         }
         if (result>0){
             map = null;
         }
-        return "success";//本地支付成功页面
+        return Result.success("支付成功","success");//本地支付成功页面
 
     }
 

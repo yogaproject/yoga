@@ -1,17 +1,21 @@
 package com.woniu.yoga.user.service.serviceImpl;
 
 import com.woniu.yoga.user.dao.CoachMapper;
+import com.woniu.yoga.user.dao.CourseMapper;
 import com.woniu.yoga.user.dao.OrderMapper;
 import com.woniu.yoga.user.pojo.Coach;
+import com.woniu.yoga.user.pojo.Course;
 import com.woniu.yoga.user.pojo.Order;
 import com.woniu.yoga.user.service.CoachService;
 import com.woniu.yoga.user.util.OrderUtil;
 import com.woniu.yoga.user.util.ResultUtil;
+import com.woniu.yoga.user.util.StudentVOUtil;
 import com.woniu.yoga.user.vo.Result;
 import com.woniu.yoga.user.vo.StudentVO;
 import com.woniu.yoga.venue.pojo.Recruitment;
 import com.woniu.yoga.venue.pojo.Venue;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,6 +27,11 @@ public class CoachServiceImpl implements CoachService {
     private CoachMapper coachMapper;
     @Autowired
     private OrderMapper orderMapper;
+
+    @Autowired
+    private CourseMapper courseMapper;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     public Coach findCoachByCoachId(Integer coachId) {
@@ -50,7 +59,7 @@ public class CoachServiceImpl implements CoachService {
         } else if (result.equals("拒绝")) {
             orderStatus = OrderUtil.CANCELED;
         } else {
-           ResultUtil.illegalOperation();
+            ResultUtil.illegalOperation();
         }
 
         order.setOrderStatus(orderStatus);
@@ -58,7 +67,7 @@ public class CoachServiceImpl implements CoachService {
         if (row > 0) {
             List data = new ArrayList();
             data.add(order);
-            return ResultUtil.actionSuccess( "已接单，请联系学员安排课程", data);
+            return ResultUtil.actionSuccess("已接单，请联系学员安排课程", data);
         } else {
             return ResultUtil.connectDatabaseFail();
         }
@@ -75,8 +84,15 @@ public class CoachServiceImpl implements CoachService {
     public Result listStudentByCoachId(Integer userId) {
         //联合student_coach,coach,user查找学生信息
         int coachId = coachMapper.selectCoachIdByUserId(userId);
-        List<StudentVO> data = coachMapper.findStudentByUserId(userId);
-        return ResultUtil.actionSuccess( "查询成功", data);
+//        int coachId = 3;//test
+        List<StudentVO> data = (List<StudentVO>) redisTemplate.opsForValue().get("studentsOfCoach" + coachId);
+        if (data == null) {
+            System.out.println("从数据库获取数据");
+//            data = StudentVOUtil.getStudents();//test
+            data = coachMapper.findStudentByUserId(userId);
+            redisTemplate.opsForValue().set("studentsOfCoach" + coachId, data);
+        }
+        return ResultUtil.actionSuccess("查询成功", data);
     }
 
     /*
@@ -90,7 +106,7 @@ public class CoachServiceImpl implements CoachService {
     public Result listCoachStyles() {
         List data = coachMapper.listCoachStyles();
         if (data.size() > 0) {
-            return ResultUtil.actionSuccess( "查询成功", data);
+            return ResultUtil.actionSuccess("查询成功", data);
         } else {
             return ResultUtil.connectDatabaseFail();
         }
@@ -103,11 +119,20 @@ public class CoachServiceImpl implements CoachService {
             return ResultUtil.illegalOperation();
         }
         order.setOrderStatus(OrderUtil.WAITTOPAY);
-        int row = orderMapper.updateStatusByOrderId(order.getOrderId(),order.getOrderStatus());
-        if (row>0){
-            List data = new ArrayList();
-            data.add(order);
-            return ResultUtil.actionSuccess("更新成功",data);
+        int row = orderMapper.updateStatusByOrderId(order.getOrderId(), order.getOrderStatus());
+        if (row > 0) {
+            return ResultUtil.actionSuccess("更新成功", order);
+        }
+        return ResultUtil.connectDatabaseFail();
+    }
+
+    @Override
+    public Result insertCourse(int userId, Course course) {
+        int coachId = coachMapper.findCoachIdByUserId(userId);
+        course.setCoachId(coachId);
+        int row = courseMapper.insertSelective(course);
+        if (row > 0) {
+            return ResultUtil.actionSuccess("新建课程成功", course);
         }
         return ResultUtil.connectDatabaseFail();
     }

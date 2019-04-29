@@ -73,4 +73,28 @@ public class Supporter {
     public void setSupFlag(Integer supFlag) {
         this.supFlag = supFlag;
     }
+
+
+    public Supporter(Integer supId, Integer cfId, Integer userId, BigDecimal supMoney, String supComment, Date supDate, Integer supFlag) {
+        this.supId = supId;
+        this.cfId = cfId;
+        this.userId = userId;
+        this.supMoney = supMoney;
+        this.supComment = supComment;
+        this.supDate = supDate;
+        this.supFlag = supFlag;
+    }
+
+    @Override
+    public String toString() {
+        return "Supporter{" +
+                "supId=" + supId +
+                ", cfId=" + cfId +
+                ", userId=" + userId +
+                ", supMoney=" + supMoney +
+                ", supComment='" + supComment + '\'' +
+                ", supDate=" + supDate +
+                ", supFlag=" + supFlag +
+                '}';
+    }
 }

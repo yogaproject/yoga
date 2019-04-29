@@ -1,9 +1,17 @@
 package com.woniu.yoga.user.pojo;
 
+import lombok.Data;
+import lombok.Value;
+
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
-
+@Entity
+@Table(name="coach")
+@Data
 public class Coach {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer coachId;
 
     private Integer userId;

@@ -1,6 +1,7 @@
 package com.woniu.yoga.user.controller;
 
 import com.woniu.yoga.user.pojo.Coach;
+import com.woniu.yoga.user.pojo.Course;
 import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.service.CoachService;
 import com.woniu.yoga.user.vo.Result;
@@ -61,9 +62,12 @@ public class CoachController {
      * @return
      *  返回查询到的学员的结果集
      **/
+    @RequestMapping("listStudentByCoachId")
+    @ResponseBody
     public Result listStudentByCoachId(HttpSession session) {
-        User user = (User) session.getAttribute("user");
-        int userId = user.getUserId();
+//        User user = (User) session.getAttribute("user");
+//        int userId = user.getUserId();
+        int userId = 1;
         return coachService.listStudentByCoachId(userId);
     }
     /*
@@ -85,6 +89,20 @@ public class CoachController {
      **/
     public Result listCoachStyles() {
         return coachService.listCoachStyles();
+    }
+    /*
+     * @Author liufeng
+     * @Date
+     * @Description //瑜伽师创建课程
+     * @Param
+     * @return
+     **/
+    @RequestMapping("insertCourse")
+    @ResponseBody
+    public Result insertCourse(HttpSession session,Course course){
+        User user = (User) session.getAttribute("user");
+        int userId = user.getUserId();
+        return coachService.insertCourse(userId,course);
     }
 
 

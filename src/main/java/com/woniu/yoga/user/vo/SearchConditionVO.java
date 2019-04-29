@@ -74,14 +74,6 @@ public class SearchConditionVO {
         this.roleId = roleId;
     }
 
-//    public int getLowPrice() {
-//        return lowPrice;
-//    }
-//
-//    public void setLowPrice(int lowPrice) {
-//        this.lowPrice = lowPrice;
-//    }
-
     public int getCoachStyle() {
         return coachStyle;
     }

@@ -10,9 +10,26 @@
     <result column="sup_date" jdbcType="TIMESTAMP" property="supDate" />
     <result column="sup_flag" jdbcType="INTEGER" property="supFlag" />
   </resultMap>
+
+  <resultMap id="MySupVO" type="com.woniu.yoga.crowdfunding.vo.MySupVO">
+    <result column="cf_id" jdbcType="INTEGER" property="cfId" />
+    <result column="sup_money" jdbcType="DECIMAL" property="supMoney" />
+  </resultMap>
+
+
   <sql id="Base_Column_List">
     sup_id, cf_id, user_id, sup_money, sup_comment, sup_date, sup_flag
   </sql>
+
+  <select id="querySupByIds" resultMap="BaseResultMap" >
+    select * from supporter where cf_id = #{cfId} and user_id = #{userId}
+  </select>
+  
+  <select id="selMySup" resultMap="MySupVO" >
+    SELECT SUM(sup_money) sup_money,cf_id FROM supporter WHERE user_id = #{param} GROUP BY cf_id ORDER BY sup_money DESC;
+  </select>
+
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
@@ -46,10 +63,10 @@
       <if test="supMoney != null">
         sup_money,
       </if>
-      <if test="supComment != null">
+      <if test="supComment != null and supComment != '' ">
         sup_comment,
       </if>
-      <if test="supDate != null">
+      <if test="supDate != null and supDate != ''">
         sup_date,
       </if>
       <if test="supFlag != null">

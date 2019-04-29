@@ -3,11 +3,11 @@ package com.woniu.yoga.user.pojo;
 import javax.persistence.*;
 import java.math.BigDecimal;
 
-//@Entity
-//@Table
+@Entity
+@Table(name = "course")
 public class Course {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer courseId;
     @Column(name = "course_name")
     private String courseName;

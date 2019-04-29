@@ -10,4 +10,6 @@ public interface CommentService {
     Result showComments(Integer mid, Integer currentPage, Integer pageSize);
 
     Result addComment(Comment comment, HttpSession session);
+
+    Result deleteComment(Integer commentId);
 }

@@ -145,4 +145,24 @@ public class CrowdFunding {
     public void setCfSponsor(User cfSponsor) {
         this.cfSponsor = cfSponsor;
     }
+
+    @Override
+    public String toString() {
+        return "CrowdFunding{" +
+                "cfId=" + cfId +
+                ", cfTitle='" + cfTitle + '\'' +
+                ", cfImg='" + cfImg + '\'' +
+                ", cfSupCount=" + cfSupCount +
+                ", cfDescribe='" + cfDescribe + '\'' +
+                ", cfType=" + cfType +
+                ", cfFocCount=" + cfFocCount +
+                ", cfSponsor=" + cfSponsor +
+                ", supporters=" + supporters +
+                ", cfTargetMoney=" + cfTargetMoney +
+                ", cfCurMoney=" + cfCurMoney +
+                ", cfStatus=" + cfStatus +
+                ", cfLight=" + cfLight +
+                ", cfFlag=" + cfFlag +
+                '}';
+    }
 }
