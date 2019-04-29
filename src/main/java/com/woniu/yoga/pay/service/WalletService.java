@@ -6,6 +6,7 @@ import com.woniu.yoga.pay.pojo.Wallet;
 import com.woniu.yoga.pay.pojo.WalletRecord;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -24,4 +25,6 @@ public interface WalletService {
     int addBankcardByUserId(Integer userid, String pwd, String againPwd, String bankcard);
 
     Wallet findWalletByWalletId(int walletId);
+
+    String Unionpaypay(String money,HttpServletRequest req, HttpServletResponse resp);
 }

@@ -6,7 +6,6 @@ import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayFundTransToaccountTransferRequest;
 import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.alipay.api.response.AlipayFundTransToaccountTransferResponse;
-import com.woniu.yoga.commom.utils.Attributes;
 import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.manage.pojo.Coupon;
 import com.woniu.yoga.pay.alipayConfig.AlipayConfig;
@@ -14,7 +13,6 @@ import com.woniu.yoga.pay.pojo.Wallet;
 import com.woniu.yoga.pay.pojo.WalletRecord;
 import com.woniu.yoga.pay.service.WalletRecordService;
 import com.woniu.yoga.pay.service.WalletService;
-import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,11 +22,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.*;
-
-
 @Controller
 @RequestMapping("/wallet")
 public class WalletController {
@@ -39,6 +37,7 @@ public class WalletController {
     private UserService userService;
     @Autowired
     private WalletRecordService walletRecordService;
+
 
 
 /**
@@ -210,7 +209,7 @@ public class WalletController {
     @ResponseBody
     public String alipay(String allmoney, String goodsIds, String goodscount, HttpServletRequest request, String goodsprice, HttpServletResponse response) throws  AlipayApiException {
         System.out.println("获取前端参数数据=="+goodsIds+"=====数量==="+goodscount);
-
+        //goodsIds,goodscount,goodsprice，生成订单时要用的数据
         //获得初始化的AlipayClient
         AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.gatewayUrl, AlipayConfig.app_id, AlipayConfig.merchant_private_key, "json", AlipayConfig.charset, AlipayConfig.alipay_public_key, AlipayConfig.sign_type);
 
@@ -251,47 +250,16 @@ public class WalletController {
 
 
 
-    /**
-     *  回调
-     * @param request
-     * @param response
-     * @return
-     * @throws AlipayApiException
-     */
 
-    @RequestMapping("/success")
-    @ResponseBody
-    public Result success(HttpServletRequest request, HttpServletResponse response) throws AlipayApiException {
 
-        Map<String,String> params = new HashMap<>();
-        Map requestParams = request.getParameterMap();
-        for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext();) {
-            String name = (String) iter.next();
-         //   System.out.println(name);
-            String[] values = (String[]) requestParams.get(name);
-            String valueStr = "";
-            for (int i = 0; i < values.length; i++) {
 
-                valueStr = (i == values.length - 1) ? valueStr + values[i]
-                        : valueStr + values[i] + ",";
-            }
-           // System.out.println(valueStr);
-            params.put(name, valueStr);
-            map.put(name, valueStr);
-
-        }
-
-        boolean signVerified = AlipaySignature.rsaCheckV1(params, AlipayConfig.alipay_public_key, AlipayConfig.charset, AlipayConfig.sign_type); //调用SDK验证签名
-        System.out.println(signVerified);
-        int result =walletService.UpdateUserMoneyAndCreateRecord(map,request);
-        if(!signVerified){
-            return Result.error("支付异常");//本地支付异常页面
-        }
-        if (result>0){
-            map = null;
-        }
-        return Result.success("支付成功","success");//本地支付成功页面
-
+    @RequestMapping("/Unionpaypay")
+    public void Unionpaypay(String money, HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        resp.setContentType("text/html;charset=utf-8");
+        String pay=walletService.Unionpaypay(money,req,resp);
+        PrintWriter out =resp.getWriter();
+        out.println(pay);
+        out.close();
     }
 
 }
