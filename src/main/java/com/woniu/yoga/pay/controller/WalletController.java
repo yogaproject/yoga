@@ -32,7 +32,7 @@ import java.util.*;
 @Controller
 @RequestMapping("/wallet")
 public class WalletController {
-    Map<String, Object> map = new HashMap<>();
+
     @Autowired
     private WalletService walletService;
     @Autowired
@@ -266,7 +266,8 @@ public class WalletController {
     @RequestMapping("/success")
     @ResponseBody
     public String success(HttpServletRequest request, HttpServletResponse response) throws AlipayApiException {
-
+        System.out.println("-----------回调-------------");
+        Map<String, Object> map = new HashMap<>();
         Map<String,String> params = new HashMap<String,String>();
         Map requestParams = request.getParameterMap();
         for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext();) {
@@ -277,11 +278,13 @@ public class WalletController {
                 valueStr = (i == values.length - 1) ? valueStr + values[i]
                         : valueStr + values[i] + ",";
             }
+            System.out.println(valueStr);
             map.put(name,valueStr);
             params.put(name, valueStr);
         }
         boolean signVerified = AlipaySignature.rsaCheckV1(params, AlipayConfig.alipay_public_key, AlipayConfig.charset, AlipayConfig.sign_type); //调用SDK验证签名
         int n=walletService.UpdateUserMoneyAndCreateRecord(map,request);
+        System.out.println("n="+n);
         if (!signVerified){
             return "error" ;
         }

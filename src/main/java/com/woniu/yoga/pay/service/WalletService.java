@@ -4,6 +4,7 @@ package com.woniu.yoga.pay.service;
 import com.woniu.yoga.manage.pojo.Coupon;
 import com.woniu.yoga.pay.pojo.Wallet;
 import com.woniu.yoga.pay.pojo.WalletRecord;
+import lombok.Data;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
