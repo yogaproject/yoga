@@ -249,10 +249,13 @@ public class WalletController {
     }
 
 
-
-
-
-
+    /**
+     * 银联支付
+     * @param money
+     * @param req
+     * @param resp
+     * @throws IOException
+     */
     @RequestMapping("/Unionpaypay")
     public void Unionpaypay(String money, HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("text/html;charset=utf-8");
