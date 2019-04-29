@@ -17,7 +17,7 @@ public interface WalletService {
 
     List<WalletRecord> selectOrderByUserId(int userid);
 
-    int UpdateUserMoneyAndCreateRecord(Map<String, Object> map, HttpServletRequest request);
+    int UpdateUserMoneyAndCreateRecord(Map<String, String> map, HttpServletRequest request);
 
     int updateUserMoneyByWalletId(int walletId, BigDecimal money);
 

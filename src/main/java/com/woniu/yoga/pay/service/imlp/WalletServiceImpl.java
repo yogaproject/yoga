@@ -42,12 +42,11 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public int UpdateUserMoneyAndCreateRecord(Map<String, Object> map, HttpServletRequest request) {
+    public int UpdateUserMoneyAndCreateRecord(Map<String, String> map, HttpServletRequest request) {
        // User user = (User) map.get(Attributes.CURRENT_USER);
         User user =new User();
-         user.setUserId(1);//测试数据
-        BigDecimal money = new BigDecimal(map.get("total_amount").toString());
-        System.out.println(money);
+        user.setUserId(1);//测试数据
+        BigDecimal money = new BigDecimal(map.get("total_amount"));
         //根据用户id,找到对应钱包
         Wallet wallet = walletMapper.findWalletByUserId(user.getUserId());
         //修改钱包余额 充值
