@@ -1,15 +1,14 @@
 package com.woniu.yoga.user.dao;
 
+import com.woniu.yoga.manage.pojo.Coupon;
+import com.woniu.yoga.user.dto.CoachDTO;
 import com.woniu.yoga.user.dto.SearchConditionDTO;
-import com.woniu.yoga.user.pojo.Course;
 import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.util.UserMapperProviderUtil;
 import com.woniu.yoga.user.vo.CoachDetailInfoVO;
-import com.woniu.yoga.user.vo.UserDetailInfoVo;
-import com.woniu.yoga.user.vo.UserVO;
+import com.woniu.yoga.user.vo.VenueVOR;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -17,24 +16,26 @@ import java.util.List;
 
 @Repository
 public interface UserMapper {
-    int deleteByPrimaryKey(Integer userId)throws SQLException;
+    int deleteByPrimaryKey(Integer userId);
 
-    int insert(User record)throws SQLException;
+    int insert(User record);
 
-    int insertSelective(User record)throws SQLException;
+    int insertSelective(User record);
 
-    User selectByPrimaryKey(Integer userId)throws SQLException;
+    User selectByPrimaryKey(Integer userId);
 
-    int updateByPrimaryKeySelective(User record)throws SQLException;
+    int updateByPrimaryKeySelective(User record);
 
-    int updateByPrimaryKey(User record)throws SQLException;
+    int updateByPrimaryKey(User record);
 
     /*
      * @Author liufeng
      * @Description //根据地址查询附近的教练
      **/
     @SelectProvider(type = UserMapperProviderUtil.class, method = "findAroundCoachs")
-    List<UserVO> listAroundUser(SearchConditionDTO searchConditionDTO)throws SQLException;
+    List<CoachDTO> listAroundCoach(SearchConditionDTO searchConditionDTO) throws SQLException;
+    @SelectProvider(type = UserMapperProviderUtil.class,method = "listAroundVenues")
+    List<VenueVOR> listAroundVenue(SearchConditionDTO searchConditionDTO) throws SQLException;
 
     /*
      * @Author liufeng
@@ -52,41 +53,43 @@ public interface UserMapper {
             @Result(column = "authentication", property = "authentication"),
             @Result(column = "deal_account", property = "numberOfTrade"),
             @Result(column = "good_comment", property = "goodCommentCount"),
-            @Result(column = "user_privacy",property = "privacy"),
+            @Result(column = "user_privacy", property = "privacy"),
             @Result(column = "coach_id", property = "courses", one = @One(
                     select = "com.woniu.yoga.user.dao.CoachMapper.findCourseByCoachId"
             )),
     })
-    CoachDetailInfoVO getDetailInfoByUserId(Integer userId)throws SQLException;
+    CoachDetailInfoVO getDetailInfoByUserId(Integer userId) throws SQLException;
 
     /*
      * @Author liufeng
      * @Description //根据用户等级查询所享有的优惠
      **/
     @Select("select discount from level_discount where level_id = #{userLevel}")
-    BigDecimal selectDiscountByLevel(Integer userLevel)throws SQLException;
+    BigDecimal selectDiscountByLevel(Integer userLevel);
 
 
-    User saveUser(User user)throws SQLException;
+    User saveUser(User user);
 
-    Integer activeUserByEamil(String userEmail)throws SQLException;
+    Integer activeUserByEamil(String userEmail);
 
-    Integer activeUserByPhone(String userPhone)throws SQLException;
+    Integer activeUserByPhone(String userPhone);
 
-    User queryUserByEmail(String userEmail)throws SQLException;
+    User queryUserByEmail(String userEmail);
 
-    User queryUserByEmailAndPwd(String userEmail, String userPwd)throws SQLException;
+    User queryUserByEmailAndPwd(String userEmail, String userPwd);
 
-    User queryUserByPhone(String userPhone)throws SQLException;
+    User queryUserByPhone(String userPhone);
 
-    User queryUserByPhoneAndPwd(String userPhone, String userPwd)throws SQLException;
+    User queryUserByPhoneAndPwd(String userPhone, String userPwd);
 
-    User queryUserByPhoneAndCode(String userPhone, String userVerifyCode)throws SQLException;
+    User queryUserByPhoneAndCode(String userPhone, String userVerifyCode);
 
-    Integer updateCode(String userVerifyCode, String userPhone)throws SQLException;
+    Integer updateCode(String userVerifyCode, String userPhone);
 
-    User queryUserByEmailAndCode(String userEmail, String userVerifyCode)throws SQLException;
+    User queryUserByEmailAndCode(String userEmail, String userVerifyCode);
 
     @Select("select user_phone from user where user_id = #{userId}")
-    String selectPhoneByUserId(Integer userId)throws SQLException;
+    String selectPhoneByUserId(Integer userId);
+    @Select("select * from Coupon where coupon_id in (select coupon_id from user_coupon where user_id=#{userid})")
+    List<Coupon> fandCouponByUserId(@Param("userid") int userid);
 }

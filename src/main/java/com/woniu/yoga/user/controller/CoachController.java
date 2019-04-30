@@ -144,7 +144,7 @@ public class CoachController {
      * @Param
      * @return
      **/
-    @DeleteMapping("/deleteCourse")
+    @DeleteMapping("deleteCourse")
     @ResponseBody
     @ApiOperation(value = "瑜伽师删除课程")
     @ApiImplicitParams(value = {
@@ -164,7 +164,7 @@ public class CoachController {
      * @Param
      * @return
      **/
-    @RequestMapping("updateCourse")
+    @PostMapping("updateCourse")
     @ResponseBody
     @ApiOperation(value = "瑜伽师更新课程")
     @ApiImplicitParams(value = {
@@ -184,7 +184,7 @@ public class CoachController {
      * @Param
      * @return
      **/
-    @RequestMapping("/applyForSign")
+    @PostMapping("applyForSign")
     @ResponseBody
     @ApiOperation(value = "瑜伽师申请认证")
     @ApiImplicitParams(value = {
@@ -205,7 +205,7 @@ public class CoachController {
      *  result:"接受","拒绝"
      * @return
      **/
-    @RequestMapping("/dealVenueRequestSign")
+    @PostMapping("dealVenueRequestSign")
     @ResponseBody
     @ApiOperation(value = "瑜伽师处理场馆（平台）发出的认证请求")
     @ApiImplicitParams(value = {
@@ -226,7 +226,7 @@ public class CoachController {
      * @Param
      * @return
      **/
-    @RequestMapping("/cancelContract")
+    @DeleteMapping("cancelContract")
     @ResponseBody
     @ApiOperation(value = "瑜伽师借阅")
     public Result cancelContract(HttpSession session) {

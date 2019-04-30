@@ -21,10 +21,6 @@ public class SearchConditionDTO {
     private double nothLatitude;
     //位置边界：南方纬度
     private double southLatitude;
-    //搜索的条件：2为搜索教练，3为搜索场馆，其余不合法
-    private int roleId;
-//    //最低课时费，限定整数；场馆无需此项
-//    private int lowPrice;
     //教练流派，需要从数据库字典查询，然后选择；场馆无需此项
     private int coachStyle;
     //教练认证方式，值为“不限”、“场馆认证”或者“平台认证”，其余不合法；场馆无需此项

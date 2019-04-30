@@ -59,34 +59,12 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private RedisTemplate redisTemplate;
 
-    //查找学员周边的教练、场馆
-    @Override
-    public Result listAroundUserByAddress(SearchConditionVO searchConditionVO) throws RuntimeException {
-        //判断用户是否开发定位给app，null则没有开启定位，需要提示用户开启定位
-        if (searchConditionVO.getLongitude() == null || searchConditionVO.getLatitude() == null) {
-            return ResultUtil.errorOperation("请开启定位！");
-        }
-        //判断角色id是否合法，2：教练；3：场馆；
-        if (searchConditionVO.getRoleId() != 2 && searchConditionVO.getRoleId() != 3) {
-            return ResultUtil.errorOperation("请明确选择教练，或者场馆！");
-        }
-        //double[4] 西侧经度，东侧经度，南侧纬度，北侧纬度
-        double bounds[] = GetBmapDistanceUtil.getRange(searchConditionVO.getLongitude(), searchConditionVO.getLatitude(), searchConditionVO.getRound());
-        SearchConditionDTO searchConditionDTO = ConvertVOToDTOUtil.searchConditionConvert(bounds, searchConditionVO);
-        List<UserVO> data = null;
-        try {
-            data = userMapper.listAroundUser(searchConditionDTO);
-        } catch (Exception e){
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
-        return ResultUtil.actionSuccess("查询成功", data);
-    }
+
 
     //如果是教练，查找头像、姓名、简介、流派、认证方式（单击查看场馆）、课程（单击查看课程），交易次数，好评数
     //好友或者公开才能查看qq、微信、电话等信息
     @Override
-    public Result getDetailInfoByUserId(Integer userId, Integer coachId) throws RuntimeException {
+    public Result getDetailInfoByUserId(Integer userId, Integer coachId) {
         if (coachId == null) {
             return ResultUtil.errorOperation("请选择想了解的瑜伽师!");
         }
@@ -116,7 +94,7 @@ public class StudentServiceImpl implements StudentService {
 
     //学员下单
     @Override
-    public Result saveOrder(Integer userId, Order order) throws RuntimeException {
+    public Result saveOrder(Integer userId, Order order) {
         try {
             order.setPayerId(userId);
             Wallet wallet = walletMapper.selectByPrimaryKey(order.getPayerId());
@@ -140,7 +118,7 @@ public class StudentServiceImpl implements StudentService {
 
     //学员付款前的订单金额更新，返回订单确认信息
     @Override
-    public Result updateOrderWithCoupon(Integer userId, String orderId, Integer couponId) throws RuntimeException {
+    public Result updateOrderWithCoupon(Integer userId, String orderId, Integer couponId) {
         try {
             Order order = orderMapper.selectByPrimaryKey(orderId);
             if (order.getPayerId() != userId) {
@@ -174,7 +152,7 @@ public class StudentServiceImpl implements StudentService {
 
     //学员钱包余额减少，瑜伽师（或所在场馆）余额增加，添加钱包记录，更改订单状态、优惠券状态、
     @Override
-    public Result updateOrderForPay(Integer userId, String orderId) throws RuntimeException {
+    public Result updateOrderForPay(Integer userId, String orderId) {
         try {
             Order order = orderMapper.selectByPrimaryKey(orderId);
             if (order.getPayerId() != userId) {
@@ -221,7 +199,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Result saveComment(Integer userId, String orderId, Comment comment) throws RuntimeException {
+    public Result saveComment(Integer userId, String orderId, Comment comment) {
         if (comment.getEntityType() == 1) {
             return ResultUtil.illegalOperation();
         }
@@ -261,7 +239,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Result listAllCourseAppoint() throws RuntimeException {
+    public Result listAllCourseAppoint() {
         List<CourseAppoint> data = new ArrayList<>();
         data.add(CourseAppoint.ONLINE);
         data.add(CourseAppoint.OFFLINE);
@@ -269,7 +247,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Result updateOrderForRefund(Integer userId, String orderId) throws RuntimeException {
+    public Result updateOrderForRefund(Integer userId, String orderId) {
         try {
             Order order = orderMapper.selectByPrimaryKey(orderId);
             if (userId != order.getPayerId()) {
@@ -288,7 +266,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Result updateOrderForCancel(Integer userId, String orderId) throws RuntimeException {
+    public Result updateOrderForCancel(Integer userId, String orderId) {
         try {
             Order order = orderMapper.selectByPrimaryKey(orderId);
             if (order.getOrderStatus() != OrderUtil.NEWORDER) {
@@ -307,7 +285,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Result findCoachPhoneByUserId(Integer userId) throws RuntimeException {
+    public Result findCoachPhoneByUserId(Integer userId) {
         try {
             String phone = userMapper.selectPhoneByUserId(userId);
             return ResultUtil.actionSuccess("查找成功", phone);
@@ -318,7 +296,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Result repeatOrder(Integer userId, String orderId) throws RuntimeException {
+    public Result repeatOrder(Integer userId, String orderId) {
        try {
            Order order = orderMapper.selectByPrimaryKey(orderId);
            if (order.getPayerId() != userId) {

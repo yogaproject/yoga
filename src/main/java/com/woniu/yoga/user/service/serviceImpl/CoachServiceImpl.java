@@ -31,7 +31,7 @@ public class CoachServiceImpl implements CoachService {
     private CourseMapper courseMapper;
 
     @Override
-    public Coach findCoachByCoachId(Integer coachId) throws RuntimeException {
+    public Coach findCoachByCoachId(Integer coachId) {
         try {
             Coach coach = coachMapper.selectByPrimaryKey(coachId);
             return coach;
@@ -49,7 +49,7 @@ public class CoachServiceImpl implements CoachService {
      * @return
      **/
     @Override
-    public Result updateOrder(String orderId, String result) throws RuntimeException {
+    public Result updateOrder(String orderId, String result) {
         try {
             //根据操作更改订单状态
             Order order = orderMapper.selectByPrimaryKey(orderId);
@@ -81,7 +81,7 @@ public class CoachServiceImpl implements CoachService {
      * @return
      **/
     @Override
-    public Result listStudentByCoachId(Integer userId) throws RuntimeException {
+    public Result listStudentByCoachId(Integer userId) {
         //联合student_coach,coach,user查找学生信息
         try {
             int coachId = coachMapper.selectCoachIdByUserId(userId);
@@ -101,7 +101,7 @@ public class CoachServiceImpl implements CoachService {
      * @return
      **/
     @Override
-    public Result listCoachStyles() throws RuntimeException {
+    public Result listCoachStyles() {
         try {
             List data = coachMapper.listCoachStyles();
             return ResultUtil.actionSuccess("查询成功", data);
@@ -112,7 +112,7 @@ public class CoachServiceImpl implements CoachService {
     }
 
     @Override
-    public Result updateOrderForWaitToPay(Integer userId, String orderId) throws RuntimeException {
+    public Result updateOrderForWaitToPay(Integer userId, String orderId) {
         try {
             Order order = orderMapper.selectByPrimaryKey(orderId);
             if (order.getAccepterId() != userId) {
@@ -131,7 +131,7 @@ public class CoachServiceImpl implements CoachService {
     }
 
     @Override
-    public Result insertCourse(int userId, Course course) throws RuntimeException {
+    public Result insertCourse(int userId, Course course) {
         try {
             Integer coachId = coachMapper.selectCoachIdByUserId(userId);
             Integer courseIdOld = courseMapper.selectByCoachIdAndCOurseName(coachId, course.getCourseName());
@@ -148,7 +148,7 @@ public class CoachServiceImpl implements CoachService {
     }
 
     @Override
-    public Result applyForSign(int userId, Integer venueId) throws RuntimeException {
+    public Result applyForSign(int userId, Integer venueId) {
         try {
             Integer coachId = coachMapper.selectCoachIdByUserId(userId);
             Integer authentication = coachMapper.selectAuthenticationByCoachId(coachId);
@@ -164,7 +164,7 @@ public class CoachServiceImpl implements CoachService {
     }
 
     @Override
-    public Result dealVenueRequest(int userId, Integer venueId, String result) throws RuntimeException {
+    public Result dealVenueRequest(int userId, Integer venueId, String result) {
         try {
             Integer coachId = coachMapper.selectCoachIdByUserId(userId);
             Integer authentication = coachMapper.selectAuthenticationByCoachId(coachId);
@@ -196,7 +196,7 @@ public class CoachServiceImpl implements CoachService {
     }
 
     @Override
-    public Result cancelContract(int userId) throws RuntimeException {
+    public Result cancelContract(int userId) {
         try {
             Integer coachId = coachMapper.selectCoachIdByUserId(userId);
             coachMapper.updateCoachVenueStatus(coachId, 2);
@@ -209,7 +209,7 @@ public class CoachServiceImpl implements CoachService {
     }
 
     @Override
-    public Result deleteCourse(int userId, Integer courseId) throws RuntimeException {
+    public Result deleteCourse(int userId, Integer courseId) {
         try {
             int row = courseMapper.deleteCourse();
             return ResultUtil.actionSuccess("删除成功", null);
@@ -220,7 +220,7 @@ public class CoachServiceImpl implements CoachService {
     }
 
     @Override
-    public Result updateCourse(int userId, Course course) throws RuntimeException {
+    public Result updateCourse(int userId, Course course) {
         try {
             Integer coachId = coachMapper.selectCoachIdByUserId(userId);
             course.setCoachId(coachId);
@@ -234,7 +234,7 @@ public class CoachServiceImpl implements CoachService {
 
 
     @Override
-    public List<Venue> findVenueByConditions(Recruitment recruitment) throws RuntimeException {
+    public List<Venue> findVenueByConditions(Recruitment recruitment) {
         try {
             List venueList = coachMapper.queryVenueByConditions(recruitment);
             return venueList;

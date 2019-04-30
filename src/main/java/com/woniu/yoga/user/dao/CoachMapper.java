@@ -2,6 +2,7 @@ package com.woniu.yoga.user.dao;
 
 import com.woniu.yoga.user.pojo.Coach;
 import com.woniu.yoga.user.pojo.Course;
+import com.woniu.yoga.user.vo.CoachStyleVO;
 import com.woniu.yoga.user.vo.StudentVO;
 import com.woniu.yoga.venue.pojo.Recruitment;
 import com.woniu.yoga.venue.pojo.Venue;
@@ -47,8 +48,8 @@ public interface CoachMapper {
      * @Author liufeng
      * @Description //查询所有的瑜伽流派
      **/
-    @Select("select dict_item_name from base_dir where dict_type_code = 1")
-    List listCoachStyles()throws SQLException;
+    @Select("select dict_id,dict_item_name from base_dir where dict_type_code = 1")
+    List<CoachStyleVO> listCoachStyles()throws SQLException;
 
     /*
      * @Author liufeng

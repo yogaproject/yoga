@@ -66,7 +66,7 @@ public class OrderUtil {
         return repeatOrder;
     }
 
-    public static String getOrderStatus(String orderStatus) {
+    public static int[] getOrderStatus(String orderStatus) {
         int[] status = null;
         if (orderStatus.equals("未完成订单")) {
             status = new int[5];
@@ -83,6 +83,6 @@ public class OrderUtil {
             status[2]=REFUNDFAILURE;
             status[3]=REFUNDSUCCESS;
         }
-        return status.toString();
+        return status;
     }
 }
