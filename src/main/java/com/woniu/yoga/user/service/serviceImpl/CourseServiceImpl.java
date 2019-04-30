@@ -6,6 +6,7 @@ import com.woniu.yoga.user.util.ResultUtil;
 import com.woniu.yoga.user.vo.CourseVO;
 import com.woniu.yoga.user.vo.Result;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 
@@ -16,6 +17,7 @@ import java.sql.SQLException;
  * @Version 1.0
  * @Description 课程信息交互
  **/
+@Service
 public class CourseServiceImpl implements CourseService {
 
     @Autowired
