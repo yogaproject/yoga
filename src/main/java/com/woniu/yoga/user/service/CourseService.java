@@ -1,6 +1,7 @@
 package com.woniu.yoga.user.service;
 
 import com.woniu.yoga.user.vo.CourseVO;
+import com.woniu.yoga.user.vo.Result;
 
 /**
  * @Author liufeng
@@ -12,5 +13,5 @@ import com.woniu.yoga.user.vo.CourseVO;
 public interface CourseService {
 
 
-    CourseVO findCourseByCourseId(Integer courseId);
+    Result findCourseByCourseId(Integer courseId);
 }

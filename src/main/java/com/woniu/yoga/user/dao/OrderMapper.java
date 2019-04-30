@@ -2,36 +2,40 @@ package com.woniu.yoga.user.dao;
 
 
 import com.woniu.yoga.user.pojo.Order;
+import com.woniu.yoga.user.util.UserMapperProviderUtil;
 import com.woniu.yoga.user.vo.Result;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.Update;
 import org.springframework.stereotype.Repository;
 
+import java.sql.SQLException;
 import java.util.List;
 
 @Repository
 public interface OrderMapper {
-    int deleteByPrimaryKey(String orderId);
+    int deleteByPrimaryKey(String orderId)throws SQLException;
 
-    int insert(Order record);
+    int insert(Order record)throws SQLException;
 
-    int insertSelective(Order record);
+    int insertSelective(Order record)throws SQLException;
 
-    Order selectByPrimaryKey(String orderId);
+    Order selectByPrimaryKey(String orderId)throws SQLException;
 
-    int updateByPrimaryKeySelective(Order record);
+    int updateByPrimaryKeySelective(Order record)throws SQLException;
 
-    int updateByPrimaryKey(Order record);
+    int updateByPrimaryKey(Order record)throws SQLException;
     /*
      * @Author liufeng
      * @Description //根据用户id和订单状态查询订单
      **/
-    @Select("select * from order where order_status = #{orderStatus} and payer_id =#{userId}")
-    List<Order> findOrderByUserIdAndStatus(Integer userId, String orderStatus);
+    //@Select("select * from order where order_status = #{orderStatus} and payer_id =#{userId} and order_flag = 0")
+    //@SelectProvider(type = UserMapperProviderUtil.class,method = "findOrderByUserIdAndStatus")
+    List<Order> findOrderByUserIdAndStatus(Integer userId, String orderStatus)throws SQLException;
     /*
      * @Author liufeng
      * @Description //根据订单编号更新订单状态
      **/
-    @Update("update order set order_status = #{orderStatus} where order_id =#{orderId}")
-    int updateStatusByOrderId(String orderId,Integer orderStatus);
+    @Update("update order set order_status = #{orderStatus} where order_id =#{orderId} and order_flag = 0")
+    int updateStatusByOrderId(String orderId,Integer orderStatus)throws SQLException;
 }

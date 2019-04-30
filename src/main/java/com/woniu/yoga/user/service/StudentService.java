@@ -22,22 +22,22 @@ public interface StudentService {
     Result getDetailInfoByUserId(Integer userId, Integer coachId);
 
 
-    Result saveOrder(Order order);
+    Result saveOrder(Integer userId,Order order);
 
 
-    Result updateOrderWithCoupon(String orderId, @RequestParam(required = false) Integer couponId);
+    Result updateOrderWithCoupon(Integer userId,String orderId, @RequestParam(required = false) Integer couponId);
 
 
-    Result updateOrderForPay(String orderId);
+    Result updateOrderForPay(Integer userId,String orderId);
 
 
-    Result saveComment(String orderId,Comment comment);
+    Result saveComment(Integer userId,String orderId,Comment comment);
 
 
     Result listAllCourseAppoint();
 
 
-    Result updateOrderForRefund(String orderId);
+    Result updateOrderForRefund(Integer userId,String orderId);
 
     Result updateOrderForCancel(Integer userId, String orderId);
 

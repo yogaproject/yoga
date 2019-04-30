@@ -1,5 +1,6 @@
 package com.woniu.yoga.user.service.serviceImpl;
 
+import com.woniu.yoga.manage.dao.CouponMapper;
 import com.woniu.yoga.manage.pojo.Coupon;
 import com.woniu.yoga.user.dao.OrderMapper;
 import com.woniu.yoga.user.dao.UserMapper;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.util.List;
 
 
@@ -28,10 +30,12 @@ public class UserServiceImpl implements UserService {
     private OrderMapper orderMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private CouponMapper couponMapper;
 
     //查询用户所有订单
     @Override
-    public Result listOrder(Integer userId, String orderStatus) {
+    public Result listOrder(Integer userId, String orderStatus) throws SQLException {
         int status = 0;
         if (orderStatus != null) {
             status = OrderUtil.checkOrderStatus(orderStatus);//利用工具将字符串状态转为数字状态
@@ -45,15 +49,19 @@ public class UserServiceImpl implements UserService {
 
     //查询用户所有有效的优惠券
     @Override
-    public Result listCouponsByUserId(Integer userId) {
-        //等待工具中......
-        return null;
+    public Result listCouponsByUserId(Integer userId) throws RuntimeException{
+        try {
+            List<Coupon> coupons = couponMapper.selectByUserId(userId);
+            return ResultUtil.actionSuccess("查询成功",coupons);
+        }catch (SQLException e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
     }
 
-    //lxy
     @Override
     public User saveUser(User user) {
-        return userMapper.saveUser(user);
+        return null;
     }
 
 

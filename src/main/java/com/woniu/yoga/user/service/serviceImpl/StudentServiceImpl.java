@@ -21,8 +21,11 @@ import com.woniu.yoga.user.util.OrderUtil;
 import com.woniu.yoga.user.util.ResultUtil;
 import com.woniu.yoga.user.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -41,7 +44,7 @@ public class StudentServiceImpl implements StudentService {
     private UserMapper userMapper;
     @Autowired
     private CoachMapper coachMapper;
-    //    @Autowire
+    @Autowired
     private WalletMapper walletMapper;
     @Autowired
     private CourseMapper courseMapper;
@@ -51,11 +54,14 @@ public class StudentServiceImpl implements StudentService {
     private OrderMapper orderMapper;
     @Autowired
     private CommentMapper commentMapper;
+    @Autowired
     private WalletRecordMapper walletRecordMapper;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     //查找学员周边的教练、场馆
     @Override
-    public Result listAroundUserByAddress(SearchConditionVO searchConditionVO) {
+    public Result listAroundUserByAddress(SearchConditionVO searchConditionVO) throws RuntimeException {
         //判断用户是否开发定位给app，null则没有开启定位，需要提示用户开启定位
         if (searchConditionVO.getLongitude() == null || searchConditionVO.getLatitude() == null) {
             return ResultUtil.errorOperation("请开启定位！");
@@ -67,169 +73,195 @@ public class StudentServiceImpl implements StudentService {
         //double[4] 西侧经度，东侧经度，南侧纬度，北侧纬度
         double bounds[] = GetBmapDistanceUtil.getRange(searchConditionVO.getLongitude(), searchConditionVO.getLatitude(), searchConditionVO.getRound());
         SearchConditionDTO searchConditionDTO = ConvertVOToDTOUtil.searchConditionConvert(bounds, searchConditionVO);
-        List<UserVO> data = userMapper.listAroundUser(searchConditionDTO);
+        List<UserVO> data = null;
+        try {
+            data = userMapper.listAroundUser(searchConditionDTO);
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
         return ResultUtil.actionSuccess("查询成功", data);
     }
 
     //如果是教练，查找头像、姓名、简介、流派、认证方式（单击查看场馆）、课程（单击查看课程），交易次数，好评数
     //好友或者公开才能查看qq、微信、电话等信息
     @Override
-    public Result getDetailInfoByUserId(Integer userId, Integer coachId) {
+    public Result getDetailInfoByUserId(Integer userId, Integer coachId) throws RuntimeException {
         if (coachId == null) {
             return ResultUtil.errorOperation("请选择想了解的瑜伽师!");
         }
-        CoachDetailInfoVO coachDetailInfoVO = userMapper.getDetailInfoByUserId(coachId);
-        //如果学员和瑜伽师不是好友，隐藏个人信息；或者瑜伽师设置保密
-        if ((coachDetailInfoVO.getPrivacy()==0)||(coachDetailInfoVO.getPrivacy() == 1 && !("学员和瑜伽师是好友" == ""))) {
-            coachDetailInfoVO.setQq("secret");
-            coachDetailInfoVO.setWechat("secret");
-            coachDetailInfoVO.setPhone("secret");
+        CoachDetailInfoVO coachDetailInfoVO = null;
+        try {
+            coachDetailInfoVO = userMapper.getDetailInfoByUserId(coachId);
+            //如果是场馆认证，设置venueName：场馆名
+            if (coachDetailInfoVO.getAuthentication() == 1) {
+                coachDetailInfoVO.setVenueName(coachMapper.getVenueByCoachId(coachId));
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException();
         }
-        //如果是场馆认证，设置venueName：场馆名
-        if (coachDetailInfoVO.getAuthentication() == 1) {
-            coachDetailInfoVO.setVenueName(coachMapper.getVenueByCoachId(coachId));
+        //如果学员和瑜伽师不是好友，隐藏个人信息；或者瑜伽师设置保密
+        if ((coachDetailInfoVO.getPrivacy() == 0) || (coachDetailInfoVO.getPrivacy() == 1 && !("学员和瑜伽师是好友" == ""))) {
+            coachDetailInfoVO.setQq(null);
+            coachDetailInfoVO.setWechat(null);
+            coachDetailInfoVO.setPhone(null);
         }
         //如果是官方认证，设置venueName：平台认证
         if (coachDetailInfoVO.getAuthentication() == 2) {
             coachDetailInfoVO.setVenueName("平台认证");
         }
-        List data = new ArrayList();
-        data.add(coachDetailInfoVO);
-        return ResultUtil.actionSuccess("查询成功", data);
+        return ResultUtil.actionSuccess("查询成功", coachDetailInfoVO);
     }
 
     //学员下单
     @Override
-    public Result saveOrder(Order order) {
-        Wallet wallet = walletMapper.selectByPrimaryKey(order.getPayerId());
-        Course course = courseMapper.selectByPrimaryKey(order.getCourseId());
-        BigDecimal orderMoney = course.getCoursePrice().multiply(new BigDecimal(order.getCourseCount()));
-        if (orderMoney.compareTo(wallet.getBalance()) < 0) {
-            return ResultUtil.errorOperation("余额不足，请充值");
+    public Result saveOrder(Integer userId, Order order) throws RuntimeException {
+        try {
+            order.setPayerId(userId);
+            Wallet wallet = walletMapper.selectByPrimaryKey(order.getPayerId());
+            Course course = courseMapper.selectByPrimaryKey(order.getCourse().getCourseId());
+            BigDecimal orderMoney = course.getCoursePrice().multiply(new BigDecimal(order.getCourseCount()));
+            if (orderMoney.compareTo(wallet.getBalance()) < 0) {
+                return ResultUtil.errorOperation("余额不足，请充值");
+            }
+            order.setOrderMoney(orderMoney);
+            order.setOrderStatus(OrderUtil.NEWORDER);
+            order.setOrderId(OrderIdUtil.getOrderId());
+            order.setCreateTime(new Date());
+            //插入订单，
+            orderMapper.insertSelective(order);
+            return ResultUtil.actionSuccess("已下单，等待处理中...", order);
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException();
         }
-        order.setOrderMoney(orderMoney);
-        order.setOrderStatus(OrderUtil.NEWORDER);
-        order.setOrderId(OrderIdUtil.getOrderId());
-        order.setCreateTime(new Date());
-        //插入订单，
-        int row = orderMapper.insertSelective(order);
-        if (row == 1) {
-            List data = new ArrayList();
-            data.add(order);
-            return ResultUtil.actionSuccess("已下单，等待处理中...", data);
-        }
-        return ResultUtil.connectDatabaseFail();
     }
 
     //学员付款前的订单金额更新，返回订单确认信息
     @Override
-    public Result updateOrderWithCoupon(String orderId, Integer couponId) {
-        int faceValue = 0;
-        if (couponId != null) {
-            Coupon coupon = couponMapper.selectByPrimaryKey(couponId);
-            if (coupon == null) {
-                return ResultUtil.errorOperation("优惠券状态错误，请联系管理员");
+    public Result updateOrderWithCoupon(Integer userId, String orderId, Integer couponId) throws RuntimeException {
+        try {
+            Order order = orderMapper.selectByPrimaryKey(orderId);
+            if (order.getPayerId() != userId) {
+                return ResultUtil.illegalOperation();
             }
-            faceValue = coupon.getFaceValue();
+            if (order.getOrderStatus() != OrderUtil.WAITTOPAY) {
+                return ResultUtil.errorOperation("订单状态错误，请联系管理员");
+            }
+            int faceValue = 0;
+            if (couponId != null) {
+                Coupon coupon = couponMapper.selectByPrimaryKey(couponId);
+                if (coupon == null) {
+                    return ResultUtil.errorOperation("优惠券状态错误，请联系管理员");
+                }
+                faceValue = coupon.getFaceValue();
+            }
+
+            User user = userMapper.selectByPrimaryKey(order.getPayerId());
+            //查询会员等级，打折，计算应付款
+            BigDecimal VIPDiscount = userMapper.selectDiscountByLevel(user.getUserLevel());
+            BigDecimal discount = order.getOrderMoney().multiply(VIPDiscount).subtract(new BigDecimal(String.valueOf(faceValue)));
+            order.setDiscount(discount);
+            order.setCouponId(couponId);
+            orderMapper.updateByPrimaryKeySelective(order);
+            return ResultUtil.actionSuccess("订单信息更新，请确认...", order);
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException();
         }
-        Order order = orderMapper.selectByPrimaryKey(orderId);
-        if (order.getOrderStatus() != OrderUtil.WAITTOPAY) {
-            return ResultUtil.errorOperation("订单状态错误，请联系管理员");
-        }
-        User user = userMapper.selectByPrimaryKey(order.getPayerId());
-        //查询会员等级，打折，计算应付款
-        BigDecimal VIPDiscount = userMapper.selectDiscountByLevel(user.getUserLevel());
-        BigDecimal discount = order.getOrderMoney().multiply(VIPDiscount).subtract(new BigDecimal(String.valueOf(faceValue)));
-        order.setDiscount(discount);
-        order.setCouponId(couponId);
-        int row = orderMapper.updateByPrimaryKeySelective(order);
-        if (row > 1) {
-            List data = new ArrayList();
-            data.add(order);
-            return ResultUtil.actionSuccess("订单信息更新，请确认...", data);
-        } else {
-            return ResultUtil.connectDatabaseFail();
+    }
+
+    //学员钱包余额减少，瑜伽师（或所在场馆）余额增加，添加钱包记录，更改订单状态、优惠券状态、
+    @Override
+    public Result updateOrderForPay(Integer userId, String orderId) throws RuntimeException {
+        try {
+            Order order = orderMapper.selectByPrimaryKey(orderId);
+            if (order.getPayerId() != userId) {
+                return ResultUtil.illegalOperation();
+            }
+            if (order.getOrderStatus() != OrderUtil.WAITTOPAY) {
+                return ResultUtil.errorOperation("订单状态错误，请联系管理员");
+            }
+            User user = userMapper.selectByPrimaryKey(order.getPayerId());
+            Wallet studentWallet = walletMapper.findWalletByUserId(user.getUserId());
+            //更新钱包余额
+            if (studentWallet.getBalance().compareTo(order.getDiscount()) > 0) {
+                studentWallet.setBalance(studentWallet.getBalance().subtract(order.getDiscount()));
+            } else {
+                return ResultUtil.errorOperation("余额不足");
+            }
+            //添加钱包记录：共2条；1：学员付款给平台；2：平台付款给瑜伽师或教练；
+            WalletRecord studentPayCourseRecord = this.getStudentPayCourseRecord(order);
+            WalletRecord platfotmPayCourseRecord = this.getPlatfotmPayCourseRecord(order);
+            WalletRecord coachCourseRecord = this.getCoachCourseRecord(order);
+            platfotmPayCourseRecord.setFromId(Attributes.PLATFORMNUMBER);
+            //更新瑜伽师（场馆）钱包余额
+            Wallet acceptWallet = walletMapper.selectByPrimaryKey(platfotmPayCourseRecord.getToId());
+            acceptWallet.setBalance(acceptWallet.getBalance().add(platfotmPayCourseRecord.getMoney()));
+            //更新订单状态
+            order.setOrderStatus(OrderUtil.PAIED);
+            //更新优惠券状态
+            if (order.getCouponId() != null) {
+                Coupon coupon = couponMapper.selectByPrimaryKey(order.getCouponId());
+                coupon.setCouponStatus(2);//0未使用；1可用；2使用；3过期
+                couponMapper.updateByPrimaryKeySelective(coupon);
+            }
+            //保存钱包余额
+            walletMapper.updateByPrimaryKeySelective(studentWallet);
+            walletMapper.updateByPrimaryKeySelective(acceptWallet);
+            walletRecordMapper.insertSelective(studentPayCourseRecord);
+            walletRecordMapper.insertSelective(platfotmPayCourseRecord);
+            walletRecordMapper.insertSelective(coachCourseRecord);
+            return ResultUtil.actionSuccess("支付成功", order);
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException();
         }
     }
 
     @Override
-    public Result updateOrderForPay(String orderId) {
-        //学员钱包余额减少，添加钱包记录，更改订单状态、优惠券状态、
-        Order order = orderMapper.selectByPrimaryKey(orderId);
-        if (order.getOrderStatus() != OrderUtil.WAITTOPAY) {
-            return ResultUtil.errorOperation("订单状态错误，请联系管理员");
-        }
-        User user = userMapper.selectByPrimaryKey(order.getPayerId());
-        Wallet studentWallet = walletMapper.findWalletByUserId(user.getUserId());
-        //更新钱包余额
-        if (studentWallet.getBalance().compareTo(order.getDiscount()) > 0) {
-            studentWallet.setBalance(studentWallet.getBalance().subtract(order.getDiscount()));
-        } else {
-            return ResultUtil.errorOperation("余额不足");
-        }
-        //添加钱包记录：共2条；1：学员付款给平台；2：平台付款给瑜伽师或教练；
-        WalletRecord studentPayCourseRecord = this.getStudentPayCourseRecord(order);
-        WalletRecord platfotmPayCourseRecord = this.getPlatfotmPayCourseRecord(order);
-        WalletRecord coachCourseRecord = this.getCoachCourseRecord(order);
-        platfotmPayCourseRecord.setFromId(Attributes.PLATFORMNUMBER);
-        //更新瑜伽师（场馆）钱包余额
-        Wallet acceptWallet = walletMapper.selectByPrimaryKey(platfotmPayCourseRecord.getToId());
-        acceptWallet.setBalance(acceptWallet.getBalance().add(platfotmPayCourseRecord.getMoney()));
-        //更新订单状态
-        order.setOrderStatus(OrderUtil.PAIED);
-        //更新优惠券状态
-        if (order.getCouponId() != null) {
-            Coupon coupon = couponMapper.selectByPrimaryKey(order.getCouponId());
-            coupon.setCouponStatus(2);
-            couponMapper.updateByPrimaryKeySelective(coupon);
-        }
-        //保存钱包余额
-        walletMapper.updateByPrimaryKeySelective(studentWallet);
-        walletMapper.updateByPrimaryKeySelective(acceptWallet);
-        walletRecordMapper.insertSelective(studentPayCourseRecord);
-        walletRecordMapper.insertSelective(platfotmPayCourseRecord);
-        walletRecordMapper.insertSelective(coachCourseRecord);
-        List data = new ArrayList();
-        data.add(order);
-        return ResultUtil.actionSuccess("支付成功", data);
-    }
-
-    @Override
-    public Result saveComment(String orderId, Comment comment) {
+    public Result saveComment(Integer userId, String orderId, Comment comment) throws RuntimeException {
         if (comment.getEntityType() == 1) {
             return ResultUtil.illegalOperation();
         }
-        int row = commentMapper.insertSelective(comment);
-        //学员、瑜伽师 会员等级，积分变化，交易记录，并返回评论详细信息
-        //根据金额转换积分，修改积分
-        //根据积分转换等级
-        User student = userMapper.selectByPrimaryKey(comment.getUserId());
-        student.setUserScore(student.getUserScore() + Attributes.INTEGRALADDWITHCOMMENT);
-        student.setUserLevel(UserLevelUtil.getUserLevel(student.getUserScore()));
-        Coach coach = coachMapper.selectByCourseId(comment.getEntityId());
-        if (comment.getCommentDegree() == 0) {
-            coach.setGoodComment(coach.getGoodComment() + 1);
+        try {
+            commentMapper.insertSelective(comment);
+            //学员、瑜伽师 会员等级，积分变化，交易记录，并返回评论详细信息
+            //根据金额转换积分，修改积分
+            //根据积分转换等级
+            User student = userMapper.selectByPrimaryKey(comment.getUserId());
+            if (userId != student.getUserId()) {
+                ResultUtil.illegalOperation();
+            }
+            student.setUserScore(student.getUserScore() + Attributes.INTEGRALADDWITHCOMMENT);
+            student.setUserLevel(UserLevelUtil.getUserLevel(student.getUserScore()));
+            Coach coach = coachMapper.selectByCourseId(comment.getEntityId());
+            if (comment.getCommentDegree() == 0) {
+                coach.setGoodComment(coach.getGoodComment() + 1);
+            }
+            if (comment.getCommentDegree() == 1) {
+                coach.setCommonComment(coach.getCommonComment() + 1);
+            }
+            if (comment.getCommentDegree() == 2) {
+                coach.setBadComment(coach.getBadComment() + 1);
+            }
+            User cUser = userMapper.selectByPrimaryKey(coach.getUserId());
+            cUser.setUserScore(cUser.getUserScore() + Attributes.INTEGRALADDWITHCOMMENT);
+            cUser.setUserLevel(UserLevelUtil.getUserLevel(cUser.getUserScore()));
+            coachMapper.updateByPrimaryKeySelective(coach);
+            userMapper.updateByPrimaryKeySelective(student);
+            userMapper.updateByPrimaryKeySelective(cUser);
+            orderMapper.updateStatusByOrderId(orderId, OrderUtil.END);
+            return ResultUtil.actionSuccess("评论成功", comment);
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException();
         }
-        if (comment.getCommentDegree() == 1) {
-            coach.setCommonComment(coach.getCommonComment() + 1);
-        }
-        if (comment.getCommentDegree() == 2) {
-            coach.setBadComment(coach.getBadComment() + 1);
-        }
-        User cUser = userMapper.selectByPrimaryKey(coach.getUserId());
-        cUser.setUserScore(cUser.getUserScore() + Attributes.INTEGRALADDWITHCOMMENT);
-        cUser.setUserLevel(UserLevelUtil.getUserLevel(cUser.getUserScore()));
-        coachMapper.updateByPrimaryKeySelective(coach);
-        userMapper.updateByPrimaryKeySelective(student);
-        userMapper.updateByPrimaryKeySelective(cUser);
-        orderMapper.updateStatusByOrderId(orderId, OrderUtil.END);
-        List data = new ArrayList();
-        data.add(comment);
-        return ResultUtil.actionSuccess("评论成功", data);
     }
 
     @Override
-    public Result listAllCourseAppoint() {
+    public Result listAllCourseAppoint() throws RuntimeException {
         List<CourseAppoint> data = new ArrayList<>();
         data.add(CourseAppoint.ONLINE);
         data.add(CourseAppoint.OFFLINE);
@@ -237,58 +269,68 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Result updateOrderForRefund(String orderId) {
-        Order order = orderMapper.selectByPrimaryKey(orderId);
-        if (order.getOrderStatus() != OrderUtil.PAIED) {
-            return ResultUtil.errorOperation("订单状态出错，请与管理员联系");
+    public Result updateOrderForRefund(Integer userId, String orderId) throws RuntimeException {
+        try {
+            Order order = orderMapper.selectByPrimaryKey(orderId);
+            if (userId != order.getPayerId()) {
+                return ResultUtil.illegalOperation();
+            }
+            if (order.getOrderStatus() != OrderUtil.PAIED) {
+                return ResultUtil.errorOperation("订单状态出错，请与管理员联系");
+            }
+            order.setOrderStatus(OrderUtil.APPLICATIONFORDRAWBACK);
+            orderMapper.updateByPrimaryKeySelective(order);
+            return ResultUtil.actionSuccess("已提交申请，等待客服处理中...", order);
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException();
         }
-        order.setOrderStatus(OrderUtil.APPLICATIONFORDRAWBACK);
-        int row = orderMapper.updateByPrimaryKeySelective(order);
-        if (row > 0) {
-            List data = new ArrayList();
-            data.add(order);
-            return ResultUtil.actionSuccess("已提交申请，等待客服处理中...", data);
-        }
-        return ResultUtil.connectDatabaseFail();
     }
 
     @Override
-    public Result updateOrderForCancel(Integer userId, String orderId) {
-        Order order = orderMapper.selectByPrimaryKey(orderId);
-        if (order.getOrderStatus() != OrderUtil.NEWORDER) {
-            return ResultUtil.errorOperation("订单状态出错，请与管理员联系");
+    public Result updateOrderForCancel(Integer userId, String orderId) throws RuntimeException {
+        try {
+            Order order = orderMapper.selectByPrimaryKey(orderId);
+            if (order.getOrderStatus() != OrderUtil.NEWORDER) {
+                return ResultUtil.errorOperation("订单状态出错，请与管理员联系");
+            }
+            if (order.getPayerId() != userId) {
+                return ResultUtil.errorOperation("非法操作");
+            }
+            orderMapper.updateStatusByOrderId(orderId, OrderUtil.CANCELED);
+            return ResultUtil.actionSuccess("订单已取消", order);
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException();
         }
-        if (order.getPayerId() != userId) {
-            return ResultUtil.errorOperation("非法操作");
-        }
-        int row = orderMapper.updateStatusByOrderId(orderId, OrderUtil.CANCELED);
-        if (row > 0) {
-            List data = new ArrayList();
-            data.add(order);
-            return ResultUtil.actionSuccess("订单已取消", data);
-        }
-        return ResultUtil.connectDatabaseFail();
+
     }
 
     @Override
-    public Result findCoachPhoneByUserId(Integer userId) {
-        String data[] = new String[1];
-        data[0] = userMapper.selectPhoneByUserId(userId);
-        return ResultUtil.actionSuccess("查找成功", data);
+    public Result findCoachPhoneByUserId(Integer userId) throws RuntimeException {
+        try {
+            String phone = userMapper.selectPhoneByUserId(userId);
+            return ResultUtil.actionSuccess("查找成功", phone);
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
     }
 
     @Override
-    public Result repeatOrder(Integer userId, String orderId) {
-        Order order = orderMapper.selectByPrimaryKey(orderId);
-        if (order.getPayerId() != userId) {
-            return ResultUtil.illegalOperation();
-        }
-        Order repeatOrder = OrderUtil.getRepeatOrder(order);
-        int row = orderMapper.insertSelective(repeatOrder);
-        if (row > 0) {
-            return ResultUtil.actionSuccess("已下单，等待瑜伽师处理中...", repeatOrder);
-        }
-        return ResultUtil.connectDatabaseFail();
+    public Result repeatOrder(Integer userId, String orderId) throws RuntimeException {
+       try {
+           Order order = orderMapper.selectByPrimaryKey(orderId);
+           if (order.getPayerId() != userId) {
+               return ResultUtil.illegalOperation();
+           }
+           Order repeatOrder = OrderUtil.getRepeatOrder(order);
+           orderMapper.insertSelective(repeatOrder);
+           return ResultUtil.actionSuccess("已下单，等待瑜伽师处理中...", repeatOrder);
+       }catch (SQLException e){
+           e.printStackTrace();
+           throw new RuntimeException();
+       }
     }
 
     /*
@@ -309,7 +351,7 @@ public class StudentServiceImpl implements StudentService {
      * @Author liufeng
      * @Description //生成一条钱包记录：学员付款后，平台为瑜伽师或所在平台付款
      **/
-    WalletRecord getPlatfotmPayCourseRecord(Order order) {
+    WalletRecord getPlatfotmPayCourseRecord(Order order)throws SQLException {
         WalletRecord platfotmPayCourseRecord = new WalletRecord();
         platfotmPayCourseRecord.setFromId(Attributes.PLATFORMNUMBER);
         Integer acceptId = order.getAccepterId();
@@ -324,6 +366,10 @@ public class StudentServiceImpl implements StudentService {
         return platfotmPayCourseRecord;
     }
 
+    /*
+     * @Author liufeng
+     * @Description //学员为课程付款，瑜伽师（或所在场馆）钱包余额增加，生成钱包记录
+     **/
     WalletRecord getCoachCourseRecord(Order order) {
         WalletRecord coachCourseRecord = new WalletRecord();
         coachCourseRecord.setFromId(Attributes.PLATFORMNUMBER);

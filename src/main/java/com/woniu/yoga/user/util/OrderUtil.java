@@ -54,14 +54,35 @@ public class OrderUtil {
         }
         return -1;
     }
-    public static Order getRepeatOrder(Order order){
+
+    public static Order getRepeatOrder(Order order) {
         Order repeatOrder = new Order();
-        BeanUtils.copyProperties(order,repeatOrder);
+        BeanUtils.copyProperties(order, repeatOrder);
         repeatOrder.setOrderStatus(NEWORDER);
         repeatOrder.setCouponId(null);
         repeatOrder.setCreateTime(new Date());
         repeatOrder.setOrderId(OrderIdUtil.getOrderId());
         repeatOrder.setDiscount(null);
         return repeatOrder;
+    }
+
+    public static String getOrderStatus(String orderStatus) {
+        int[] status = null;
+        if (orderStatus.equals("未完成订单")) {
+            status = new int[5];
+            status[0] = NEWORDER;
+            status[1] = STARTORDER;
+            status[2] = WAITTOPAY;
+            status[3] = PAIED;
+            status[4] = APPLICATIONFORDRAWBACK;
+        }
+        if (orderStatus.equals("已完成订单")) {
+            status = new int[4];
+            status[0]=CANCELED;
+            status[1]=END;
+            status[2]=REFUNDFAILURE;
+            status[3]=REFUNDSUCCESS;
+        }
+        return status.toString();
     }
 }

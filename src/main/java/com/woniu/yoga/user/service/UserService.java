@@ -36,6 +36,8 @@ public interface UserService {
      **/
     Result listCouponsByUserId(Integer userId);
 
+
+
     //登录注册，插入用户信息 lxy
     User saveUser(User user);
     //邮箱注册验证 lxy

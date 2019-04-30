@@ -13,4 +13,6 @@ public interface FollowService {
     Result addFollow(Integer userId, HttpSession session);
 
     Result cancelFollow(Integer userId, HttpSession session);
+
+    Result searchFollow(String userNickName, Integer userId);
 }
