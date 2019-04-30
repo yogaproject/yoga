@@ -29,9 +29,7 @@ public interface OrderMapper {
      * @Author liufeng
      * @Description //根据用户id和订单状态查询订单
      **/
-    //@Select("select * from order where order_status = #{orderStatus} and payer_id =#{userId} and order_flag = 0")
-    //@SelectProvider(type = UserMapperProviderUtil.class,method = "findOrderByUserIdAndStatus")
-    List<Order> findOrderByUserIdAndStatus(Integer userId, String orderStatus)throws SQLException;
+    List<Order> findOrderByUserIdAndStatus(Integer userId, int[] orderStatus)throws SQLException;
     /*
      * @Author liufeng
      * @Description //根据订单编号更新订单状态

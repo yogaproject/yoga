@@ -16,32 +16,32 @@ import java.util.List;
  **/
 public interface StudentService {
 
-    Result listAroundUserByAddress(SearchConditionVO searchConditionVO);
 
 
-    Result getDetailInfoByUserId(Integer userId, Integer coachId);
+
+    Result getDetailInfoByUserId(Integer userId, Integer coachId) throws RuntimeException;
 
 
-    Result saveOrder(Integer userId,Order order);
+    Result saveOrder(Integer userId,Order order) throws RuntimeException;
 
 
-    Result updateOrderWithCoupon(Integer userId,String orderId, @RequestParam(required = false) Integer couponId);
+    Result updateOrderWithCoupon(Integer userId,String orderId, @RequestParam(required = false) Integer couponId) throws RuntimeException;
 
 
-    Result updateOrderForPay(Integer userId,String orderId);
+    Result updateOrderForPay(Integer userId,String orderId) throws RuntimeException;
 
 
-    Result saveComment(Integer userId,String orderId,Comment comment);
+    Result saveComment(Integer userId,String orderId,Comment comment) throws RuntimeException;
 
 
-    Result listAllCourseAppoint();
+    Result listAllCourseAppoint() throws RuntimeException;
 
 
-    Result updateOrderForRefund(Integer userId,String orderId);
+    Result updateOrderForRefund(Integer userId,String orderId) throws RuntimeException;
 
-    Result updateOrderForCancel(Integer userId, String orderId);
+    Result updateOrderForCancel(Integer userId, String orderId) throws RuntimeException;
 
-    Result findCoachPhoneByUserId(Integer userId);
+    Result findCoachPhoneByUserId(Integer userId) throws RuntimeException;
 
-    Result repeatOrder(Integer userId, String orderId);
+    Result repeatOrder(Integer userId, String orderId) throws RuntimeException;
 }

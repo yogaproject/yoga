@@ -3,8 +3,10 @@ package com.woniu.yoga.user.service;
 import com.woniu.yoga.manage.pojo.Coupon;
 import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.vo.Result;
+import com.woniu.yoga.user.vo.SearchConditionVO;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -14,8 +16,9 @@ import java.util.List;
  * @ClassName StudentService
  * @Date 2019/4/18 15:30
  * @Version 1.0
- * @Description TODO
+ * @Description
  **/
+@Service
 public interface UserService {
 
     /*
@@ -36,6 +39,9 @@ public interface UserService {
      **/
     Result listCouponsByUserId(Integer userId);
 
+    Result listAroundCoachs(SearchConditionVO searchConditionVO) throws RuntimeException;
+
+    Result listAroundVenues(SearchConditionVO searchConditionVO) throws RuntimeException;
 
 
     //登录注册，插入用户信息 lxy

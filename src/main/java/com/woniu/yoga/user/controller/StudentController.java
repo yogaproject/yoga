@@ -13,10 +13,7 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.jar.Attributes;
@@ -35,42 +32,7 @@ public class StudentController {
     @Autowired
     private StudentServiceImpl studentService;
 
-    /*
-     * @Author liufeng
-     * @Date
-     * @Description //根据用户注册的地址或定位地址查询附近一定范围的教练、场馆(默认查找教练)
-     * @Param
-     *   SearchConditionVO:搜索条件封装的类，参数如下
-     *   //位置：经度
-     *   private float longitude;
-     *   //位置：纬度
-     *   private float latitude;
-     *   //距离“我”的距离，单位为米
-     *   private int round;
-     *   //搜索的条件：2为搜索教练，3为搜索场馆，其余不合法
-     *   private int coachStyle;
-     *   //教练认证方式，值为场馆或平台，其余不合法；场馆无需此项
-     *   private String authentication;
-     *   //教练空闲时间，值为不限、早、中、晚四选一；场馆无需此项
-     *   private String freeTime;
-     * @return
-     **/
-    @RequestMapping("listAroundUserByIdOrAddress")
-    @ResponseBody
-    @ApiOperation(value = "学员查看附近的瑜伽师（场馆）")
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "searchConditionVO",value = "多个搜索条件封装成的对象，包含以下属性"),
-            @ApiImplicitParam(name="longitude",value = "学员位置：经度（百度地图）",paramType = "double",required = true),
-            @ApiImplicitParam(name = "latitude",value = "学员位置：纬度（百度地图）",paramType = "double",required = true),
-            @ApiImplicitParam(name = "round",value = "距离‘我的距离’",defaultValue = "2000"),
-            @ApiImplicitParam(name = "roleId",value = "2:瑜伽师；3：场馆；其余默认为瑜伽师",defaultValue = "2",paramType = "integer"),
-            @ApiImplicitParam(name = "coachStyle",value = "瑜伽师流派，从数据库中查询，0为不限;场馆无需此项",required = false,defaultValue = "0",paramType = "integer"),
-            @ApiImplicitParam(name = "authentication",value = "瑜伽师认证方式：不限、平台认证或场馆认证;场馆无需此项",required = false,defaultValue = "不限",paramType = "String"),
-            @ApiImplicitParam(name = "freeTime",value = "瑜伽师自定义的空闲时间，值为不限、早、中、晚、全天",required = false,defaultValue = "不限",paramType = "String")
-    })
-    public Result listAroundUserByIdOrAddress(SearchConditionVO searchConditionVO) {
-        return studentService.listAroundUserByAddress(searchConditionVO);
-    }
+
 
     /*
      * @Author liufeng
@@ -81,7 +43,7 @@ public class StudentController {
      * @return
      *  封装了用户详细信息的数据类
      **/
-    @RequestMapping("getDetailInfoByUserId")
+    @PostMapping("getDetailInfoByUserId")
     @ResponseBody
     @ApiOperation(value = "学员查看瑜伽师信息，非好友私人信息为null")
     @ApiImplicitParams(value = {
@@ -103,7 +65,7 @@ public class StudentController {
      * @return
      *  通用返回类型
      **/
-    @RequestMapping("saveOrder")
+    @PostMapping("saveOrder")
     @ResponseBody
     @ApiOperation(value = "学员下单")
     @ApiImplicitParams(value = {
@@ -126,7 +88,7 @@ public class StudentController {
      * @return
      *  通用返回类型，包含处理完成的订单详细信息
      **/
-    @RequestMapping("updateOrderWithCoupon")
+    @PutMapping("updateOrderWithCoupon")
     @ResponseBody
     @ApiOperation(value = "学员选择要使用的优惠券，准备付款")
     @ApiImplicitParams(value = {
@@ -147,7 +109,7 @@ public class StudentController {
      * @Param
      * @return
      **/
-    @RequestMapping("updateOrderForPay")
+    @PutMapping("updateOrderForPay")
     @ResponseBody
     @ApiOperation(value = "学员付款")
     @ApiImplicitParams(value = {
@@ -167,7 +129,7 @@ public class StudentController {
      * @Param
      * @return
      **/
-    @RequestMapping("updateOrderForRefund")
+    @PutMapping("updateOrderForRefund")
     @ResponseBody
     @ApiOperation(value = "学员申请退款")
     @ApiImplicitParams(value = {
@@ -189,7 +151,7 @@ public class StudentController {
      * @return
      *  处理完成的评论
      **/
-    @RequestMapping("saveComment")
+    @PostMapping("saveComment")
     @ResponseBody
     @ApiOperation(value = "学员发表订单评论")
     @ApiImplicitParams(value = {

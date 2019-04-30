@@ -22,7 +22,7 @@ public class CourseServiceImpl implements CourseService {
     private CourseMapper courseMapper;
 
     @Override
-    public Result findCourseByCourseId(Integer courseId) throws RuntimeException {
+    public Result findCourseByCourseId(Integer courseId) {
         try {
             CourseVO course = (CourseVO) courseMapper.findCourseByCourseId(courseId);
             return ResultUtil.actionSuccess("查询成功", course);

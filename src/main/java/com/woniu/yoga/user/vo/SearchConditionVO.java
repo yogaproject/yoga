@@ -19,8 +19,6 @@ public class SearchConditionVO {
     private Float latitude;
     //距离“我”的距离，单位为米
     private int round;
-    //搜索的条件：2为搜索教练，3为搜索场馆，其余不合法
-    private int roleId;
     //教练流派，需要从数据库字典查询，然后选择；场馆无需此项
     private int coachStyle;
     //教练认证方式，值为场馆、平台或不限，其余不合法；场馆无需此项
@@ -30,9 +28,8 @@ public class SearchConditionVO {
 
     public SearchConditionVO() {
         round = 5000;
-        roleId = 2;
         coachStyle = 0;
-        authentication="不限";
-        freeTime="不限";
+        authentication = "不限";
+        freeTime = "不限";
     }
 }
