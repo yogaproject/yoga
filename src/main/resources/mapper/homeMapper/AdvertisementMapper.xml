@@ -22,6 +22,12 @@
     delete from advertisement
     where ad_id = #{adId,jdbcType=INTEGER}
   </delete>
+  <select id="queryAdvertisement" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from advertisement
+    order by ad_sort
+  </select>
   <insert id="insert" parameterType="com.woniu.yoga.home.pojo.Advertisement">
     insert into advertisement (ad_id, ad_img, ad_detail, 
       ad_sort, ad_price, ad_flag

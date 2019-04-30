@@ -16,13 +16,13 @@ public class Result {
     //描述信息，一般为判定不通过的原因
     private String message;
     //附带的数据，无论是单条还是多条数据，都以集合或数组返回，名称为data
-    private Object object;
+    private Object data;
 
 
-    public Result(Integer code, String message, Object object) {
+    public Result(Integer code, String message, Object data) {
         this.code = code;
         this.message = message;
-        this.object = object;
+        this.data = data;
     }
 
     public Result(Integer code, String message) {

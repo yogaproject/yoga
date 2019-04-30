@@ -44,7 +44,7 @@
     from follow
     where follow_id = #{followId,jdbcType=INTEGER}
   </select>
-  <select id="selectIfFollow" >
+  <select id="selectIfFollow" resultType="java.lang.Integer">
     select
     count(follow_id)
     from follow
@@ -79,24 +79,31 @@
   <update id="updateFollowStatus">
     update follow
     set follow_status=1
-    where user_id=#{user_id} and followed_id=#{followedId}
+    where user_id=#{userId} and followed_id=#{followedId}
   </update>
-  <select id="selectFollowStatus">
+  <select id="selectFollowStatus" resultType="java.lang.Integer">
     select
     follow_status
     from follow
-    where user_id=#{user_id} and followed_id=#{follwedId}
+    where user_id=#{userId} and followed_id=#{followedId}
+  </select>
+  <select id="queryFollowUser" resultMap="FollowVoResult">
+    select
+      follow_id, f.user_id, followed_id, create_time, follow_status,
+      user_level, user_headimg, user_nickname
+    from follow as f, `user` as u
+    where followed_id=u.user_id and #{userId}=f.user_id and user_nickname like "%${userNickName}%"
   </select>
   <update id="updateCancelFollowStatus">
     update follow
     set follow_status=0
-    where user_id=#{user_id} and followed_id=#{followedId}
+    where user_id=#{userId} and followed_id=#{followedId}
   </update>
 
   <update id="deleteByFlag">
     update follow
     set follow_flag=1
-    where user_id=#{user_id} and followed_id=#{followedId}
+    where user_id=#{userId} and followed_id=#{followedId}
   </update>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from follow

@@ -102,7 +102,7 @@ public class HomepageController {
             @ApiImplicitParam(name = "latitude", value = "纬度", required = true, paramType = "path"),
             @ApiImplicitParam(name = "longitude", value = "经度", required = true, paramType = "path"),
             @ApiImplicitParam(name = "currentPage", value = "当前页",required = true, paramType = "path"),
-            @ApiImplicitParam(name = "currentPage", value = "每页查询数据条数",required = true, paramType = "path")
+            @ApiImplicitParam(name = "pageSize", value = "每页查询数据条数",required = true, paramType = "path")
     })
     @GetMapping(value = "/{roleId}/{latitude}/{longitude}/{currentPage}/{pageSize}/showOtherHomepage")
     public String showOtherHomepage(@PathVariable("roleId") Integer roleId, @PathVariable("latitude") Float latitude, @PathVariable("longitude") Float longitude,

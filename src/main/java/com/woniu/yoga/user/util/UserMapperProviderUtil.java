@@ -18,17 +18,14 @@ public class UserMapperProviderUtil {
         sql.WHERE(" coach.userId = user.userId and roleId = " + searchConditionDTO.getRoleId());
         //约束：姓名，模糊查询
         if (searchConditionDTO.getRealName() != null) {
-          sql.WHERE(" real_name like '%"+searchConditionDTO.getRealName()+"%' ");
+            sql.WHERE(" real_name like '%" + searchConditionDTO.getRealName() + "%' ");
         }
         if (searchConditionDTO.getRoleId() == 2) {
             //约束：接受约教且未满课的瑜伽师
             sql.WHERE(" coach.coachStatus = 1 and full_class = 0 ");
             //约束：认证方式
-            if (searchConditionDTO.getAuthenticationMethod().equals("平台认证")) {
-                sql.WHERE(" authentication = 2 ");
-            }
-            if (searchConditionDTO.getAuthenticationMethod().equals("场馆认证")) {
-                sql.WHERE(" authentication = 1 ");
+            if (searchConditionDTO.getAuthentication() != null) {
+                sql.WHERE(" authentication = " + searchConditionDTO.getAuthentication());
             }
             //约束：流派
             if (searchConditionDTO.getCoachStyle() != 0) {
@@ -46,8 +43,15 @@ public class UserMapperProviderUtil {
         //约束：限定在一定区域
         sql.WHERE(" longitude <= " + searchConditionDTO.getWestLongitude() + " longitude >= " + searchConditionDTO.getEastLongitude());
         sql.WHERE(" latitude <= " + searchConditionDTO.getNothLatitude() + " latitude >= " + searchConditionDTO.getSouthLatitude());
+        sql.WHERE(" user_flag = 0 ");
         //约束：限定查询的数量
         String limit = sql.toString() + " limit 20";
         return limit;
     }
+
+//    public String findOrderByUserIdAndStatus(){
+//        SQL sql = new SQL().SELECT("order").FROM("order,");
+//
+//
+//    }
 }
