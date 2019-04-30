@@ -2,7 +2,9 @@ package com.woniu.yoga.communicate.controller;
 
 import com.woniu.yoga.commom.utils.JsonUtil;
 import com.woniu.yoga.commom.vo.Result;
+import com.woniu.yoga.communicate.constant.SysConstant;
 import com.woniu.yoga.communicate.service.FollowService;
+import com.woniu.yoga.user.pojo.User;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -42,9 +44,9 @@ public class FollowController {
             @ApiImplicitParam(name = "pageSize", value = "每页多少条数据", required = true, paramType = "path")
     })
     @GetMapping("/{state}/{currentPage}/{pageSize}/showFollowList")
-    public Result showFollowList(@PathVariable("state") Integer state, @PathVariable("currentPage") Integer currentPage,
+    public String showFollowList(@PathVariable("state") Integer state, @PathVariable("currentPage") Integer currentPage,
                                  @PathVariable("pageSize") Integer pageSize, HttpSession session){
-        return followService.showFollowList(state, currentPage, pageSize, session);
+        return JsonUtil.toJson(followService.showFollowList(state, currentPage, pageSize, session));
     }
 
     /**
@@ -60,8 +62,8 @@ public class FollowController {
             @ApiImplicitParam(name = "pageSize", value = "每页多少条数据", required = true, paramType = "path")
     })
     @GetMapping("/{currentPage}/{pageSize}/showFollowHomepage")
-    public Result showFollowHomepage(@PathVariable("currentPage") Integer currentPage, @PathVariable("pageSize") Integer pageSize, HttpSession session){
-        return followService.showFollowHomepage(currentPage, pageSize, session);
+    public String showFollowHomepage(@PathVariable("currentPage") Integer currentPage, @PathVariable("pageSize") Integer pageSize, HttpSession session){
+        return JsonUtil.toJson(followService.showFollowHomepage(currentPage, pageSize, session));
     }
 
     /**
@@ -74,8 +76,8 @@ public class FollowController {
     @ApiOperation(value = "关注用户")
     @ApiImplicitParam(name = "userId", value = "要关注的用户id", required = true, paramType = "path")
     @PutMapping("/{userId}/addFollow")
-    public Result addFollow(@PathVariable("userId") Integer userId, HttpSession session){
-        return followService.addFollow(userId, session);
+    public String addFollow(@PathVariable("userId") Integer userId, HttpSession session){
+        return JsonUtil.toJson(followService.addFollow(userId, session));
     }
 
     /**
@@ -91,5 +93,24 @@ public class FollowController {
     @DeleteMapping("/{userId}/cancelFollow")
     public String cancelFollow(@PathVariable("userId") Integer userId, HttpSession session){
         return JsonUtil.toJson(followService.cancelFollow(userId, session));
+    }
+
+    /**
+    * @Description 模糊查询关注的人
+    * @param userNickName
+    * @param session
+    * @author huijie yan
+    * @date 2019/4/29
+    * @return java.lang.String
+    */
+    @ApiOperation(value = "模糊查询关注的人")
+    @ApiImplicitParam(name = "userNickName", value = "要查询的名字", required = true, paramType = "path")
+    @GetMapping("/{userNickName}/searchFollow")
+    public String searchFollow(@PathVariable("userNickName") String userNickName, HttpSession session){
+        User user = (User)session.getAttribute(SysConstant.CURRENT_USER);
+        if (user == null){
+            return  JsonUtil.toJson(Result.error("未登录"));
+        }
+        return JsonUtil.toJson(followService.searchFollow(userNickName, user.getUserId()));
     }
 }

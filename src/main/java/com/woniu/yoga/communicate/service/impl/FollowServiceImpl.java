@@ -119,4 +119,13 @@ public class FollowServiceImpl implements FollowService {
         followMapper.deleteByFlag(user.getUserId(), userId);
         return Result.success("取关成功");
     }
+
+    @Override
+    public Result searchFollow(String userNickName, Integer userId) {
+        FollowVo vo = followMapper.queryFollowUser(userId, userNickName);
+        if (vo == null){
+            return Result.error("未搜索到相关用户");
+        }
+        return Result.success("成功",vo);
+    }
 }

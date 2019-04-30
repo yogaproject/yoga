@@ -50,7 +50,7 @@
       comment_id, c.user_id, comment_detail, entity_id, entity_type, comment_degree
             ,comment_createtime,user_nickname,user_headimg, role_name
     from comment as c, user as u, role as r
-    where entity_type=1 and entity_id=#{comment_id} and c.user_id=u.user_id
+    where entity_type=1 and entity_id=#{comment_id} and c.user_id=u.user_id and r.role_id=u.role_id
   </select>
 
   <sql id="Base_Column_List">
@@ -62,9 +62,9 @@
     from comment
     where comment_id = #{commentId,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from comment
-    where comment_id = #{commentId,jdbcType=BIGINT}
+    where comment_id = #{commentId,jdbcType=INTEGER}
   </delete>
   <insert id="insert" parameterType="com.woniu.yoga.communicate.pojo.Comment">
     insert into comment (comment_id, user_id, comment_detail, 

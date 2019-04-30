@@ -20,5 +20,4 @@ public class YogaApplication {
     public static void main(String[] args) {
         SpringApplication.run(YogaApplication.class, args);
     }
-
 }
