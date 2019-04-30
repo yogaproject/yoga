@@ -4,10 +4,7 @@ import com.woniu.yoga.pay.UnionpayConfig.sdk.AcpService;
 import com.woniu.yoga.pay.UnionpayConfig.sdk.DemoBase;
 import com.woniu.yoga.pay.UnionpayConfig.sdk.LogUtil;
 import com.woniu.yoga.pay.UnionpayConfig.sdk.SDKConstants;
-import com.woniu.yoga.pay.pojo.WalletRecord;
-import com.woniu.yoga.pay.service.WalletRecordService;
 import org.apache.commons.io.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -23,7 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 银联支付回调
+ * 描述：银联支付回调
+ * @return string
  */
 @Controller
 public class CallBackController {

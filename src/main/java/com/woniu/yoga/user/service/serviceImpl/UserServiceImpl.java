@@ -209,4 +209,9 @@ public class UserServiceImpl implements UserService {
     public User queryUserByPhoneAndCode(String userPhone, String userVerifyCode) {
         return userMapper.queryUserByPhoneAndCode(userPhone,userVerifyCode);
     }
+
+    @Override
+    public List<Coupon> fandCouponByUserId(int userid) {
+        return userMapper.fandCouponByUserId(userid);
+    }
 }

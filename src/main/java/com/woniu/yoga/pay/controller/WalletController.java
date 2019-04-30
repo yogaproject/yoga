@@ -7,25 +7,27 @@ import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayFundTransToaccountTransferRequest;
 import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.alipay.api.response.AlipayFundTransToaccountTransferResponse;
-import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.manage.pojo.Coupon;
 import com.woniu.yoga.pay.alipayConfig.AlipayConfig;
 import com.woniu.yoga.pay.pojo.Wallet;
 import com.woniu.yoga.pay.pojo.WalletRecord;
 import com.woniu.yoga.pay.service.WalletRecordService;
 import com.woniu.yoga.pay.service.WalletService;
+import com.woniu.yoga.pay.util.Result;
+import com.woniu.yoga.user.dao.CoachMapper;
 import com.woniu.yoga.user.service.UserService;
+import com.woniu.yoga.user.vo.StudentVO;
+import jdk.nashorn.internal.ir.LiteralNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -35,20 +37,23 @@ public class WalletController {
 
     @Autowired
     private WalletService walletService;
+
     @Autowired
     private UserService userService;
+
     @Autowired
     private WalletRecordService walletRecordService;
 
 
     /**
-     * 根据user_id查找钱包
-     *
-     * @param userid
-     * @return Wallet
+     * 描述： 根据user_id查找钱包
+     * URl： wallet/selectwallet
+     * 请求方式： get
+     * 参数： @param userid
+     * 返回值：@return Result
      */
 
-    @RequestMapping("/selectwallet")
+    @RequestMapping(value = "/selectwallet",method = RequestMethod.GET)
     @ResponseBody
     public Result findWalletByUserId(int userid) {
         Wallet wallet = walletService.findWalletByUserId(userid);
@@ -59,32 +64,34 @@ public class WalletController {
     }
 
     /**
-     * 更新钱包余额，用于余额的减少
-     *
-     * @param walletId
+     * 描述：更新钱包余额，用于余额的减少
+     * URL：URl： wallet/updateusermoney
+     * 请求方式：post
+     * 参数：@param walletId
      * @param money
-     * @return
+     * 返回值：Result
      */
-    @RequestMapping("/updateusermoney")
+    @RequestMapping(value = "/updateusermoney",method = RequestMethod.POST)
     @ResponseBody
     public Result updateUserMoneyByWalletId(int walletId, BigDecimal money) {
         if ((walletService.findWalletByWalletId(walletId).getBalance().compareTo(money)) < 0) {
             return Result.error("余额不足");
         }
         walletService.updateUserMoneyByWalletId(walletId, money);
-        return Result.success("操作成功");
+        return Result.success("操作成功",walletService.findWalletByWalletId(walletId).getBalance());
     }
 
     /**
-     * 提现操作,生成订单
-     *
-     * @param userid
+     * 描述：提现操作,生成订单
+     *URl:wallet/withdrawDeposit
+     * 请求方式：post
+     * 参数：@param userid
      * @param account
      * @param money
      * @param pwd
-     * @throws AlipayApiException
+     * 返回值：Result
      */
-    @RequestMapping("/withdrawDeposit")
+    @RequestMapping(value = "/withdrawDeposit",method = RequestMethod.POST)
     @ResponseBody
     public Result withdrawDeposit(Integer userid, String account, BigDecimal money, String pwd) {
         Wallet wallet = walletService.findWalletByUserId(userid);
@@ -156,12 +163,14 @@ public class WalletController {
     }
 
     /**
-     * 充值余额，用于余额的增加
-     *
-     * @param walletId
-     * @return 返回余额
+     * 描述：充值余额，用于余额的增加
+     *URL：wallet/saveMoney
+     * 请求方式：post
+     * 参数：@param walletId
+     * @param money
+     * @return Result
      */
-    @RequestMapping("/saveMoney")
+    @RequestMapping(value = "/saveMoney",method = RequestMethod.POST)
     @ResponseBody
     public Result saveMoney(int walletId, BigDecimal money) {
 
@@ -172,13 +181,14 @@ public class WalletController {
     }
 
     /**
-     * 查询交易记录
-     *
-     * @param userid
-     * @return
+     * 描述：查询交易记录
+     *  URl：wallet/selectorder
+     * 请求方式：get
+     * 参数：@param userid
+     * @return Result
      */
 
-    @RequestMapping("/selectorder")
+    @RequestMapping(value = "/selectorder",method = RequestMethod.GET)
     @ResponseBody
     public Result selectOrderByUserId(int userid) {
         List<WalletRecord> walletRecords = walletService.selectOrderByUserId(userid);
@@ -189,29 +199,35 @@ public class WalletController {
     }
 
     /**
-     * 查询优惠券
-     *
-     * @param userid
-     * @return
+     * 描述：查询优惠券
+     *URL：wallet/selectcoupon
+     * 请求方式：get
+     * 参数：@param userid
+     * @return Result
      */
-    @RequestMapping("/selectcoupon")
+    @RequestMapping(value = "/selectcoupon",method = RequestMethod.GET)
     @ResponseBody
-    public List<Coupon> selectUserCouponByUserId(int userid) {
-        return null;
+    public Result selectUserCouponByUserId(int userid) {
+      List<Coupon> coupons = userService.fandCouponByUserId(userid);
+        if (coupons==null){
+            return Result.error("亲，您还没有优惠券");
+        }
+        return Result.success(coupons);
     }
 
 
     /**
-     * 付款操作
-     *
+     * 描述：付款操作
+     *URl：wallet/alipay
+     * 请求方式：post
      * @param allmoney
      * @param goodsIds
      * @param goodscount
      * @param request
      * @param goodsprice
      * @param response
-     * @return
-     * @throws AlipayApiException
+     * @return String
+     *
      */
     @RequestMapping("/alipay")
     @ResponseBody
@@ -257,17 +273,15 @@ public class WalletController {
     }
 
     /**
-     * 支付宝回调
-     * @param request
-     * @param response
-     * @return
-     * @throws AlipayApiException
+     * 描述：支付宝回调
+     *
+     * @return string
+     *
      */
     @RequestMapping("/success")
     @ResponseBody
     public String success(HttpServletRequest request, HttpServletResponse response) throws AlipayApiException {
         System.out.println("-----------回调-------------");
-
         Map<String,String> params = new HashMap<String,String>();
         Map requestParams = request.getParameterMap();
         for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext();) {
@@ -294,15 +308,15 @@ public class WalletController {
     }
 
     /**
-     * 银联支付
+     * 描述：银联支付
+     * URL：wallet/Unionpaypay
      *(使用银联支付需要在本地放入证书文件)
-     * @param money
-     * @param req
-     * @param resp
-     * @throws IOException
+     * 请求方式：post
+     * 参数：@param money
+     * 返回值为空
      */
     @RequestMapping("/Unionpaypay")
-    public void Unionpaypay(String money, HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void Unionpaypay (String money, HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("text/html;charset=utf-8");
         String pay = walletService.Unionpaypay(money, req, resp);
         PrintWriter out = resp.getWriter();

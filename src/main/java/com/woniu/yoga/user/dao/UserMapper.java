@@ -1,5 +1,6 @@
 package com.woniu.yoga.user.dao;
 
+import com.woniu.yoga.manage.pojo.Coupon;
 import com.woniu.yoga.user.dto.SearchConditionDTO;
 import com.woniu.yoga.user.pojo.Course;
 import com.woniu.yoga.user.pojo.User;
@@ -8,6 +9,7 @@ import com.woniu.yoga.user.vo.CoachDetailInfoVO;
 import com.woniu.yoga.user.vo.UserDetailInfoVo;
 import com.woniu.yoga.user.vo.UserVO;
 import org.apache.ibatis.annotations.*;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
@@ -88,4 +90,6 @@ public interface UserMapper {
 
     @Select("select user_phone from user where user_id = #{userId}")
     String selectPhoneByUserId(Integer userId);
+    @Select("select * from Coupon where coupon_id in (select coupon_id from user_coupon where user_id=#{userid})")
+    List<Coupon> fandCouponByUserId(@Param("userid") int userid);
 }
