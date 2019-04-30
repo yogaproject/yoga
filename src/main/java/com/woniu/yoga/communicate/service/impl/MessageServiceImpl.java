@@ -37,7 +37,7 @@ public class MessageServiceImpl implements MessageService {
     @Override
     @Transactional
     public int updateMsgStatusByFromIdAndToId(Integer fromId, Integer toId) {
-        return messageRepository.updateMsgStatusByFromIdAndToId(fromId,toId);
+        return messageMapper.updateMsgStatusByFromIdAndToId(fromId,toId);
     }
 
     @Override
@@ -48,13 +48,13 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     @Transactional
-    public Message sendMessage(Message message) {
+    public Integer sendMessage(Message message) {
         if(message == null || message.getFromId() == 0 || message.getToId() == 0 ||
                 message.getContent() == null || "".equals(message.getContent())){
             throw new YogaException(ResultEnum.MSG_TYPE_ERROR);
         }
         message.setConversationId(message.getFromId(),message.getToId());
-        return messageRepository.save(message);
+        return messageMapper.insert(message);
     }
 
     @Override

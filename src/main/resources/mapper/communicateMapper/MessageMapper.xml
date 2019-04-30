@@ -115,7 +115,7 @@
     where msg_id = #{msgId,jdbcType=BIGINT}
   </update>
 
-  <select id="getUnreadMsgsByUserId" parameterType="java.lang.instrument" resultMap="BaseResultMap">
+  <select id="getUnreadMsgsByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select * from message where to_id = #{toId} and msg_status = 0 and msg_flag = 0;
   </select>
 </mapper>

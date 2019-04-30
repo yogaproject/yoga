@@ -51,7 +51,7 @@ public class MessageController {
     @PostMapping("/sendMsg")
     public String sendMessage(Message message){
         try {
-            Message msg = messageService.sendMessage(message);
+            messageService.sendMessage(message);
             return JsonUtil.toJson(Result.success("发送成功！"));
         }catch (Exception e){
             e.printStackTrace();

@@ -29,8 +29,8 @@ public class Message {
     private String msgUrl;
     /**消息发送时间*/
     private Date sendTime;
-    /**消息类型*/
-    private Integer entityType;
+    /**消息类型,默认私信*/
+    private Integer entityType = EntityTypeEnum.PRIVATE_MSG.getCode();
     /**会话id，A->B和B->A为同一个，较小的userId的在前，较大的userId在后*/
     private String conversationId;
     /**消息状态，0（未读，默认），1（已读）*/

@@ -17,9 +17,8 @@ public interface MessageService {
      * @Author guochxi
      * @Date 17:59 2019/4/22
      * @Param [message]
-     * @return com.gcx.jap_mybatis_test.entity.Message
      **/
-    Message sendMessage(Message message);
+    Integer sendMessage(Message message);
 
     /**
      * @Description 查找userId的所有消息并按时间排序

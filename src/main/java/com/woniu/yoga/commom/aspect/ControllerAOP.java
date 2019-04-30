@@ -1,6 +1,7 @@
 package com.woniu.yoga.commom.aspect;
 
 import com.woniu.yoga.commom.exception.YogaException;
+import com.woniu.yoga.commom.utils.JsonUtil;
 import com.woniu.yoga.commom.vo.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.intercept.Joinpoint;
@@ -24,7 +25,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class ControllerAOP {
 
-    @Pointcut("execution(public * com.woniu.yoga.*.controller.*(..))")
+    @Pointcut("execution(public * com.woniu.yoga.*.controller.*.*(..)) &&!execution(public * com.woniu.yoga.communicate.controller.WebSocketController.*(..))")
     public void pointcut(){}
 
     @Before("pointcut()")
@@ -36,13 +37,15 @@ public class ControllerAOP {
         log.info("args={}"+joinPoint.getArgs());
     }
 
-    @Around("pointcut()")
+    // TODO: 2019/4/30 controller层返回值不统一会报错
+    /*@Around("pointcut()")
     public Object doAround(ProceedingJoinPoint proceedingJoinPoint){
         Result result = null;
         try{
+            System.out.println("around通知");
             return proceedingJoinPoint.proceed();
         }catch (Throwable e){
-            return new Result(500,"系统异常");
+            return JsonUtil.toJson(new Result(500,"系统异常"));
         }
-    }
+    }*/
 }
