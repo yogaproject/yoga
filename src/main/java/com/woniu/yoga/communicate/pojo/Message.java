@@ -50,6 +50,7 @@ public class Message {
         this.conversationId = this.getConversationId();
     }
 
+
     public String getConversationId() {
         return fromId < toId ? fromId + "_" + toId : toId + "_" + fromId;
     }

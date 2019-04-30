@@ -65,4 +65,13 @@ public interface MessageService {
      * @return
      **/
     Integer getUnreadCount(Integer userId,String conversationId);
+
+    /**
+     * @Description 根据用户Id获取未读的所有消息
+     * @Author guochxi
+     * @Date 14:30 2019/4/30
+     * @Param [userId]
+     * @return java.util.List<com.woniu.yoga.communicate.pojo.Message>
+     **/
+    List<Message> getUnreadMsgs(Integer userId);
 }

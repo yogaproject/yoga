@@ -2,6 +2,7 @@ package com.woniu.yoga.communicate.service.impl;
 
 import com.woniu.yoga.commom.enums.ResultEnum;
 import com.woniu.yoga.commom.exception.YogaException;
+import com.woniu.yoga.communicate.dao.MessageMapper;
 import com.woniu.yoga.communicate.repository.MessageRepository;
 import com.woniu.yoga.communicate.pojo.Message;
 import com.woniu.yoga.communicate.service.MessageService;
@@ -9,6 +10,7 @@ import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,9 @@ public class MessageServiceImpl implements MessageService {
 
     @Autowired
     private MessageRepository messageRepository;
+
+    @Autowired
+    private MessageMapper messageMapper;
 
     @Override
     @Transactional
@@ -71,5 +76,10 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public Integer getUnreadCount(Integer userId,String conversationId) {
         return messageRepository.getUnreadCount(userId,conversationId);
+    }
+
+    @Override
+    public List<Message> getUnreadMsgs(Integer userId) {
+        return messageMapper.getUnreadMsgsByUserId(userId);
     }
 }

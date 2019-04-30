@@ -40,7 +40,7 @@ public class ConfigMVC implements WebMvcConfigurer {
         InterceptorRegistration registration = registry.addInterceptor(resourceInterceptor);
         registration.addPathPatterns("/**");
         registration.order(1);
-    }*/
+    }
 
     /**
      * @Description 解决因springboot与thymeleaf在合作过程中的bug，该bug会导致static中的资源加载不完全
