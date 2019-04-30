@@ -12,34 +12,35 @@ import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.List;
 
 @Repository
 public interface UserMapper {
-    int deleteByPrimaryKey(Integer userId);
+    int deleteByPrimaryKey(Integer userId)throws SQLException;
 
-    int insert(User record);
+    int insert(User record)throws SQLException;
 
-    int insertSelective(User record);
+    int insertSelective(User record)throws SQLException;
 
-    User selectByPrimaryKey(Integer userId);
+    User selectByPrimaryKey(Integer userId)throws SQLException;
 
-    int updateByPrimaryKeySelective(User record);
+    int updateByPrimaryKeySelective(User record)throws SQLException;
 
-    int updateByPrimaryKey(User record);
+    int updateByPrimaryKey(User record)throws SQLException;
 
     /*
      * @Author liufeng
      * @Description //根据地址查询附近的教练
      **/
     @SelectProvider(type = UserMapperProviderUtil.class, method = "findAroundCoachs")
-    List<UserVO> listAroundUser(SearchConditionDTO searchConditionDTO);
+    List<UserVO> listAroundUser(SearchConditionDTO searchConditionDTO)throws SQLException;
 
     /*
      * @Author liufeng
      * @Description //查询瑜伽师的详细信息
      **/
-    @Select("select real_name,user_headimg,user_phone,user_qq,user_wechat,coach_detail,coach_id,coach_style,authentication,deal_account,good_comment,user_privacy where user.user_id = coach.user_id and user.user_id = #{userId}")
+    @Select("select real_name,user_headimg,user_phone,user_qq,user_wechat,coach_detail,coach_id,coach_style,authentication,deal_account,good_comment,user_privacy where user.user_id = coach.user_id and user.user_id = #{userId} and user_flag = 0")
     @Results(value = {
             @Result(column = "real_name", property = "realName"),
             @Result(column = "user_headimg", property = "headImg"),
@@ -56,36 +57,36 @@ public interface UserMapper {
                     select = "com.woniu.yoga.user.dao.CoachMapper.findCourseByCoachId"
             )),
     })
-    CoachDetailInfoVO getDetailInfoByUserId(Integer userId);
+    CoachDetailInfoVO getDetailInfoByUserId(Integer userId)throws SQLException;
 
     /*
      * @Author liufeng
      * @Description //根据用户等级查询所享有的优惠
      **/
     @Select("select discount from level_discount where level_id = #{userLevel}")
-    BigDecimal selectDiscountByLevel(Integer userLevel);
+    BigDecimal selectDiscountByLevel(Integer userLevel)throws SQLException;
 
 
-    User saveUser(User user);
+    User saveUser(User user)throws SQLException;
 
-    Integer activeUserByEamil(String userEmail);
+    Integer activeUserByEamil(String userEmail)throws SQLException;
 
-    Integer activeUserByPhone(String userPhone);
+    Integer activeUserByPhone(String userPhone)throws SQLException;
 
-    User queryUserByEmail(String userEmail);
+    User queryUserByEmail(String userEmail)throws SQLException;
 
-    User queryUserByEmailAndPwd(String userEmail, String userPwd);
+    User queryUserByEmailAndPwd(String userEmail, String userPwd)throws SQLException;
 
-    User queryUserByPhone(String userPhone);
+    User queryUserByPhone(String userPhone)throws SQLException;
 
-    User queryUserByPhoneAndPwd(String userPhone, String userPwd);
+    User queryUserByPhoneAndPwd(String userPhone, String userPwd)throws SQLException;
 
-    User queryUserByPhoneAndCode(String userPhone, String userVerifyCode);
+    User queryUserByPhoneAndCode(String userPhone, String userVerifyCode)throws SQLException;
 
-    Integer updateCode(String userVerifyCode, String userPhone);
+    Integer updateCode(String userVerifyCode, String userPhone)throws SQLException;
 
-    User queryUserByEmailAndCode(String userEmail, String userVerifyCode);
+    User queryUserByEmailAndCode(String userEmail, String userVerifyCode)throws SQLException;
 
     @Select("select user_phone from user where user_id = #{userId}")
-    String selectPhoneByUserId(Integer userId);
+    String selectPhoneByUserId(Integer userId)throws SQLException;
 }

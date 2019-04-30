@@ -1,5 +1,6 @@
 package com.woniu.yoga.user.service.serviceImpl;
 
+import com.woniu.yoga.commom.utils.Attributes;
 import com.woniu.yoga.user.dao.CoachMapper;
 import com.woniu.yoga.user.dao.CourseMapper;
 import com.woniu.yoga.user.dao.OrderMapper;
@@ -9,16 +10,14 @@ import com.woniu.yoga.user.pojo.Order;
 import com.woniu.yoga.user.service.CoachService;
 import com.woniu.yoga.user.util.OrderUtil;
 import com.woniu.yoga.user.util.ResultUtil;
-import com.woniu.yoga.user.util.StudentVOUtil;
 import com.woniu.yoga.user.vo.Result;
 import com.woniu.yoga.user.vo.StudentVO;
 import com.woniu.yoga.venue.pojo.Recruitment;
 import com.woniu.yoga.venue.pojo.Venue;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.List;
 
 @Service
@@ -30,13 +29,16 @@ public class CoachServiceImpl implements CoachService {
 
     @Autowired
     private CourseMapper courseMapper;
-    @Autowired
-    private RedisTemplate redisTemplate;
 
     @Override
-    public Coach findCoachByCoachId(Integer coachId) {
-        Coach coach = coachMapper.selectByPrimaryKey(coachId);
-        return coach;
+    public Coach findCoachByCoachId(Integer coachId) throws RuntimeException {
+        try {
+            Coach coach = coachMapper.selectByPrimaryKey(coachId);
+            return coach;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
     }
 
     /*
@@ -47,29 +49,27 @@ public class CoachServiceImpl implements CoachService {
      * @return
      **/
     @Override
-    public Result updateOrder(String orderId, String result) {
-        //根据操作更改订单状态
-        Order order = orderMapper.selectByPrimaryKey(orderId);
-        if (order.getOrderStatus() != OrderUtil.NEWORDER) {
-            ResultUtil.illegalOperation();
-        }
-        int orderStatus = 0;
-        if (result.equals("接受")) {
-            orderStatus = OrderUtil.STARTORDER;
-        } else if (result.equals("拒绝")) {
-            orderStatus = OrderUtil.CANCELED;
-        } else {
-            ResultUtil.illegalOperation();
-        }
-
-        order.setOrderStatus(orderStatus);
-        int row = orderMapper.updateByPrimaryKeySelective(order);
-        if (row > 0) {
-            List data = new ArrayList();
-            data.add(order);
-            return ResultUtil.actionSuccess("已接单，请联系学员安排课程", data);
-        } else {
-            return ResultUtil.connectDatabaseFail();
+    public Result updateOrder(String orderId, String result) throws RuntimeException {
+        try {
+            //根据操作更改订单状态
+            Order order = orderMapper.selectByPrimaryKey(orderId);
+            if (order.getOrderStatus() != OrderUtil.NEWORDER) {
+                ResultUtil.illegalOperation();
+            }
+            int orderStatus = 0;
+            if (result.equals("接受")) {
+                orderStatus = OrderUtil.STARTORDER;
+            } else if (result.equals("拒绝")) {
+                orderStatus = OrderUtil.CANCELED;
+            } else {
+                ResultUtil.illegalOperation();
+            }
+            order.setOrderStatus(orderStatus);
+            orderMapper.updateByPrimaryKeySelective(order);
+            return ResultUtil.actionSuccess("已接单，请联系学员安排课程", order);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
         }
     }
 
@@ -81,18 +81,16 @@ public class CoachServiceImpl implements CoachService {
      * @return
      **/
     @Override
-    public Result listStudentByCoachId(Integer userId) {
+    public Result listStudentByCoachId(Integer userId) throws RuntimeException {
         //联合student_coach,coach,user查找学生信息
-        int coachId = coachMapper.selectCoachIdByUserId(userId);
-//        int coachId = 3;//test
-        List<StudentVO> data = (List<StudentVO>) redisTemplate.opsForValue().get("studentsOfCoach" + coachId);
-        if (data == null) {
-            System.out.println("从数据库获取数据");
-//            data = StudentVOUtil.getStudents();//test
-            data = coachMapper.findStudentByUserId(userId);
-            redisTemplate.opsForValue().set("studentsOfCoach" + coachId, data);
+        try {
+            int coachId = coachMapper.selectCoachIdByUserId(userId);
+            List<StudentVO> studentVOS = coachMapper.findStudentByUserId(userId);
+            return ResultUtil.actionSuccess("查询成功", studentVOS);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
         }
-        return ResultUtil.actionSuccess("查询成功", data);
     }
 
     /*
@@ -103,44 +101,146 @@ public class CoachServiceImpl implements CoachService {
      * @return
      **/
     @Override
-    public Result listCoachStyles() {
-        List data = coachMapper.listCoachStyles();
-        if (data.size() > 0) {
+    public Result listCoachStyles() throws RuntimeException {
+        try {
+            List data = coachMapper.listCoachStyles();
             return ResultUtil.actionSuccess("查询成功", data);
-        } else {
-            return ResultUtil.connectDatabaseFail();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
         }
     }
 
     @Override
-    public Result updateOrderForWaitToPay(String orderId) {
-        Order order = orderMapper.selectByPrimaryKey(orderId);
-        if (order.getOrderStatus() != OrderUtil.STARTORDER) {
-            return ResultUtil.illegalOperation();
-        }
-        order.setOrderStatus(OrderUtil.WAITTOPAY);
-        int row = orderMapper.updateStatusByOrderId(order.getOrderId(), order.getOrderStatus());
-        if (row > 0) {
+    public Result updateOrderForWaitToPay(Integer userId, String orderId) throws RuntimeException {
+        try {
+            Order order = orderMapper.selectByPrimaryKey(orderId);
+            if (order.getAccepterId() != userId) {
+                return ResultUtil.illegalOperation();
+            }
+            if (order.getOrderStatus() != OrderUtil.STARTORDER) {
+                return ResultUtil.illegalOperation();
+            }
+            order.setOrderStatus(OrderUtil.WAITTOPAY);
+            orderMapper.updateStatusByOrderId(order.getOrderId(), order.getOrderStatus());
             return ResultUtil.actionSuccess("更新成功", order);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
         }
-        return ResultUtil.connectDatabaseFail();
     }
 
     @Override
-    public Result insertCourse(int userId, Course course) {
-        int coachId = coachMapper.findCoachIdByUserId(userId);
-        course.setCoachId(coachId);
-        int row = courseMapper.insertSelective(course);
-        if (row > 0) {
+    public Result insertCourse(int userId, Course course) throws RuntimeException {
+        try {
+            Integer coachId = coachMapper.selectCoachIdByUserId(userId);
+            Integer courseIdOld = courseMapper.selectByCoachIdAndCOurseName(coachId, course.getCourseName());
+            if (courseIdOld != null) {
+                return ResultUtil.errorOperation("该课程已存在，请到课程页面查看，或者更改课程名");
+            }
+            course.setCoachId(coachId);
+            courseMapper.insertSelective(course);
             return ResultUtil.actionSuccess("新建课程成功", course);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
         }
-        return ResultUtil.connectDatabaseFail();
+    }
+
+    @Override
+    public Result applyForSign(int userId, Integer venueId) throws RuntimeException {
+        try {
+            Integer coachId = coachMapper.selectCoachIdByUserId(userId);
+            Integer authentication = coachMapper.selectAuthenticationByCoachId(coachId);
+            if (authentication != 0) {
+                return ResultUtil.errorOperation("已签约，不能重复申请");
+            }
+            coachMapper.applyForSign(coachId, venueId);
+            return ResultUtil.actionSuccess("已发出申请，等待场馆处理中...", null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public Result dealVenueRequest(int userId, Integer venueId, String result) throws RuntimeException {
+        try {
+            Integer coachId = coachMapper.selectCoachIdByUserId(userId);
+            Integer authentication = coachMapper.selectAuthenticationByCoachId(coachId);
+            if (authentication != 0) {
+                return ResultUtil.errorOperation("出错啦，请与管理员联系!");
+            }
+            Integer cvId = coachMapper.selectSignWithCoachIdAndVenueId(coachId, venueId);
+            if (cvId == null) {
+                return ResultUtil.errorOperation("请求错误，请联系管理员！");
+            }
+            if (result.equals("接受")) {
+                authentication = 1;
+                if (venueId == Attributes.PLATFORMNUMBER) {
+                    authentication = 2;
+                }
+                coachMapper.updateCoachVenueStatus(coachId, 1);
+                coachMapper.updateAuthenticationForSign(coachId, authentication);
+            } else if (result.equals("拒绝")) {
+                coachMapper.updateCoachVenueStatus(coachId, 2);
+            } else {
+                return ResultUtil.errorOperation("出错啦，请与管理员联系!");
+            }
+            //给场馆发送一条信息
+            return ResultUtil.actionSuccess("处理成功", null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public Result cancelContract(int userId) throws RuntimeException {
+        try {
+            Integer coachId = coachMapper.selectCoachIdByUserId(userId);
+            coachMapper.updateCoachVenueStatus(coachId, 2);
+            coachMapper.updateAuthenticationForSign(coachId, 0);
+            return ResultUtil.actionSuccess("解约成功", null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public Result deleteCourse(int userId, Integer courseId) throws RuntimeException {
+        try {
+            int row = courseMapper.deleteCourse();
+            return ResultUtil.actionSuccess("删除成功", null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public Result updateCourse(int userId, Course course) throws RuntimeException {
+        try {
+            Integer coachId = coachMapper.selectCoachIdByUserId(userId);
+            course.setCoachId(coachId);
+            courseMapper.updateByPrimaryKeySelective(course);
+            return ResultUtil.actionSuccess("修改成功", course);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
     }
 
 
     @Override
-    public List<Venue> findVenueByConditions(Recruitment recruitment) {
-        List venueList = coachMapper.queryVenueByConditions(recruitment);
-        return venueList;
+    public List<Venue> findVenueByConditions(Recruitment recruitment) throws RuntimeException {
+        try {
+            List venueList = coachMapper.queryVenueByConditions(recruitment);
+            return venueList;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
     }
 }

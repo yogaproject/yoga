@@ -13,7 +13,13 @@ import com.woniu.yoga.user.vo.SearchConditionVO;
 public class ConvertVOToDTOUtil {
     public static SearchConditionDTO searchConditionConvert(double[] bounds, SearchConditionVO searchConditionVO) {
         SearchConditionDTO searchConditionDTO = new SearchConditionDTO();
-        searchConditionDTO.setAuthenticationMethod(searchConditionVO.getAuthenticationMethod());
+        if (searchConditionVO.getAuthentication().equals("不限")){
+            searchConditionDTO.setAuthentication(null);
+        }else if (searchConditionVO.getAuthentication().equals("平台认证")){
+            searchConditionDTO.setAuthentication(2);
+        }else{
+            searchConditionDTO.setAuthentication(1);
+        }
         searchConditionDTO.setCoachStyle(searchConditionVO.getCoachStyle());
         if (searchConditionVO.getFreeTime().equals("不限")) {
             searchConditionDTO.setFreeTimeStart(null);
