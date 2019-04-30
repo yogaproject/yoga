@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<!--需要方法：找出数据库中所有的教练类型-->
+教练类型：<select id="selection1"></select>
+期望薪资大于：<input type="number">
+期望薪资小于：<input type="number">
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript">
+/*方法：找出数据库中所有教练类型的方法*/
+//所有教练类型的方法
+function allCoachType(uu){
+    $.ajax({
+        url : "/coach/allCoachType",
+        type : "get",
+        //dataType :"json",
+        contentType : "application/json;charset=utf-8",
+        success: function(result) {
+            for (var i = 0; i < result.length; i++) {
+                var coachType = result[i].coachType;
+                var option = $("<option></option>").text(coachType)
+                $("#"+uu).append(option);
+            }
+        }
+    });
+}
+function allCoachType(){
+    $.ajax({
+        url : "/coach/allCoachType",
+        type : "get",
+        //dataType :"json",
+        contentType : "application/json;charset=utf-8",
+        success: function(result) {
+            for (var i = 0; i < result.length; i++) {
+                var coachType = result[i].coachType;
+                var option = $("<option></option>").text(coachType)
+                $("#selection1").append(option);
+            }
+        }
+    });
+}
+//场馆根据条件查询符合教练的list
+function selectCoachByVagueConditions() {
+    $.ajax({
+        url:"/venue/vagueConditions",
+        type:"post",
+        contentType:"application/json;charset=utf-8",
+        data:JSON.stringify({
+            "coachType":$("#selection1").val(),
+            "upExpectedSalary":$("#upExpectedSalary").val(),
+            "downExpectedSalary":$("#downExpectedSalary").val()
+        }),
+        success:function (result) {
+            var content = "";
+            for (var i = 0;i<result.length;i++){
+                content +=  "教练id："+result.coachId+"<br>"+  /*这里是隐藏的*/
+                    "教练姓名："+result.realName+"<br>"/*可以通过点击显示教练详情页*/
+            }
+        }
+    })
+}
+//根据查出来的教练list，根据教练id显示教练详细信息
+function selectCoachByCoachId(coachId) {
+    $.ajax({
+        url:"/venue/coachInformation",
+        type:"post",
+        contentType:"application/json;charset=utf-8",
+        data:JSON.stringify({
+            "coachId":coachId,
+        }),
+        success:function (result) {
+            var content =
+                "教练名字："+result[i].realName+"<br>"+
+                "教练电话："+result[i].userPhone+"<br>"+
+                "教练 Q Q："+result[i].userQq+"<br>"+
+                "成交次数："+result[i].dealAccount+"<br>"+
+                "未完成次数："+result[i].notCompleted+"<br>"+
+                "好评次数："+result[i].goodComment+"<br>"+
+                "中评次数："+result[i].commonComment+"<br>"+
+                "差评次数："+result[i].badComment+"<br>"+
+                "已签约场馆:"+selectVenueByVenueId(result[i].venueId)
+
+        }
+    })
+}
+
+
+//根据场馆id查询场馆具体详情--教练详情页点击签约场馆时调用
+function selectVenueByVenueId(venueId) {
+    $.ajax({
+        url:"/venue/venueInformation",
+        type:"post",
+        contentType:"application/json;charset=utf-8",
+        data:JSON.stringify({
+            "venueId":venueId,
+        }),
+        success:function (result) {//返回的是场馆id查出来的user对象
+            if (result.realName == null){
+                return "未签约场馆";
+            }
+            return result.realName;
+        }
+    })
+}
+
+//场馆发起签约请求签约
+function applyForSign(venueId,coachId) {
+    $.ajax({
+        url:"/venue/applyForSign",
+        type:"post",
+        contentType:"application/json;charset=utf-8",
+        data:JSON.stringify({
+            "venueId":venueId,
+            "coachId":coachId,
+        }),
+        success:function (result) {//返回的是场馆id查出来的user对象
+            alert(result)
+        }
+    })
+}
+
+//场馆查询和场馆签约的list --- 这里不需要条件，查询出所有和场馆签约的教练
+function venueAllCoach(venueId) {
+    $.ajax({
+        url:"/venue/venueAllCoach",
+        type:"post",
+        contentType:"application/json;charset=utf-8",
+        data:JSON.stringify({
+            "venueId":venueId,
+        }),
+        success:function (result) {//返回的是场馆id查出来的allCoach
+            var content ="";
+            for (var i = 0;i < result.length;i++) {
+                "教练名字：" + result[i].realName + "<br>"
+            }
+        }
+        ("#要填入的id").html(content)
+    })
+}
+//场馆解约选中的教练
+function venueBreakCoach(coachId) {
+    $.ajax({
+        url:"/venue/venueBreakCoach",
+        type:"post",
+        contentType:"application/json;charset=utf-8",
+        data:JSON.stringify({
+            "venueId":coachId,
+        }),
+        success:function (result) {
+            alert(result)
+        }
+    })
+}
+
+//场馆查询所有产品的信息
+function venueAllProduct(venueId) {
+    $.ajax({
+        url:"/product/venueAllProduct",
+        type:"post",
+        contentType:"application/json;charset=utf-8",
+        data:JSON.stringify({
+            "venueId":venueId,
+        }),
+        success:function (result) {//查出来的是产品的list
+            var content ="";
+            for (var i = 0;i<result.length;i++){
+                content += "产品类型："+result.productType+
+                    "产品价格："+result.productPrice+
+                    "产品描述："+result.product.productDetail
+            }
+        }
+    })
+}
+
+//场馆增加产品
+function venueAddProduct() {
+    $.ajax({
+        url:"/product/venueAddProduct",
+        type:"post",
+        contentType:"application/json;charset=utf-8",
+        data:JSON.stringify({
+            "venueId":("#venueId").val(),
+            "productType":("#productType").val(),
+            "productPrice":("#productPrice").val(),
+            "productDetail":("#productDetail").val(),
+            "totalTime":("#totalTime").val(),
+            "productLevel":("productLevel").val(),
+            "startTime":("#startTime").val(),
+            "endTime":("#endTime").val(),
+            "consumeTime":("#consumeTime").val()
+        }),
+        success:function (result) {//查出来的是产品的list
+            alert(result)
+        }
+    })
+}
+
+//场馆删除产品
+function venueDeleteProduct(productId) {
+    $.ajax({
+        url:"/product/venueDeleteProduct",
+        type:"post",
+        contentType:"application/json;charset=utf-8",
+        data:JSON.stringify({
+            "product":productId,
+        }),
+        success:function (result) {
+            alert(result)
+        }
+    })
+}
+
+//场馆查询单个产品
+function venueSelectProduct(productId) {
+    $.ajax({
+        url:"/product/venueSelectProduct",
+        type:"post",
+        contentType:"application/json;charset=utf-8",
+        data:JSON.stringify({
+            "product":productId,
+        }),
+        success:function (result) {
+            alert(result)
+        }
+    })
+}
+
+//场馆修改单个产品
+function venueUpdateProduct(){
+    $.ajax({
+        url:"/product/venueUpdateProduct",
+        type:"post",
+        contentType:"application/json;charset=utf-8",
+        data:JSON.stringify({
+            "venueId":("#venueId").val(),
+            "productType":("#productType").val(),
+            "productPrice":("#productPrice").val(),
+            "productDetail":("#productDetail").val(),
+            "totalTime":("#totalTime").val(),
+            "productLevel":("productLevel").val(),
+            "startTime":("#startTime").val(),
+            "endTime":("#endTime").val(),
+            "consumeTime":("#consumeTime").val()
+        }),
+        success:function (result) {//查出来的是产品的list
+            alert(result)
+        }
+    })
+}
+
+
+</script>
+
+
+
+</body>
+</html>

@@ -12,10 +12,11 @@ public class WalletRecordcontroller {
 
     /**
      * 插入订单
+     *
      * @param walletRecord
      */
-    public void insertRecord(WalletRecord walletRecord){
-       walletRecordService.insertRecord(walletRecord);
+    public void insertRecord(WalletRecord walletRecord) {
+        walletRecordService.insertRecord(walletRecord);
     }
 
 //    @RequestMapping("/OrderRate")
