@@ -57,4 +57,8 @@ public interface CoachService {
     Result deleteCourse(int userId, Integer courseId) throws RuntimeException;
 
     Result updateCourse(int userId, Course course) throws RuntimeException;
+
+    void saveCoach(Coach coach);
+
+    Coach findCoachByUserId(Integer userId);
 }

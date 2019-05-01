@@ -2,6 +2,7 @@ package com.woniu.yoga.user.service;
 
 import com.woniu.yoga.communicate.pojo.Comment;
 import com.woniu.yoga.user.pojo.Order;
+import com.woniu.yoga.user.pojo.Student;
 import com.woniu.yoga.user.vo.*;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -15,7 +16,9 @@ import java.util.List;
  * @Description TODO
  **/
 public interface StudentService {
+    Student findStudentByUserId(Integer userId);
 
+    void saveStudent(Student student);
 
 
 

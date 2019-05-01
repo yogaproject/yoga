@@ -6,17 +6,12 @@ import com.woniu.yoga.communicate.dao.MessageMapper;
 import com.woniu.yoga.communicate.repository.MessageRepository;
 import com.woniu.yoga.communicate.pojo.Message;
 import com.woniu.yoga.communicate.service.MessageService;
-import com.woniu.yoga.user.pojo.User;
-import com.woniu.yoga.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Description 私信通知业务实现类

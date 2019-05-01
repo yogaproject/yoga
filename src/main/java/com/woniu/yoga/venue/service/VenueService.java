@@ -48,6 +48,7 @@ public interface VenueService {
     //教练添加课程
     int coachAddCourseService(Course course);
 
-
+    //lxy
+    void saveVenue(Venue venue);
 
 }

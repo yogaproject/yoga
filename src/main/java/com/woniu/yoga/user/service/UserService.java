@@ -43,31 +43,18 @@ public interface UserService {
 
     Result listAroundVenues(SearchConditionVO searchConditionVO) throws RuntimeException;
 
-
-    //登录注册，插入用户信息 lxy
-    User saveUser(User user);
-    //邮箱注册验证 lxy
-    boolean sendRegEmailCode(User user);
-    //登录注册手机，激活状态 lxy
-    boolean activeUserByPhone(String userPhone);
-    //登录注册邮箱，激活状态 lxy
-    boolean activeUserByEmail(String userEmail);
-    //查询邮箱是否存在 lxy
-    User queryUserByEmail(String userEmail);
-    //邮箱登录，查询邮箱和密码 lxy
-    User queryUserByEmailAndPwd(String userEmail,String userPwd);
-    //邮箱注册，查询邮箱和验证码 lxy
-    User queryUserByEmailAndCode(String userEmail, String userVerifyCode);
-    //查询手机是否存在 lxy
-    User queryUserByPhone(String userPhone);
-    //注册发送验证码，并插入 lxy
-    boolean sendRegPhonePwd(User user);
-    //已发送验证码，注册手机，查询用户名 lxy
-    User queryUserByPhoneAndPwd(String userPhone, String userPwd);
-    //登录发送验证码 lxy
-    boolean sendLoginMessage(User user);
-    //登录手机，查询验证手机和验证码 lxy
-    User queryUserByPhoneAndCode(String userPhone, String userVerifyCode);
     //查询用户优惠券
     List<Coupon> fandCouponByUserId(int userid);
+
+    //插入 lxy
+    void saveUser(User user);
+    //邮箱注册验证 lxy
+    boolean sendRegEmailCode(User user);
+    //查询邮箱是否存在 lxy
+    User queryUserByEmail(String userEmail);
+    //查询手机是否存在 lxy
+    User queryUserByPhone(String userPhone);
+    //注册，登录发送验证码（密码），并插入redis lxy
+    boolean sendPhoneMessage(User user,Integer templateId);
+
 }

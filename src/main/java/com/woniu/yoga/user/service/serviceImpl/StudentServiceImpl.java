@@ -14,6 +14,7 @@ import com.woniu.yoga.pay.pojo.WalletRecord;
 import com.woniu.yoga.user.dao.*;
 import com.woniu.yoga.user.dto.SearchConditionDTO;
 import com.woniu.yoga.user.pojo.*;
+import com.woniu.yoga.user.repository.StudentRepository;
 import com.woniu.yoga.user.service.StudentService;
 import com.woniu.yoga.user.util.ConvertVOToDTOUtil;
 import com.woniu.yoga.user.util.GetBmapDistanceUtil;
@@ -58,6 +59,8 @@ public class StudentServiceImpl implements StudentService {
     private WalletRecordMapper walletRecordMapper;
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private StudentRepository studentRepository;
 
 
 
@@ -358,5 +361,14 @@ public class StudentServiceImpl implements StudentService {
         return coachCourseRecord;
     }
 
+    @Override
+    public Student findStudentByUserId(Integer userId) {
+        return studentRepository.findStudentByUserId(userId);
+    }
+
+    @Override
+    public void saveStudent(Student student) {
+        studentRepository.save(student);
+    }
 
 }

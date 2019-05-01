@@ -7,6 +7,7 @@ import com.woniu.yoga.user.dao.OrderMapper;
 import com.woniu.yoga.user.pojo.Coach;
 import com.woniu.yoga.user.pojo.Course;
 import com.woniu.yoga.user.pojo.Order;
+import com.woniu.yoga.user.repository.CoachRepository;
 import com.woniu.yoga.user.service.CoachService;
 import com.woniu.yoga.user.util.OrderUtil;
 import com.woniu.yoga.user.util.ResultUtil;
@@ -30,6 +31,18 @@ public class CoachServiceImpl implements CoachService {
     @Autowired
     private CourseMapper courseMapper;
 
+    @Autowired
+    private CoachRepository coachRepository;
+
+    @Override
+    public void saveCoach(Coach coach) {
+        coachRepository.save(coach);
+    }
+
+    @Override
+    public Coach findCoachByUserId(Integer userId) {
+        return coachRepository.findCoachByUserId(userId);
+    }
     @Override
     public Coach findCoachByCoachId(Integer coachId) {
         try {
