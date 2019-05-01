@@ -2,8 +2,13 @@ package com.woniu.yoga.user.service.serviceImpl;
 
 import com.woniu.yoga.user.dao.CourseMapper;
 import com.woniu.yoga.user.service.CourseService;
+import com.woniu.yoga.user.util.ResultUtil;
 import com.woniu.yoga.user.vo.CourseVO;
+import com.woniu.yoga.user.vo.Result;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.sql.SQLException;
 
 /**
  * @Author liufeng
@@ -12,13 +17,20 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @Version 1.0
  * @Description 课程信息交互
  **/
+@Service
 public class CourseServiceImpl implements CourseService {
 
     @Autowired
     private CourseMapper courseMapper;
 
     @Override
-    public CourseVO findCourseByCourseId(Integer courseId) {
-        return courseMapper.findCourseByCourseId(courseId);
+    public Result findCourseByCourseId(Integer courseId) {
+        try {
+            CourseVO course = (CourseVO) courseMapper.findCourseByCourseId(courseId);
+            return ResultUtil.actionSuccess("查询成功", course);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
     }
 }

@@ -1,17 +1,22 @@
 package com.woniu.yoga.user.service.serviceImpl;
 
+import com.woniu.yoga.manage.dao.CouponMapper;
 import com.woniu.yoga.manage.pojo.Coupon;
 import com.woniu.yoga.user.dao.OrderMapper;
 import com.woniu.yoga.user.dao.UserMapper;
+import com.woniu.yoga.user.dto.SearchConditionDTO;
 import com.woniu.yoga.user.pojo.Order;
 import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.service.UserService;
 import com.woniu.yoga.user.util.*;
+import com.woniu.yoga.user.vo.CoachVO;
 import com.woniu.yoga.user.vo.Result;
+import com.woniu.yoga.user.vo.SearchConditionVO;
+import com.woniu.yoga.user.vo.VenueVOR;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.util.List;
 
 
@@ -28,32 +33,75 @@ public class UserServiceImpl implements UserService {
     private OrderMapper orderMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private CouponMapper couponMapper;
 
     //查询用户所有订单
     @Override
     public Result listOrder(Integer userId, String orderStatus) {
-        int status = 0;
-        if (orderStatus != null) {
-            status = OrderUtil.checkOrderStatus(orderStatus);//利用工具将字符串状态转为数字状态
-            if (status == -1) {
-                return ResultUtil.errorOperation("此类订单不存在");
-            }
+        int[] status = OrderUtil.getOrderStatus(orderStatus);//利用工具将状态转为字符串（数组）
+        List<Order> data = null;
+        try {
+            data = orderMapper.findOrderByUserIdAndStatus(userId, status);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
         }
-        List<Order> data =orderMapper.findOrderByUserIdAndStatus(userId, orderStatus);
         return ResultUtil.actionSuccess("查询成功",data);
     }
 
     //查询用户所有有效的优惠券
     @Override
-    public Result listCouponsByUserId(Integer userId) {
-        //等待工具中......
-        return null;
+    public Result listCouponsByUserId(Integer userId) throws RuntimeException{
+        try {
+            List<Coupon> coupons = couponMapper.selectByUserId(userId);
+            return ResultUtil.actionSuccess("查询成功",coupons);
+        }catch (SQLException e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+    //查找学员周边的瑜伽师
+    @Override
+    public Result listAroundCoachs(SearchConditionVO searchConditionVO) {
+        //判断用户是否开发定位给app，null则没有开启定位，需要提示用户开启定位
+        if (searchConditionVO.getLongitude() == null || searchConditionVO.getLatitude() == null) {
+            return ResultUtil.errorOperation("请开启定位！");
+        }
+        //double[4] 西侧经度，东侧经度，南侧纬度，北侧纬度
+        double bounds[] = GetBmapDistanceUtil.getRange(searchConditionVO.getLongitude(), searchConditionVO.getLatitude(), searchConditionVO.getRound());
+        SearchConditionDTO searchConditionDTO = ConvertVOToDTOUtil.searchConditionConvert(bounds, searchConditionVO);
+        List<CoachVO> data = null;
+        try {
+            data = ConvertVOToDTOUtil.convertCoachDTOtoVO(userMapper.listAroundCoach(searchConditionDTO));
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+        return ResultUtil.actionSuccess("查询成功", data);
     }
 
-    //lxy
+    @Override
+    public Result listAroundVenues(SearchConditionVO searchConditionVO) throws RuntimeException {
+        //判断用户是否开发定位给app，null则没有开启定位，需要提示用户开启定位
+        if (searchConditionVO.getLongitude() == null || searchConditionVO.getLatitude() == null) {
+            return ResultUtil.errorOperation("请开启定位！");
+        }
+        //double[4] 西侧经度，东侧经度，南侧纬度，北侧纬度
+        double bounds[] = GetBmapDistanceUtil.getRange(searchConditionVO.getLongitude(), searchConditionVO.getLatitude(), searchConditionVO.getRound());
+        SearchConditionDTO searchConditionDTO = ConvertVOToDTOUtil.searchConditionConvert(bounds, searchConditionVO);
+        List<VenueVOR> data = null;
+        try {
+            data = userMapper.listAroundVenue(searchConditionDTO);
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+        return ResultUtil.actionSuccess("查询成功", data);
+    }
     @Override
     public User saveUser(User user) {
-        return userMapper.saveUser(user);
+        return null;
     }
 
 
@@ -208,5 +256,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User queryUserByPhoneAndCode(String userPhone, String userVerifyCode) {
         return userMapper.queryUserByPhoneAndCode(userPhone,userVerifyCode);
+    }
+
+    @Override
+    public List<Coupon> fandCouponByUserId(int userid) {
+        return userMapper.fandCouponByUserId(userid);
     }
 }

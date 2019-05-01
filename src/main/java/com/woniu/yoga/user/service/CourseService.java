@@ -1,6 +1,8 @@
 package com.woniu.yoga.user.service;
 
 import com.woniu.yoga.user.vo.CourseVO;
+import com.woniu.yoga.user.vo.Result;
+import org.springframework.stereotype.Service;
 
 /**
  * @Author liufeng
@@ -9,8 +11,9 @@ import com.woniu.yoga.user.vo.CourseVO;
  * @Version 1.0
  * @Description 
  **/
+@Service
 public interface CourseService {
 
 
-    CourseVO findCourseByCourseId(Integer courseId);
+    Result findCourseByCourseId(Integer courseId)throws RuntimeException;
 }

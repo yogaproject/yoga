@@ -13,38 +13,48 @@ import java.util.List;
 @Service
 public interface CoachService {
     //根据教练id，查询教练详细信息
-    Coach findCoachByCoachId(Integer coachId);
+    Coach findCoachByCoachId(Integer coachId) throws RuntimeException;
 
     /*
      * @Author liufeng
-     * @Date
      * @Description //瑜伽师处理带处理订单
-     * @Param
-     * @return
      **/
-    Result updateOrder(String orderId, String result);
+    Result updateOrder(String orderId, String result) throws RuntimeException;
     /*
      * @Author liufeng
-     * @Date
      * @Description //查看学员信息？？？？？
-     * @Param
-     * @return
      **/
-    Result listStudentByCoachId(Integer userId);
+    Result listStudentByCoachId(Integer userId) throws RuntimeException;
     /*
      * @Author liufeng
-     * @Date
      * @Description //查找所有流派
-     * @Param
-     * @return
      **/
-    Result listCoachStyles();
+    Result listCoachStyles() throws RuntimeException;
     //教练根据查询条件查询场馆list
-    List<Venue> findVenueByConditions(Recruitment recruitment);
+    List<Venue> findVenueByConditions(Recruitment recruitment) throws RuntimeException;
 
 
+    /*
+     * @Author liufeng
+     * @Description //课程完结后，瑜伽师修改订单状态为待付款
+     **/
+    Result updateOrderForWaitToPay(Integer userId,String orderId) throws RuntimeException;
+    /*
+     * @Author liufeng
+     * @Description //瑜伽师新建课程
+     **/
+    Result insertCourse(int userId,Course course) throws RuntimeException;
+    /*
+     * @Author liufeng
+     * @Description //瑜伽师申请向场馆签约
+     **/
+    Result applyForSign(int userId, Integer venueId) throws RuntimeException;
 
-    Result updateOrderForWaitToPay(String orderId);
+    Result dealVenueRequest(int userId, Integer venueId, String result) throws RuntimeException;
 
-    Result insertCourse(int userId,Course course);
+    Result cancelContract(int userId) throws RuntimeException;
+
+    Result deleteCourse(int userId, Integer courseId) throws RuntimeException;
+
+    Result updateCourse(int userId, Course course) throws RuntimeException;
 }
