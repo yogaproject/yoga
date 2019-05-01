@@ -2,13 +2,13 @@ package com.woniu.yoga.communicate.service.impl;
 
 import com.github.pagehelper.PageInfo;
 import com.woniu.yoga.commom.utils.CommentUtil;
-import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.communicate.constant.SysConstant;
 import com.woniu.yoga.communicate.dao.FollowMapper;
 import com.woniu.yoga.communicate.pojo.Follow;
 import com.woniu.yoga.communicate.service.FollowService;
 import com.woniu.yoga.communicate.vo.FollowVo;
 import com.woniu.yoga.home.vo.HomepageVo;
+import com.woniu.yoga.home.vo.Result;
 import com.woniu.yoga.user.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

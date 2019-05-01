@@ -21,6 +21,8 @@ public class Order {
     //订单状态
     private Integer orderStatus;
 
+    private Integer courseId;
+
     private Integer payStatus;
     //课时数
     private Integer courseCount;

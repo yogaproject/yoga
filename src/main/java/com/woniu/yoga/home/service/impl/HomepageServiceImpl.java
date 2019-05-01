@@ -2,11 +2,11 @@ package com.woniu.yoga.home.service.impl;
 
 import com.github.pagehelper.PageInfo;
 import com.woniu.yoga.commom.utils.CommentUtil;
-import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.home.dao.HomepageMapper;
 import com.woniu.yoga.home.pojo.Homepage;
 import com.woniu.yoga.home.service.HomepageService;
 import com.woniu.yoga.home.vo.HomepageVo;
+import com.woniu.yoga.home.vo.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,8 +48,7 @@ public class HomepageServiceImpl implements HomepageService {
     }
 
     @Override
-    public Result showOtherHomepage(Integer roleId, Float latitude, Float longitude, Integer currentPage, Integer pageSize) {
-
+    public Result<List<HomepageVo>> showOtherHomepage(Integer roleId, Float latitude, Float longitude, Integer currentPage, Integer pageSize) {
         List<HomepageVo> list = homepageMapper.queryOtherHomepages(roleId,latitude, longitude, currentPage, pageSize);
         return dealWithList(list);
     }

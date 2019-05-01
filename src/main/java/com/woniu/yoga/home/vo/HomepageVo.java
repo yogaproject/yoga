@@ -1,5 +1,7 @@
 package com.woniu.yoga.home.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
@@ -11,33 +13,47 @@ import java.util.Date;
  * @date 2019/4/22 15:31
  */
 @Data
+@ApiModel("动态")
 public class HomepageVo {
-    //动态内容id
+    @ApiModelProperty("动态内容id")
     private Integer mId;
-    //标题
+
+    @ApiModelProperty("标题")
     private String title;
-    //图片
+
+    @ApiModelProperty("图片")
     private String img;
-    //用户id
+
+    @ApiModelProperty("动态内容id")
     private Integer userId;
-    //评论数量
+
+    @ApiModelProperty("评论数量")
     private Long commentCount;
-    //创建时间
+
+    @ApiModelProperty("创建时间")
     private Date createTime;
-    //发布时间
+
+    @ApiModelProperty("发布时间")
     private String publishTime;
-    //内容
+
+    @ApiModelProperty("内容")
     private String content;
-    //显示距离
+
+    @ApiModelProperty("显示距离")
     private Float distance;
-    //用户昵称
+
+    @ApiModelProperty("用户昵称")
     private String userNickName;
-    //user等级
+
+    @ApiModelProperty("user等级")
     private Integer userLevel;
-    //用户设置的权限
+
+    @ApiModelProperty("用户设置的权限")
     private Integer userPrivacy;
-    //动态图文设置的权限
+
+    @ApiModelProperty("动态图文设置的权限")
     private Integer homepagePrivacy;
-    //关注状态
+
+    @ApiModelProperty("关注状态")
     private Integer followStatus;
 }

@@ -24,7 +24,7 @@
   </delete>
   <select id="queryAdvertisement" resultMap="BaseResultMap">
     select
-    <include refid="Base_Column_List" />
+    ad_id, ad_img, ad_detail, ad_sort, ad_price, ad_flag
     from advertisement
     order by ad_sort
   </select>

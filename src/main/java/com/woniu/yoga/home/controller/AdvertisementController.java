@@ -1,11 +1,16 @@
 package com.woniu.yoga.home.controller;
 
 import com.woniu.yoga.commom.utils.JsonUtil;
+import com.woniu.yoga.home.pojo.Advertisement;
 import com.woniu.yoga.home.service.AdvertisementService;
-import io.swagger.annotations.ApiOperation;
+import com.woniu.yoga.home.vo.Result;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * @author huijie yan
@@ -21,8 +26,8 @@ public class AdvertisementController {
     private AdvertisementService advertisementService;
 
     @ApiOperation(value = "展示广告")
-    @RequestMapping("/showAdvertisement")
-    public String showAdvertisement(){
-        return JsonUtil.toJson(advertisementService.showAdvertisement());
+    @GetMapping("/showAdvertisement")
+    public Result<List<Advertisement>> showAdvertisement(){
+        return advertisementService.showAdvertisement();
     }
 }

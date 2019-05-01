@@ -102,7 +102,7 @@
 
   <update id="deleteByFlag">
     update follow
-    set follow_flag=1
+    set follow_flag=1 and follow_status=0
     where user_id=#{userId} and followed_id=#{followedId}
   </update>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">

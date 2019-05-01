@@ -1,19 +1,18 @@
 package com.woniu.yoga.home.controller;
 
 import com.woniu.yoga.commom.utils.JsonUtil;
-import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.communicate.constant.SysConstant;
 import com.woniu.yoga.home.pojo.Homepage;
 import com.woniu.yoga.home.service.HomepageService;
+import com.woniu.yoga.home.vo.HomepageVo;
+import com.woniu.yoga.home.vo.Result;
 import com.woniu.yoga.user.pojo.User;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.spring.web.json.Json;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  * @author huijie yan
@@ -46,10 +45,10 @@ public class HomepageController {
             @ApiImplicitParam(name = "currentPage", value = "每页查询数据条数",required = true, paramType = "path")
     })
     @GetMapping("/{latitude}/{longitude}/{currentPage}/{pageSize}/showHomepage")
-    public String showHomepage(@PathVariable("latitude") Float latitude, @PathVariable("longitude") Float longitude,
+    public Result<List<HomepageVo>> showHomepage(@PathVariable("latitude") Float latitude, @PathVariable("longitude") Float longitude,
                                @PathVariable("currentPage") Integer currentPage, @PathVariable("pageSize") Integer pageSize){
 
-        return JsonUtil.toJson(homepageService.selectHomepages(latitude,longitude, currentPage, pageSize));
+        return homepageService.selectHomepages(latitude,longitude, currentPage, pageSize);
     }
 
     /**
@@ -62,9 +61,8 @@ public class HomepageController {
     @ApiOperation(value = "根据动态内容id获取图文详情")
     @ApiImplicitParam(name = "mid", value = "动态内容id", required = true, paramType = "path")
     @GetMapping("/{mid}/showHomepageDetail")
-    public String showHomepageDetail(@PathVariable("mid") Integer mid){
-
-        return JsonUtil.toJson(homepageService.showHomepageDetail(mid));
+    public Result<HomepageVo> showHomepageDetail(@PathVariable("mid") Integer mid){
+        return homepageService.showHomepageDetail(mid);
     }
 
     /**
@@ -76,13 +74,14 @@ public class HomepageController {
     */
     @ApiOperation(value = "新增动态")
     @ApiImplicitParam(name = "homepage", value = "动态", required = true, paramType = "path")
+    @ApiResponse(code = 500, message = "未登录")
     @PostMapping("/{homepage}/pushHomepage")
-    public String pushHomepage(@PathVariable("homepage") Homepage homepage, HttpSession session){
+    public Result pushHomepage(@PathVariable("homepage") Homepage homepage, HttpSession session){
         User user = (User)session.getAttribute(SysConstant.CURRENT_USER);
         if (user == null){
-            return JsonUtil.toJson(Result.error("未登录"));
+            return Result.error("未登录");
         }
-        return JsonUtil.toJson(homepageService.pushHomepage(homepage, user.getUserId()));
+        return homepageService.pushHomepage(homepage, user.getUserId());
     }
 
     /**
@@ -105,10 +104,10 @@ public class HomepageController {
             @ApiImplicitParam(name = "pageSize", value = "每页查询数据条数",required = true, paramType = "path")
     })
     @GetMapping(value = "/{roleId}/{latitude}/{longitude}/{currentPage}/{pageSize}/showOtherHomepage")
-    public String showOtherHomepage(@PathVariable("roleId") Integer roleId, @PathVariable("latitude") Float latitude, @PathVariable("longitude") Float longitude,
-                                    @PathVariable("currentPage") Integer currentPage, @PathVariable("pageSize") Integer pageSize){
+    public Result<List<HomepageVo>> showOtherHomepage(@PathVariable("roleId") Integer roleId, @PathVariable("latitude") Float latitude, @PathVariable("longitude") Float longitude,
+                                                      @PathVariable("currentPage") Integer currentPage, @PathVariable("pageSize") Integer pageSize){
 
-        return JsonUtil.toJson(homepageService.showOtherHomepage(roleId,latitude, longitude, currentPage, pageSize));
+        return homepageService.showOtherHomepage(roleId,latitude, longitude, currentPage, pageSize);
     }
 
     /**
@@ -120,8 +119,9 @@ public class HomepageController {
     */
     @ApiOperation(value = "删除动态")
     @ApiImplicitParam(name = "mid", value = "动态id", required = true, paramType = "path")
+    @ApiResponse(code = 200,message = "删除成功")
     @DeleteMapping("/{mid}/deleteHomepage")
-    public String deleteHomepage(@PathVariable("mid") Integer mid){
-        return JsonUtil.toJson(homepageService.deleteHomepage(mid));
+    public Result deleteHomepage(@PathVariable("mid") Integer mid){
+        return homepageService.deleteHomepage(mid);
     }
 }

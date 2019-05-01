@@ -1,11 +1,14 @@
 package com.woniu.yoga.home.service.impl;
 
-import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.home.dao.AdvertisementMapper;
+import com.woniu.yoga.home.pojo.Advertisement;
 import com.woniu.yoga.home.service.AdvertisementService;
+import com.woniu.yoga.home.vo.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author huijie yan
@@ -20,8 +23,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     private AdvertisementMapper advertisementMapper;
 
     @Override
-    @Cacheable(value = "advertisement", key = "#advertisement.adId")
-    public Result showAdvertisement() {
+    public Result<List<Advertisement>> showAdvertisement() {
         return Result.success("成功",advertisementMapper.queryAdvertisement());
     }
 }
