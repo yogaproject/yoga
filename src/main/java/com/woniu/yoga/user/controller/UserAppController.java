@@ -39,13 +39,8 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @Description: java类作用描述
- * 用户填写相关信息，点击注册按钮
- * 系统先将用户记录保存到数据库中，其中用户状态为未激活
- * 系统发送一封邮件并通知用户去验证
- * 用户登录邮箱并点击激活链接
- * 系统将用户状态更改为已激活并通知用户注册成功
- * @Author: 路边
+ * @Description: java类作用描述 app用户登录、注册、个人信息、功能通用
+ * @Author: lxy
  * @time: 2019/4/16 10:25
  */
 @Transactional
@@ -69,7 +64,7 @@ public class UserAppController {
      * 方法实现说明 发送邮箱验证码，已封装
      * @author      lxy
      * @Param:      email，password，userName
-     * @return      json String "success" "fail"
+     * @return      json对象 Result
      * @exception
      * @date        2019/4/17 16:26
      */
@@ -93,19 +88,11 @@ public class UserAppController {
 
     }
     /**
-     * 方法实现说明 注册邮箱
-     * 1、在过期时间内从邮箱中获取验证码，输入密码，验证密码和邮箱
-     * 2、输入后点击注册，注册时，先判断数据库中是否存在
-     * 3、如果不存在，则在redis中查找是否有邮箱的键，如果有，说明没有过期
-     * 则成功，成功后再将邮箱和密码插入进数据库，最后将激活码激活0-->1
-     * 3、如果在redis中没有查到邮箱账号，那么失败，返回字符串
-     *  密码加密，加盐，盐值采用6位随机数，盐值和密码注册时，插入，注册邮箱直接默认是学生
-     *  同时插入默认的昵称和头像
-     *  注册后直接通过认证，登录主页
-     *  注意 插入user表后，还要分别插入对应的教练表和学生表 验证码使用redis插入缓存
+     * 方法实现说明 注册邮箱，注册后直接通过shiro令牌登录
+     * 插入默认的头像和昵称,判断角色，分别插入userid到学员，教练，场馆
      * @author      lxy
      * @Param:      userVerifyCode，userPhone,active
-     * @return      json String "0","1","3"
+     * @return      json对象 Result
      * @exception
      * @date        2019/4/19 17:22
      */
@@ -113,8 +100,14 @@ public class UserAppController {
     @ResponseBody
     public Result regByEmail(String userEmail, String userPwd, String userVerifyCode, User user, HttpSession session,
                              String roleName, Student student){
-        if (userPwd.equals("") || userEmail.equals("") || userVerifyCode.equals("")){
-            return ResultUtil.errorOperation("邮箱号、密码、验证码不能为空");
+        if (userPwd.equals("")){
+            return ResultUtil.errorOperation("密码不能为空");
+        }
+        if (userEmail.equals("")){
+            return ResultUtil.errorOperation("邮箱号不能为空");
+        }
+        if (userVerifyCode.equals("")){
+            return ResultUtil.errorOperation("验证码不能为空");
         }
         if(!userEmail.matches(RegexpUtil.RegExp_Mail)) {
             return ResultUtil.errorOperation("邮箱格式不匹配");
@@ -160,7 +153,7 @@ public class UserAppController {
      * 方法实现说明 邮箱以密码登录,shiro认证
      * @author      lxy
      * @Param:      userEmail，userPwd
-     * @return
+     * @return      json对象 Result
      * @exception
      * @date        2019/4/19 21:37
      */
@@ -177,7 +170,6 @@ public class UserAppController {
         Subject subject= SecurityUtils.getSubject();
         if (!subject.isAuthenticated()){
             UsernamePasswordToken token = new UsernamePasswordToken(userEmail,userPwd);
-
             try {
                 subject.login(token);
                 //认证成功
@@ -198,13 +190,9 @@ public class UserAppController {
     }
     /**
      * 方法实现说明  发送验证码（邮箱找回密码）
-     * 1、已经有用户名，因此不用考虑插入，而是更新
-     * 2、先查找邮箱是否存在
-     * 3、存在发送验证码时先以键值对插入redis
-     * 4、判断是否插入，已插入则发送，同时设置过期时间
      * @author      lxy
      * @Param:      userEmail，userVerifyCode
-     * @return      String json
+     * @return      json对象 Result
      * @exception
      * @date        2019/4/21 3:32
      */
@@ -235,20 +223,20 @@ public class UserAppController {
     }
     /**
      * 方法实现说明 登录重置密码界面（邮箱找回密码）
-     * 1、在redis中先判断验证码是否过期
-     * 2、没有过期则，在redis中判断验证码与邮箱是否正确
-     * 2、正确，则跳转到重置密码页面
      * @author      lxy
-     * @Param:
-     * @return
+     * @Param:      userEmail，userVerifyCode，user
+     * @return      json对象 Result
      * @exception
      * @date        2019/4/23 22:38
      */
         @RequestMapping("/getPwdByEmail")
         @ResponseBody
         public Result getPwdByEmail(String userEmail,String userVerifyCode,User user,HttpSession session){
-            if (userEmail.equals("") || userVerifyCode.equals("")){
-                return ResultUtil.errorOperation("邮箱号或验证码不能为空");
+            if (userEmail.equals("")){
+                return ResultUtil.errorOperation("邮箱号不能为空");
+            }
+            if (userVerifyCode.equals("")){
+                return ResultUtil.errorOperation("验证码不能为空");
             }
             if(!userEmail.matches(RegexpUtil.RegExp_Mail)) {
                 return ResultUtil.errorOperation("邮箱格式不匹配");
@@ -263,19 +251,22 @@ public class UserAppController {
             return ResultUtil.actionSuccess("验证成功，跳转下一步",user);
 
         }
-        /**
-         * 方法实现说明 重置密码
-         * @author      lxy
-         * @Param:
-         * @return
-         * @exception
-         * @date        2019/4/24 0:03
-         */
+    /**
+     * 方法实现说明 重置密码
+     * @author      lxy
+     * @Param:      userPwd,confirmPwd,user,session
+     * @return      json对象 Result
+     * @exception
+     * @date        2019/4/24 0:03
+     */
         @RequestMapping("/updateUserPwdByEmail")
         @ResponseBody
         public Result updateUserPwdByEmail(String userPwd, String confirmPwd,User user,HttpSession session){
-            if (userPwd.equals("") || confirmPwd.equals("")){
-                return ResultUtil.errorOperation("密码或确认密码不能为空");
+            if (userPwd.equals("")){
+                return ResultUtil.errorOperation("密码不能为空");
+            }
+            if (confirmPwd.equals("")){
+                return ResultUtil.errorOperation("确认密码不能为空");
             }
             if (!userPwd.matches(RegexpUtil.RegExp_PASS) || !confirmPwd.matches(RegexpUtil.RegExp_PASS)){
                 return ResultUtil.errorOperation("密码格式不匹配");
@@ -296,10 +287,9 @@ public class UserAppController {
     //-----------------------------------手机方式-----------------------------
     /**
      * 方法实现说明  发送手机注册的密码，已封装
-     * 主要判断输入的值是否为空，注册判断手机号是否已经存在
      * @author      lxy
      * @Param:      userPwd，userPhone
-     * @return      json String "0","3"
+     * @return      json对象 Result
      * @exception
      * @date        2019/4/20 9:28
      */
@@ -323,11 +313,11 @@ public class UserAppController {
 
     }
     /**
-     * 方法实现说明 注册手机号，输入密码，验证密码和手机号，查找，更新，激活状态0--->1
-     *              同时插入默认的头像和昵称,判断角色，分别插入userid到学员，教练，场馆
+     * 方法实现说明 注册手机号
+     * 插入默认的头像和昵称,判断角色，分别插入userid到学员，教练，场馆
      * @author      lxy
      * @Param:      userVerifyCode，userPhone,activa
-     * @return      json String "0","1","3"
+     * @return      json对象 Result
      * @exception
      * @date        2019/4/19 17:22
      */
@@ -380,8 +370,6 @@ public class UserAppController {
             coach.setUserId(user.getUserId());
             coachService.saveCoach(coach);
         }
-
-
         Subject subject=SecurityUtils.getSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(userPhone,userPwd);
         subject.login(token);
@@ -390,10 +378,9 @@ public class UserAppController {
     }
     /**
      * 方法实现说明  发送登录手机的验证码，已封装
-     * 主要判断输入的值是否为空，登录判断手机号是否已经存在
      * @author      lxy
-     * @Param:      userVerifyCode,userPhone
-     * @return
+     * @Param:      userVerifyCode,userPhone,user
+     * @return      json对象 Result
      * @exception
      * @date        2019/4/20 16:18
      */
@@ -418,18 +405,11 @@ public class UserAppController {
 
     }
 
-
-
-
     /**
-     * 方法实现说明 手机登录
-     * 1、判断是否注册，为空等
-     * 2、以验证码登录，在redis中验证验证码和手机号，判断验证码是否过期，是否正确
-     *
-     *
+     * 方法实现说明 手机登录,以验证码方式登录
      * @author      lxy
      * @Param:      userVerifyCode,userPhone
-     * @return      json String
+     * @return      json对象 Result
      * @exception
      * @date        2019/4/20 16:15
      */
@@ -473,8 +453,8 @@ public class UserAppController {
     /**
      * 方法实现说明   手机发送找回密码的验证码，已封装
      * @author      lxy
-     * @Param:    userPhone
-     * @return      String json
+     * @Param:      userPhone
+     * @return      json对象 Result
      * @exception
      * @date        2019/4/21 3:32
      */
@@ -501,20 +481,22 @@ public class UserAppController {
 
     /**
      * 方法实现说明 登录重置密码界面
-     * 1、在redis中验证验证码与手机是否过期，是否正确
-     * 2、跳转到重置密码页面
      * @author      lxy
-     * @Param:
-     * @return
+     * @Param:      userPhone，userVerifyCode
+     * @return      json对象 Result
      * @exception
      * @date        2019/4/23 22:38
      */
     @RequestMapping("/getPwdByPhone")
     @ResponseBody
     public Result getPwdByPhone(String userPhone,String userVerifyCode,User user,HttpSession session){
-        if (userPhone.equals("") || userVerifyCode.equals("")){
-            return ResultUtil.errorOperation("手机号或者验证码不能为空");
+        if (userPhone.equals("")){
+            return ResultUtil.errorOperation("手机号不能为空");
         }
+        if (userVerifyCode.equals("")){
+            return ResultUtil.errorOperation("验证码不能为空");
+        }
+
         if(!userPhone.matches(RegexpUtil.RegExp_PHONE)) {
             return ResultUtil.errorOperation("手机格式不匹配");
         }
@@ -535,16 +517,19 @@ public class UserAppController {
     /**
      * 方法实现说明 重置密码
      * @author      lxy
-     * @Param:
-     * @return
+     * @Param:      userPwd，confirmPwd
+     * @return      json对象 Result
      * @exception
      * @date        2019/4/24 0:03
      */
     @RequestMapping("/updateUserPwdByPhone")
     @ResponseBody
     public Result updateUserPwdByPhone(String userPwd, String confirmPwd,User user,HttpSession session){
-        if (userPwd.equals("") || confirmPwd.equals("")){
-            return ResultUtil.errorOperation("密码或确认密码不能为空");
+        if (userPwd.equals("")){
+            return ResultUtil.errorOperation("密码不能为空");
+        }
+        if (confirmPwd.equals("")){
+            return ResultUtil.errorOperation("确认密码不能为空");
         }
         if (!userPwd.matches(RegexpUtil.RegExp_PASS) || !confirmPwd.matches(RegexpUtil.RegExp_PASS)){
             return ResultUtil.errorOperation("密码格式不匹配");
@@ -561,6 +546,14 @@ public class UserAppController {
         }
     }
 
+    /**
+     * 方法实现说明
+     * @author      lxy
+     * @Param:
+     * @return      json字符串  redirect:../loginApp.html
+     * @exception
+     * @date        2019/5/3 14:57
+     */
     @RequestMapping("/logout")
     public String logout() {
         System.out.println("注销");
@@ -575,10 +568,9 @@ public class UserAppController {
 
     /**
      * 方法实现说明   手机发送手机绑定的验证码
-     * 通过手机发送验证码，插入更换验证码，手机已存在则不能绑定
      * @author      lxy
-     * @Param:    userPhone
-     * @return      String json
+     * @Param:      userPhone
+     * @return      json对象 Result
      * @exception
      * @date        2019/4/21 3:32
      */
@@ -606,19 +598,23 @@ public class UserAppController {
     }
 
 
+
     /**
      * 方法实现说明 绑定手机
      * @author      lxy
-     * @Param:
-     * @return
+     * @Param:      userPhone,userVerifyCode
+     * @return      json对象 Result
      * @exception
      * @date        2019/4/24 18:53
      */
     @RequestMapping("/bindPhone")
     @ResponseBody
     public Result bindPhone(String userPhone,String userVerifyCode,User user,HttpSession session){
-        if (userPhone.equals("") || userVerifyCode.equals("")){
-            return ResultUtil.errorOperation("手机号或者验证码不能为空");
+        if (userPhone.equals("")){
+            return ResultUtil.errorOperation("手机号不能为空");
+        }
+        if (userVerifyCode.equals("")){
+            return ResultUtil.errorOperation("验证码不能为空");
         }
         if(!userPhone.matches(RegexpUtil.RegExp_PHONE)) {
             return ResultUtil.errorOperation("手机格式不匹配");
@@ -643,8 +639,8 @@ public class UserAppController {
     /**
      * 方法实现说明 展现学生个人信息
      * @author      lxy
-     * @Param:
-     * @return
+     * @Param:      user
+     * @return      json对象 Result
      * @exception
      * @date        2019/4/24 16:17
      */
@@ -664,20 +660,23 @@ public class UserAppController {
     }
 
 
-/**
- * 方法实现说明  完善学生信息,user直接从前端传过来
- * @author      lxy
- * @Param:
- * @return
- * @exception
- * @date        2019/4/24 15:52
- */
+    /**
+     * 方法实现说明  完善学生信息,user直接从前端传过来
+     * @author      lxy
+     * @Param:      user
+     * @return      json对象 Result
+     * @exception
+     * @date        2019/4/24 15:52
+     */
 
 @RequestMapping("/updateStudentInfo")
 @ResponseBody
 public Result updateStudentInfo(User user,HttpSession session){
-            if (user.getRealName().equals("") || user.getIdcard().equals("")){
+            if (user.getRealName().equals("")){
                 return ResultUtil.errorOperation("请完善身份证信息和真实名字");
+            }
+            if (user.getIdcard().equals("")){
+                return ResultUtil.errorOperation("请完善真实名字");
             }
             if (!user.getIdcard().matches(RegexpUtil.RegExp_ID)){
                 return ResultUtil.errorOperation("身份证格式不匹配，请重新输入");
@@ -689,7 +688,6 @@ public Result updateStudentInfo(User user,HttpSession session){
             if (exit!=null){
                 return ResultUtil.errorOperation("该邮箱已经被绑定，请重新输入");
             }
-
             User userReal=userService.queryUserByEmail(user.getUserEmail());
             if (userReal==null){
                 userReal=userService.queryUserByPhone(user.getUserPhone());
@@ -710,8 +708,8 @@ public Result updateStudentInfo(User user,HttpSession session){
     /**
      * 方法实现说明 展现教练个人信息
      * @author      lxy
-     * @Param:
-     * @return
+     * @Param:      user,coach,info
+     * @return      json对象 Map<String,Object>
      * @exception
      * @date        2019/4/24 16:17
      */
@@ -741,8 +739,8 @@ public Result updateStudentInfo(User user,HttpSession session){
     /**
      * 方法实现说明  完善教练信息,user直接从前端传过来
      * @author      lxy
-     * @Param:
-     * @return
+     * @Param:      user,coach,info
+     * @return      json对象 Map<String,Object>
      * @exception
      * @date        2019/4/24 15:52
      */
@@ -750,17 +748,20 @@ public Result updateStudentInfo(User user,HttpSession session){
     @RequestMapping("/updateCoachInfo")
     @ResponseBody
     public Map<String,Object> updateCoachInfo(User user,HttpSession session,Coach coach,String info){
+        User userSession= (User) session.getAttribute(SysConstant.CURRENT_USER);
         Map<String,Object> result=new HashMap<>();
-        if (!user.getUserEmail().matches(RegexpUtil.RegExp_Mail)){
-            info="邮箱格式不匹配，请重新输入";
-            result.put(SysConstant.CURRENT_MESSAGE,info);
-            return result;
-        }
-        User exit=userService.queryUserByEmail(user.getUserEmail());
-        if (exit!=null){
-            info="该邮箱已经被绑定，请重新输入";
-            result.put(SysConstant.CURRENT_MESSAGE,info);
-            return result;
+        if (!user.getUserEmail().equals("")){
+            if (!user.getUserEmail().matches(RegexpUtil.RegExp_Mail)){
+                info="邮箱格式不匹配，请重新输入";
+                result.put(SysConstant.CURRENT_MESSAGE,info);
+                return result;
+            }
+            User exit=userService.queryUserByEmail(user.getUserEmail());
+            if (exit!=userService.queryUserByEmail(userSession.getUserEmail())&& exit!=null){
+                info="该邮箱已经被绑定，请重新输入";
+                result.put(SysConstant.CURRENT_MESSAGE,info);
+                return result;
+            }
         }
         if (user.getRealName().equals("") || user.getIdcard().equals("")){
             info="请完善身份证信息和真实名字";
@@ -776,7 +777,6 @@ public Result updateStudentInfo(User user,HttpSession session){
         if (userReal==null){
             userReal=userService.queryUserByPhone(user.getUserPhone());
         }
-
         userReal.setIdcard(user.getIdcard());
         userReal.setUserNickname(user.getUserNickname());
         userReal.setUserEmail(user.getUserEmail());
@@ -790,11 +790,10 @@ public Result updateStudentInfo(User user,HttpSession session){
         userReal.setUserLocation(user.getUserLocation());
         Coach coachReal=coachService.findCoachByUserId(userReal.getUserId());
         if (coachReal==null){
-            System.out.println();
-            coachReal.setUserId(userReal.getUserId());
-            coachService.saveCoach(coachReal);
+            info="系统错误，请联系管理员";
+            result.put(SysConstant.CURRENT_MESSAGE,info);
+            return result;
         }
-
         coachReal.setCoachStyle(coach.getCoachStyle());
         coachReal.setAuthentication(coach.getAuthentication());
         coachReal.setCoachStatus(coach.getCoachStatus());
@@ -814,8 +813,8 @@ public Result updateStudentInfo(User user,HttpSession session){
     /**
      * 方法实现说明 文件上传
      * @author      lxy
-     * @Param:
-     * @return
+     * @Param:      userHeadimg
+     * @return      json对象 Result
      * @exception
      * @date        2019/4/26 1:12
      */
@@ -848,8 +847,8 @@ public Result updateStudentInfo(User user,HttpSession session){
     /**
      * 方法实现说明  展现个人隐私
      * @author      lxy
-     * @Param:
-     * @return
+     * @Param:      user
+     * @return      json对象 Result
      * @exception
      * @date        2019/4/27 21:07
      */
@@ -870,8 +869,8 @@ public Result updateStudentInfo(User user,HttpSession session){
     /**
      * 方法实现说明 修改隐私
      * @author      lxy
-     * @Param:
-     * @return
+     * @Param:      user
+     * @return      json对象 Result
      * @exception
      * @date        2019/4/27 21:11
      */
@@ -892,8 +891,8 @@ public Result updateStudentInfo(User user,HttpSession session){
     /**
      * 方法实现说明 展现账户与安全
      * @author      lxy
-     * @Param:
-     * @return
+     * @Param:      user
+     * @return      json对象 Result
      * @exception
      * @date        2019/4/29 10:56
      */
@@ -914,8 +913,8 @@ public Result updateStudentInfo(User user,HttpSession session){
     /**
      * 方法实现说明 展现设置密码
      * @author      lxy
-     * @Param:
-     * @return
+     * @Param:      user
+     * @return      json对象 Result
      * @exception
      * @date        2019/4/29 10:58
      */
@@ -939,8 +938,8 @@ public Result updateStudentInfo(User user,HttpSession session){
     /**
      * 方法实现说明 修改密码
      * @author      lxy
-     * @Param:
-     * @return
+     * @Param:      confirmPwd，userNewPwd，userOldPwd
+     * @return      json对象 Result
      * @exception
      * @date        2019/4/29 10:57
      */

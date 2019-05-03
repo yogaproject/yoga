@@ -28,13 +28,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpSession;
 
 /**
- * @Description: java类作用描述
- * 用户填写相关信息，点击注册按钮
- * 系统先将用户记录保存到数据库中，其中用户状态为未激活
- * 系统发送一封邮件并通知用户去验证
- * 用户登录邮箱并点击激活链接
- * 系统将用户状态更改为已激活并通知用户注册成功
- * @Author: 路边
+ * @Description: java类作用描述 pc登录、注册
+ * @Author: lxy
  * @time: 2019/4/16 10:25
  */
 @Transactional
@@ -53,10 +48,9 @@ public class UserPcController {
     //-----------------------------------PC端方式-----------------------------
     /**
      * 方法实现说明  发送手机注册的验证码，已封装
-     * 主要判断输入的值是否为空，注册判断手机号是否已经存在
      * @author      lxy
      * @Param:      userPwd，userPhone
-     * @return      json String "0","3"
+     * @return      json对象 Result
      * @exception
      * @date        2019/4/20 9:28
      */
@@ -81,11 +75,9 @@ public class UserPcController {
     }
     /**
      * 方法实现说明 注册手机号
-     * 1、输入手机、密码和验证码，
-     * 2、同时插入默认的头像和昵称,判断角色，分别插入userid到场馆，管理员没有表，不用插入
      * @author      lxy
      * @Param:      userVerifyCode，userPhone,userPwd，active
-     * @return      json String
+     * @return      json对象 Result
      * @exception
      * @date        2019/4/19 17:22
      */
@@ -144,13 +136,9 @@ public class UserPcController {
 
     /**
      * 方法实现说明 手机登录
-     * 1、判断是否注册，为空等
-     * 2、以密码登录，在数据库中验证密码和手机号，判断是否正确
-     *
-     *
      * @author      lxy
      * @Param:      userPwd,userPhone
-     * @return      json String
+     * @return      json对象 Result
      * @exception
      * @date        2019/4/20 16:15
      */
@@ -201,7 +189,7 @@ public class UserPcController {
      * 方法实现说明 注销
      * @author      lxy
      * @Param:
-     * @return
+     * @return      json字符串  redirect:../loginPc.html
      * @exception
      * @date        2019/4/30 10:46
      */
