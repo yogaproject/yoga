@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * @Author liufeng
@@ -24,9 +25,9 @@ public class CourseServiceImpl implements CourseService {
     private CourseMapper courseMapper;
 
     @Override
-    public Result findCourseByCourseId(Integer courseId) {
+    public Result listCourseByUserId(Integer userId) {
         try {
-            CourseVO course = (CourseVO) courseMapper.findCourseByCourseId(courseId);
+            List<CourseVO> course =  courseMapper.listCourseByUserId(userId);
             return ResultUtil.actionSuccess("查询成功", course);
         } catch (SQLException e) {
             e.printStackTrace();

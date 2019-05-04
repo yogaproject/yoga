@@ -36,7 +36,7 @@ public interface CourseMapper {
             @Result(column = "course_img", property = "img"),
             @Result(column = "course_price",property = "price")
     })
-    List<CourseVO> listCourseByCourseId(Integer userId) throws SQLException;
+    List<CourseVO> listCourseByUserId(Integer userId) throws SQLException;
 
     /*
      * @Author liufeng

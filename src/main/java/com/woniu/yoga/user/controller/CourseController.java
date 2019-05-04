@@ -40,6 +40,6 @@ public class CourseController {
     public Result listCoursesByCoachId(HttpSession session){
         User user = (User) session.getAttribute("user");
         Integer usrId = user.getUserId();
-        return courseService.listCourseByCourseId(usrId);
+        return courseService.listCourseByUserId(usrId);
     }
 }
