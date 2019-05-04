@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
@@ -22,7 +23,7 @@ import java.util.List;
  * @description 我的关注
  * @date 2019/4/24 12:08
  */
-@RestController
+@Controller
 @RequestMapping("/follow")
 public class FollowController {
 
@@ -47,6 +48,7 @@ public class FollowController {
             @ApiImplicitParam(name = "pageSize", value = "每页多少条数据", required = true, paramType = "path")
     })
     @GetMapping("/{state}/{currentPage}/{pageSize}/showFollowList")
+    @ResponseBody
     public Result<List<FollowVo>> showFollowList(@PathVariable("state") Integer state, @PathVariable("currentPage") Integer currentPage,
                                  @PathVariable("pageSize") Integer pageSize, HttpSession session){
         return followService.showFollowList(state, currentPage, pageSize, session);
@@ -65,6 +67,7 @@ public class FollowController {
             @ApiImplicitParam(name = "pageSize", value = "每页多少条数据", required = true, paramType = "path")
     })
     @GetMapping("/{currentPage}/{pageSize}/showFollowHomepage")
+    @ResponseBody
     public Result<List<HomepageVo>> showFollowHomepage(@PathVariable("currentPage") Integer currentPage, @PathVariable("pageSize") Integer pageSize, HttpSession session){
         return followService.showFollowHomepage(currentPage, pageSize, session);
     }
@@ -79,6 +82,7 @@ public class FollowController {
     @ApiOperation(value = "关注用户")
     @ApiImplicitParam(name = "userId", value = "要关注的用户id", required = true, paramType = "path")
     @PutMapping("/{userId}/addFollow")
+    @ResponseBody
     public Result addFollow(@PathVariable("userId") Integer userId, HttpSession session){
         return followService.addFollow(userId, session);
     }
@@ -94,6 +98,7 @@ public class FollowController {
     @ApiOperation(value = "对用户取关")
     @ApiImplicitParam(name = "userId", value = "要取关的用户id", required = true, paramType = "path")
     @DeleteMapping("/{userId}/cancelFollow")
+    @ResponseBody
     public Result cancelFollow(@PathVariable("userId") Integer userId, HttpSession session){
         return followService.cancelFollow(userId, session);
     }
@@ -109,6 +114,7 @@ public class FollowController {
     @ApiOperation(value = "模糊查询关注的人")
     @ApiImplicitParam(name = "userNickName", value = "要查询的名字", required = true, paramType = "path")
     @GetMapping("/{userNickName}/searchFollow")
+    @ResponseBody
     public Result<FollowVo> searchFollow(@PathVariable("userNickName") String userNickName, HttpSession session){
         User user = (User)session.getAttribute(SysConstant.CURRENT_USER);
         if (user == null){

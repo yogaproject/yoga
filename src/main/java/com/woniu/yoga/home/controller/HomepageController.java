@@ -9,6 +9,7 @@ import com.woniu.yoga.home.vo.Result;
 import com.woniu.yoga.user.pojo.User;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
@@ -20,7 +21,7 @@ import java.util.List;
  * @description 主页图文类
  * @date 2019/4/22 9:48
  */
-@RestController
+@Controller
 @RequestMapping("/homepage")
 public class HomepageController {
 
@@ -45,6 +46,7 @@ public class HomepageController {
             @ApiImplicitParam(name = "currentPage", value = "每页查询数据条数",required = true, paramType = "path")
     })
     @GetMapping("/{latitude}/{longitude}/{currentPage}/{pageSize}/showHomepage")
+    @ResponseBody
     public Result<List<HomepageVo>> showHomepage(@PathVariable("latitude") Float latitude, @PathVariable("longitude") Float longitude,
                                @PathVariable("currentPage") Integer currentPage, @PathVariable("pageSize") Integer pageSize){
 
@@ -61,6 +63,7 @@ public class HomepageController {
     @ApiOperation(value = "根据动态内容id获取图文详情")
     @ApiImplicitParam(name = "mid", value = "动态内容id", required = true, paramType = "path")
     @GetMapping("/{mid}/showHomepageDetail")
+    @ResponseBody
     public Result<HomepageVo> showHomepageDetail(@PathVariable("mid") Integer mid){
         return homepageService.showHomepageDetail(mid);
     }
@@ -76,6 +79,7 @@ public class HomepageController {
     @ApiImplicitParam(name = "homepage", value = "动态", required = true, paramType = "path")
     @ApiResponse(code = 500, message = "未登录")
     @PostMapping("/{homepage}/pushHomepage")
+    @ResponseBody
     public Result pushHomepage(@PathVariable("homepage") Homepage homepage, HttpSession session){
         User user = (User)session.getAttribute(SysConstant.CURRENT_USER);
         if (user == null){
@@ -104,6 +108,7 @@ public class HomepageController {
             @ApiImplicitParam(name = "pageSize", value = "每页查询数据条数",required = true, paramType = "path")
     })
     @GetMapping(value = "/{roleId}/{latitude}/{longitude}/{currentPage}/{pageSize}/showOtherHomepage")
+    @ResponseBody
     public Result<List<HomepageVo>> showOtherHomepage(@PathVariable("roleId") Integer roleId, @PathVariable("latitude") Float latitude, @PathVariable("longitude") Float longitude,
                                                       @PathVariable("currentPage") Integer currentPage, @PathVariable("pageSize") Integer pageSize){
 
@@ -121,6 +126,7 @@ public class HomepageController {
     @ApiImplicitParam(name = "mid", value = "动态id", required = true, paramType = "path")
     @ApiResponse(code = 200,message = "删除成功")
     @DeleteMapping("/{mid}/deleteHomepage")
+    @ResponseBody
     public Result deleteHomepage(@PathVariable("mid") Integer mid){
         return homepageService.deleteHomepage(mid);
     }
