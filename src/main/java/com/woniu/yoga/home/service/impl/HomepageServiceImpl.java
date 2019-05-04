@@ -25,8 +25,8 @@ public class HomepageServiceImpl implements HomepageService {
     private HomepageMapper homepageMapper;
 
     @Override
-    public Result selectHomepages(Float latitude, Float longitude, Integer currentPage, Integer pageSize) {
-        List<HomepageVo> list = homepageMapper.queryHomepages(latitude, longitude, currentPage, pageSize);
+    public Result selectHomepages(Float latitude, Float longitude) {
+        List<HomepageVo> list = homepageMapper.queryHomepages(latitude, longitude);
         return dealWithList(list);
     }
 
@@ -48,8 +48,8 @@ public class HomepageServiceImpl implements HomepageService {
     }
 
     @Override
-    public Result<List<HomepageVo>> showOtherHomepage(Integer roleId, Float latitude, Float longitude, Integer currentPage, Integer pageSize) {
-        List<HomepageVo> list = homepageMapper.queryOtherHomepages(roleId,latitude, longitude, currentPage, pageSize);
+    public Result<List<HomepageVo>> showOtherHomepage(Integer roleId, Float latitude, Float longitude) {
+        List<HomepageVo> list = homepageMapper.queryOtherHomepages(roleId,latitude, longitude);
         return dealWithList(list);
     }
 

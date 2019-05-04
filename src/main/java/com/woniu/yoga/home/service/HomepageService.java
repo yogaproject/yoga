@@ -7,13 +7,13 @@ import com.woniu.yoga.home.vo.Result;
 import java.util.List;
 
 public interface HomepageService {
-    Result selectHomepages(Float latitude, Float longitude, Integer currentPage, Integer pageSize);
+    Result selectHomepages(Float latitude, Float longitude);
 
     Result showHomepageDetail(Integer mid);
 
     Result pushHomepage(Homepage homepage, Integer userId);
 
-    Result<List<HomepageVo>> showOtherHomepage(Integer roleId, Float latitude, Float longitude, Integer currentPage, Integer pageSize);
+    Result<List<HomepageVo>> showOtherHomepage(Integer roleId, Float latitude, Float longitude);
 
     Result deleteHomepage(Integer mid);
 }

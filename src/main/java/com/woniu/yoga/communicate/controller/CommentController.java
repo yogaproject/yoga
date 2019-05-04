@@ -33,14 +33,12 @@ public class CommentController {
      */
     @ApiOperation(value = "查看动态内容里的评论")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "mid", value = "动态的id", required = true, paramType = "path"),
-            @ApiImplicitParam(name = "currentPage", value = "当前页", required = true, paramType = "path"),
-            @ApiImplicitParam(name = "pageSize", value = "每页多少条数据", required = true, paramType = "path")
+            @ApiImplicitParam(name = "mid", value = "动态的id", required = true, paramType = "body")
     })
-    @GetMapping("/{mid}/{currentPage}/{pageSize}/showComments")
+    @GetMapping("/showComments")
     @ResponseBody
-    public Result<CommentVo> showComments(@PathVariable("mid") Integer mid, @PathVariable("currentPage") Integer currentPage, @PathVariable("pageSize") Integer pageSize){
-        return commentService.showComments(mid,currentPage,pageSize);
+    public Result<CommentVo> showComments(@RequestBody Integer mid){
+        return commentService.showComments(mid);
     }
 
     /**
@@ -51,18 +49,18 @@ public class CommentController {
      * @return com.woniu.yoga.commom.vo.Result
      */
     @ApiOperation(value = "添加评论")
-    @ApiImplicitParam(name = "comment", value = "评论", required = true, paramType = "path")
-    @PutMapping("/{comment}/addComment")
+    @ApiImplicitParam(name = "comment", value = "评论", required = true, paramType = "body")
+    @PutMapping("/addComment")
     @ResponseBody
-    public Result addComment(@PathVariable("comment") Comment comment, HttpSession session){
+    public Result addComment(@RequestBody Comment comment, HttpSession session){
         return commentService.addComment(comment, session);
     }
 
     @ApiOperation(value = "删除评论")
-    @ApiImplicitParam(name = "commentId", value = "评论id", required = true, paramType = "path")
-    @DeleteMapping("/{commentId}/deleteComment")
+    @ApiImplicitParam(name = "commentId", value = "评论id", required = true, paramType = "body")
+    @DeleteMapping("/deleteComment")
     @ResponseBody
-    public Result deleteComment(@PathVariable("commentId") Integer commentId){
+    public Result deleteComment(@RequestBody Integer commentId){
         return commentService.deleteComment(commentId);
     }
 }

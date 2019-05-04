@@ -36,12 +36,11 @@ public class CommentServiceImpl implements CommentService {
     * @return com.woniu.yoga.commom.vo.Result
     */
     @Override
-    public Result showComments(Integer mid, Integer currentPage, Integer pageSize) {
+    public Result showComments(Integer mid) {
         if (mid == 0){
             return Result.error("未获取到动态内容id:m_id");
         }
-        List<CommentVo> list = commentMapper.queryComments(mid, currentPage, pageSize);
-        PageInfo pageInfo = new PageInfo(list);
+        List<CommentVo> list = commentMapper.queryComments(mid);
         for (CommentVo vo:list) {
             String publishTime = CommentUtil.publishTime(vo.getCommentCreateTime());
             vo.setPublishTime(publishTime);

@@ -7,7 +7,7 @@ import javax.servlet.http.HttpSession;
 
 public interface CommentService {
 
-    Result showComments(Integer mid, Integer currentPage, Integer pageSize);
+    Result showComments(Integer mid);
 
     Result addComment(Comment comment, HttpSession session);
 
