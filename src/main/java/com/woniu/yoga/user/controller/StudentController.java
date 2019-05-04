@@ -50,7 +50,7 @@ public class StudentController {
             @ApiImplicitParam(name = "session", value = "HttpSession"),
             @ApiImplicitParam(name = "coachId", value = "瑜伽师的用户ID", paramType = "integer"),
     })
-    public Result getDetailInfoByUserId(HttpSession session, Integer coachId) {
+    public Result getDetailInfoByUserId(HttpSession session,@RequestBody Integer coachId) {
         User user = (User) session.getAttribute("user");
         Integer userId = user.getUserId();
         return studentService.getDetailInfoByUserId(userId, coachId);
@@ -72,7 +72,7 @@ public class StudentController {
             @ApiImplicitParam(name = "order", value = "新的订单对象，无需传入用户ID", paramType = "pojo"),
             @ApiImplicitParam(name = "session", value = "HttpSession"),
     })
-    public Result saveOrder(HttpSession session,Order order) {
+    public Result saveOrder(HttpSession session,@RequestBody Order order) {
         User user = (User) session.getAttribute("user");
         Integer userId = user.getUserId();
         return studentService.saveOrder(userId,order);
@@ -96,7 +96,7 @@ public class StudentController {
             @ApiImplicitParam(name = "session", value = "HttpSession"),
             @ApiImplicitParam(name = "couponId",value = "优惠券的ID",required = false,paramType = "Integer")
     })
-    public Result updateOrderWithCoupon(HttpSession session,String orderId, Integer couponId) {
+    public Result updateOrderWithCoupon(HttpSession session,@RequestBody String orderId,@RequestBody  Integer couponId) {
         User user = (User) session.getAttribute("user");
         Integer userId = user.getUserId();
         return studentService.updateOrderWithCoupon(userId,orderId, couponId);
@@ -116,7 +116,7 @@ public class StudentController {
             @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "String"),
             @ApiImplicitParam(name = "session", value = "HttpSession"),
     })
-    public Result updateOrderForPay(HttpSession session, String orderId) {
+    public Result updateOrderForPay(HttpSession session,@RequestBody  String orderId) {
         User user = (User) session.getAttribute("user");
         Integer userId = user.getUserId();
         return studentService.updateOrderForPay(userId, orderId);
@@ -136,7 +136,7 @@ public class StudentController {
             @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "String"),
             @ApiImplicitParam(name = "session", value = "HttpSession"),
     })
-    public Result updateOrderForRefund(HttpSession session, String orderId) {
+    public Result updateOrderForRefund(HttpSession session,@RequestBody  String orderId) {
         User user = (User) session.getAttribute("user");
         Integer userId = user.getUserId();
         return studentService.updateOrderForRefund(userId, orderId);
@@ -159,7 +159,7 @@ public class StudentController {
             @ApiImplicitParam(name = "session", value = "HttpSession"),
             @ApiImplicitParam(name = "comment", value = "一个新的评论对象")
     })
-    public Result saveComment(HttpSession session, String orderId, Comment comment) {
+    public Result saveComment(HttpSession session,@RequestBody  String orderId,@RequestBody  Comment comment) {
         User user = (User) session.getAttribute("user");
         Integer userId = user.getUserId();
         return studentService.saveComment(userId, orderId, comment);
@@ -193,7 +193,7 @@ public class StudentController {
             @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "String"),
             @ApiImplicitParam(name = "session", value = "HttpSession")
     })
-    public Result updateOrderForCancel(HttpSession session, String orderId) {
+    public Result updateOrderForCancel(HttpSession session,@RequestBody  String orderId) {
         User user = (User) session.getAttribute("user");
         Integer userId = user.getUserId();
         return studentService.updateOrderForCancel(userId, orderId);
@@ -210,7 +210,7 @@ public class StudentController {
     @ResponseBody
     @ApiOperation(value = "学员申请线下签约，查询对应瑜伽师的电话号码")
     @ApiImplicitParam(name = "userId", value = "瑜伽师的用户ID")
-    public Result findCoachPhoneByUserId(Integer userId) {
+    public Result findCoachPhoneByUserId(@RequestBody Integer userId) {
         return studentService.findCoachPhoneByUserId(userId);
     }
 
@@ -228,7 +228,7 @@ public class StudentController {
             @ApiImplicitParam(name = "session", value = "HttpSession"),
             @ApiImplicitParam(name = "orderId", value = "旧的订单ID", paramType = "String")
     })
-    public Result repeatOrder(HttpSession session, String orderId) {
+    public Result repeatOrder(HttpSession session,@RequestBody  String orderId) {
         User user = (User) session.getAttribute("user");
         Integer userId = user.getUserId();
         return studentService.repeatOrder(userId, orderId);

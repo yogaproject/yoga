@@ -5,7 +5,6 @@
     <id column="order_id" jdbcType="VARCHAR" property="orderId" />
     <result column="payer_id" jdbcType="INTEGER" property="payerId" />
     <result column="accepter_id" jdbcType="INTEGER" property="accepterId" />
-    <result column="course_id" jdbcType="INTEGER" property="courseId" />
     <result column="order_money" jdbcType="DECIMAL" property="orderMoney" />
     <result column="order_status" jdbcType="INTEGER" property="orderStatus" />
     <result column="pay_status" jdbcType="INTEGER" property="payStatus" />
@@ -15,7 +14,17 @@
     <result column="coupon_id" jdbcType="INTEGER" property="couponId" />
     <result column="discount" jdbcType="DECIMAL" property="discount" />
     <result column="order_flag" jdbcType="INTEGER" property="orderFlag" />
+    <association property="courseId"  javaType="com.woniu.yoga.user.pojo.Course">
+      <id column="course_id" jdbcType="INTEGER" property="courseId" />
+      <result column="course_name" jdbcType="VARCHAR" property="courseName" />
+      <result column="coach_id" jdbcType="INTEGER" property="coachId" />
+      <result column="course_img" jdbcType="VARCHAR" property="courseImg" />
+      <result column="course_detail" jdbcType="VARCHAR" property="courseDetail" />
+      <result column="course_price" jdbcType="DECIMAL" property="coursePrice" />
+      <result column="course_flag" jdbcType="INTEGER" property="courseFlag" />
+    </association>
   </resultMap>
+
   <sql id="Base_Column_List">
     order_id, payer_id, accepter_id, course_id, order_money, order_status, pay_status, 
     course_count, update_time, create_time, coupon_id, discount, order_flag
@@ -24,7 +33,18 @@
     select 
     <include refid="Base_Column_List" />
     from order
-    where order_id = #{orderId,jdbcType=VARCHAR}
+    where order_id = #{orderId,jdbcType=VARCHAR} and order_flag = 0
+  </select>
+  <select id="findOrderByUserIdAndStatus" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from order where payer_id = #{userId} and (
+    <if test="orderStatus != null">
+    <foreach collection="orderStatus" item="status" open="(" separator="," close=")">
+      order_status  = #{status} or
+    </foreach>
+    </if>
+    )
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from order
@@ -42,7 +62,7 @@
       #{createTime,jdbcType=TIMESTAMP}, #{couponId,jdbcType=INTEGER}, #{discount,jdbcType=DECIMAL}, 
       #{orderFlag,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.woniu.yoga.user.pojo.Order">
+  <insert id="insertSelective" parameterType="com.woniu.yoga.user.pojo.Order" >
     insert into order
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="orderId != null">

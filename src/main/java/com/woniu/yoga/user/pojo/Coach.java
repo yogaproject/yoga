@@ -47,6 +47,7 @@ public class Coach {
     private Integer badComment;
 
     private Integer commonComment;
+//    private List<C>
 
     @Column(nullable = false,name = "coach_flag",columnDefinition ="int default 0")
     private Integer coachFlag;

@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -66,7 +67,7 @@ public class UserController {
             @ApiImplicitParam(name = "authentication",value = "瑜伽师认证方式：不限、平台认证或场馆认证;场馆无需此项",required = false,defaultValue = "不限",paramType = "String"),
             @ApiImplicitParam(name = "freeTime",value = "瑜伽师自定义的空闲时间，值为不限、早、中、晚、全天",required = false,defaultValue = "不限",paramType = "String")
     })
-    public Result listAroundCoachByAddress(SearchConditionVO searchConditionVO) {
+    public Result listAroundCoachByAddress(@RequestBody SearchConditionVO searchConditionVO) {
         return userService.listAroundCoachs(searchConditionVO);
     }
     /*
@@ -83,7 +84,7 @@ public class UserController {
             @ApiImplicitParam(name = "latitude",value = "学员位置：纬度（百度地图）",paramType = "double",required = true),
             @ApiImplicitParam(name = "round",value = "距离‘我的距离’",defaultValue = "2000"),
     })
-    public Result listAroundVenueByAddress(SearchConditionVO searchConditionVO) {
+    public Result listAroundVenueByAddress(@RequestBody SearchConditionVO searchConditionVO) {
         return userService.listAroundVenues(searchConditionVO);
     }
     /*
@@ -102,7 +103,7 @@ public class UserController {
             @ApiImplicitParam(name = "session",value = "HttpSession"),
             @ApiImplicitParam(name = "orderStatus",value = "订单状态：未完成订单、已完成订单、所有订单")
     })
-    public Result listOrder(HttpSession session, String orderStatus) {
+    public Result listOrder(HttpSession session,@RequestBody  String orderStatus) {
         User user = (User) session.getAttribute("user");
         Integer userId = user.getUserId();
         return userService.listOrder(userId,orderStatus);
