@@ -20,11 +20,11 @@ public interface FollowMapper {
 
     int updateByPrimaryKey(Follow record);
 
-    List<FollowVo> queryFans(@Param("userId") Integer userId, @Param("currentPage") Integer currentPage, @Param("pageSize") Integer pageSize);
+    List<FollowVo> queryFans(@Param("userId") Integer userId);
 
-    List<FollowVo> queryFollowList(@Param("userId") Integer userId, @Param("currentPage") Integer currentPage, @Param("pageSize") Integer pageSize);
+    List<FollowVo> queryFollowList(@Param("userId") Integer userId);
 
-    List<HomepageVo> queryFollowHomepages(@Param("userId") Integer userId, @Param("currentPage") Integer currentPage, @Param("pageSize") Integer pageSize);
+    List<HomepageVo> queryFollowHomepages(@Param("userId") Integer userId);
 
     int selectIfFollow(@Param("userId") Integer userId, @Param("followedId") Integer followedId);
 

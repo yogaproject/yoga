@@ -6,11 +6,7 @@ import com.woniu.yoga.home.service.AdvertisementService;
 import com.woniu.yoga.home.vo.Result;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,7 +16,7 @@ import java.util.List;
  * @description 广告接口类
  * @date 2019/4/22 12:15
  */
-@Controller
+@RestController
 @RequestMapping("/advertisement")
 public class AdvertisementController {
 
@@ -28,8 +24,7 @@ public class AdvertisementController {
     private AdvertisementService advertisementService;
 
     @ApiOperation(value = "展示广告")
-    @GetMapping("/showAdvertisement")
-    @ResponseBody
+    @PostMapping("/showAdvertisement")
     public Result<List<Advertisement>> showAdvertisement(){
         return advertisementService.showAdvertisement();
     }

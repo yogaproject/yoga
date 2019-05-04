@@ -6,9 +6,9 @@ import javax.servlet.http.HttpSession;
 
 public interface FollowService {
 
-    Result showFollowList(Integer state, Integer currentPage, Integer pageSize, HttpSession session);
+    Result showFollowList(Integer state, HttpSession session);
 
-    Result showFollowHomepage(Integer currentPage, Integer pageSize, HttpSession session);
+    Result showFollowHomepage(HttpSession session);
 
     Result addFollow(Integer userId, HttpSession session);
 

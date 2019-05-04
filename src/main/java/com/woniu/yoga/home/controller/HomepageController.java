@@ -1,6 +1,5 @@
 package com.woniu.yoga.home.controller;
 
-import com.woniu.yoga.commom.utils.JsonUtil;
 import com.woniu.yoga.communicate.constant.SysConstant;
 import com.woniu.yoga.home.pojo.Homepage;
 import com.woniu.yoga.home.service.HomepageService;
@@ -9,7 +8,6 @@ import com.woniu.yoga.home.vo.Result;
 import com.woniu.yoga.user.pojo.User;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
@@ -21,7 +19,7 @@ import java.util.List;
  * @description 主页图文类
  * @date 2019/4/22 9:48
  */
-@Controller
+@RestController
 @RequestMapping("/homepage")
 public class HomepageController {
 
@@ -57,7 +55,7 @@ public class HomepageController {
     */
     @ApiOperation(value = "根据动态内容id获取图文详情")
     @ApiImplicitParam(name = "mid", value = "动态内容id", required = true, paramType = "body")
-    @GetMapping("/showHomepageDetail")
+    @PostMapping("/showHomepageDetail")
     public Result<HomepageVo> showHomepageDetail(@RequestBody Integer mid){
         return homepageService.showHomepageDetail(mid);
     }
@@ -98,7 +96,7 @@ public class HomepageController {
             @ApiImplicitParam(name = "latitude", value = "纬度", required = true, paramType = "body"),
             @ApiImplicitParam(name = "longitude", value = "经度", required = true, paramType = "body"),
     })
-    @GetMapping(value = "/showOtherHomepage")
+    @PostMapping(value = "/showOtherHomepage")
     public Result<List<HomepageVo>> showOtherHomepage(@RequestBody Integer roleId,@RequestBody  Float latitude, @RequestBody Float longitude){
 
         return homepageService.showOtherHomepage(roleId,latitude, longitude);

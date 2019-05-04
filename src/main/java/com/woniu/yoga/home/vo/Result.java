@@ -35,14 +35,14 @@ public class Result<T> {
     }
 
     public static Result success(String message,Object data){
-        return new Result(0, message, data);
+        return new Result(1, message, data);
     }
 
     public static Result success(String message){
-        return new Result(0, message);
+        return new Result(1, message);
     }
 
     public static Result error(String message){
-        return new Result(1, message);
+        return new Result(0, message);
     }
 }
