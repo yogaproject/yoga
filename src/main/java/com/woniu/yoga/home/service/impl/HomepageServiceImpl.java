@@ -26,17 +26,16 @@ public class HomepageServiceImpl implements HomepageService {
 
     @Override
     public Result selectHomepages(Float latitude, Float longitude) {
-        if (latitude == null && longitude == null){
-            return Result.error("未获取到位置信息，请重新定位");
-        }
         List<HomepageVo> list = homepageMapper.queryHomepages(latitude, longitude);
+        System.out.println(list.size());
         return dealWithList(list);
     }
 
     @Override
     public Result showHomepageDetail(Integer mid) {
-
         HomepageVo vo = homepageMapper.selectHomepageDetail(mid);
+        String publishTime = CommentUtil.publishTime(vo.getCreateTime());
+        vo.setPublishTime(publishTime);
         return Result.success("成功",vo);
     }
 
@@ -60,7 +59,6 @@ public class HomepageServiceImpl implements HomepageService {
     }
 
     private Result dealWithList(List<HomepageVo> list){
-        PageInfo pageInfo = new PageInfo(list);
         for (HomepageVo vo: list) {
             String publishTime = CommentUtil.publishTime(vo.getCreateTime());
             vo.setPublishTime(publishTime);

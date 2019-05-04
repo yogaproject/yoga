@@ -35,7 +35,7 @@ public class CommentController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "mid", value = "动态的id", required = true, paramType = "body")
     })
-    @GetMapping("/showComments")
+    @PostMapping("/showComments")
     public Result<CommentVo> showComments(@RequestBody Integer mid){
         return commentService.showComments(mid);
     }

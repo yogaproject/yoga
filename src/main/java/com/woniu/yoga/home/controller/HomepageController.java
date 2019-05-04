@@ -3,6 +3,7 @@ package com.woniu.yoga.home.controller;
 import com.woniu.yoga.communicate.constant.SysConstant;
 import com.woniu.yoga.home.pojo.Homepage;
 import com.woniu.yoga.home.service.HomepageService;
+import com.woniu.yoga.home.vo.Address;
 import com.woniu.yoga.home.vo.HomepageVo;
 import com.woniu.yoga.home.vo.Result;
 import com.woniu.yoga.user.pojo.User;
@@ -28,9 +29,9 @@ public class HomepageController {
 
     /**
     * @Description 展示附近人发布的消息
-    * @param latitude 传入经纬度
-    * @param currentPage 查询当前页
-    * @param longitude 传入经纬度
+//    * @param latitude 传入经纬度
+//    * @param currentPage 查询当前页
+//    * @param longitude 传入经纬度
     * @param pageSize 每页多少条数据
     * @author huijie yan
     * @date 2019/4/22
@@ -42,8 +43,9 @@ public class HomepageController {
             @ApiImplicitParam(name = "longitude", value = "经度", required = true, paramType = "form", dataType = "Float")
     })
     @PostMapping("/showHomepage")
-    public Result<List<HomepageVo>> showHomepage( @RequestBody Float latitude, @RequestBody Float longitude){
-        return homepageService.selectHomepages(latitude,longitude);
+    public Result<List<HomepageVo>> showHomepage( @RequestBody Address address){
+        System.out.println(address);
+        return homepageService.selectHomepages(address.getLatitude(),address.getLongitude());
     }
 
     /**
@@ -57,6 +59,7 @@ public class HomepageController {
     @ApiImplicitParam(name = "mid", value = "动态内容id", required = true, paramType = "body")
     @PostMapping("/showHomepageDetail")
     public Result<HomepageVo> showHomepageDetail(@RequestBody Integer mid){
+        System.out.println(mid);
         return homepageService.showHomepageDetail(mid);
     }
 
@@ -73,10 +76,14 @@ public class HomepageController {
     @PostMapping("/pushHomepage")
     public Result pushHomepage(@RequestBody Homepage homepage, HttpSession session){
         User user = (User)session.getAttribute(SysConstant.CURRENT_USER);
-        if (user == null){
-            return Result.error("未登录");
+        if ("".equals(homepage.getContent()) || "".equals(homepage.getTitle())){
+            return Result.error("内容或标题不能为空");
         }
-        return homepageService.pushHomepage(homepage, user.getUserId());
+        System.out.println(homepage);
+        /*if (user == null){
+            return Result.error("未登录");
+        }*/
+        return homepageService.pushHomepage(homepage, 1);
     }
 
     /**
@@ -97,9 +104,9 @@ public class HomepageController {
             @ApiImplicitParam(name = "longitude", value = "经度", required = true, paramType = "body"),
     })
     @PostMapping(value = "/showOtherHomepage")
-    public Result<List<HomepageVo>> showOtherHomepage(@RequestBody Integer roleId,@RequestBody  Float latitude, @RequestBody Float longitude){
-
-        return homepageService.showOtherHomepage(roleId,latitude, longitude);
+    public Result<List<HomepageVo>> showOtherHomepage(@RequestBody Address address){
+        System.out.println(address);
+        return homepageService.showOtherHomepage(address.getRoleId(),address.getLatitude(), address.getLongitude());
     }
 
     /**

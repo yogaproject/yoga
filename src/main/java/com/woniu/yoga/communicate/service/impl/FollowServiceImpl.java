@@ -34,14 +34,14 @@ public class FollowServiceImpl implements FollowService {
     @Override
     public Result showFollowList(Integer state, HttpSession session) {
         User user = (User) session.getAttribute(SysConstant.CURRENT_USER);
-        if (user == null){
+        /*if (user == null){
             return Result.error("未登录");
-        }
+        }*/
         List<FollowVo> list = new ArrayList<>();
         if (state == 1){
-           list  = followMapper.queryFollowList(user.getUserId());
+           list  = followMapper.queryFollowList(1);
         }else if (state == 0){
-            list = followMapper.queryFans(user.getUserId());
+            list = followMapper.queryFans(1);
         } else {
             return Result.error("参数错误");
         }
@@ -51,10 +51,10 @@ public class FollowServiceImpl implements FollowService {
     @Override
     public Result showFollowHomepage(HttpSession session) {
         User user = (User) session.getAttribute(SysConstant.CURRENT_USER);
-        if (user == null){
+        /*if (user == null){
             return Result.error("未登录");
-        }
-        List<HomepageVo> list = followMapper.queryFollowHomepages(user.getUserId());
+        }*/
+        List<HomepageVo> list = followMapper.queryFollowHomepages(1);
         for (int i = 0; i < list.size(); i++){
             HomepageVo vo = list.get(i);
             //用户设置权限为好友，如果不是相互关注，不能查看
@@ -80,10 +80,10 @@ public class FollowServiceImpl implements FollowService {
     @Transactional
     public Result addFollow(Integer userId, HttpSession session) {
         User user = (User) session.getAttribute(SysConstant.CURRENT_USER);
-        if (user == null){
+        /*if (user == null){
             return Result.error("未登录");
-        }
-        Integer uid = user.getUserId();
+        }*/
+        Integer uid = 1;
         //先查看他们是不是互相关注
         int count = followMapper.selectIfFollow(userId, uid);
         Follow follow = new Follow();
@@ -120,10 +120,10 @@ public class FollowServiceImpl implements FollowService {
 
     @Override
     public Result searchFollow(String userNickName, Integer userId) {
-        FollowVo vo = followMapper.queryFollowUser(userId, userNickName);
-        if (vo == null){
+        List<FollowVo> list = followMapper.queryFollowUser(userId, userNickName);
+        if (list.size() == 0){
             return Result.error("未搜索到相关用户");
         }
-        return Result.success("成功",vo);
+        return Result.success("成功",list);
     }
 }

@@ -56,4 +56,6 @@ public class HomepageVo {
 
     @ApiModelProperty("关注状态")
     private Integer followStatus;
+
+    private String roleName;
 }

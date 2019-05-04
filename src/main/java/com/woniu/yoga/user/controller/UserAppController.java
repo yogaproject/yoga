@@ -23,10 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -70,8 +67,8 @@ public class UserAppController {
      */
     @RequestMapping(value = "/sendRegEmailCode")
     @ResponseBody
-    public Result sendRegEmailCode(String userEmail, User user){
-        if(userEmail.equals("")){
+    public Result sendRegEmailCode(@RequestBody String userEmail, @RequestBody User user){
+        if("".equals(userEmail)){
             return ResultUtil.errorOperation("邮箱号不能为空");
         }
         if(!user.getUserEmail().matches(RegexpUtil.RegExp_Mail)) {

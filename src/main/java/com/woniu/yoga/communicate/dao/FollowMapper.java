@@ -36,5 +36,5 @@ public interface FollowMapper {
 
     void deleteByFlag(@Param("userId") Integer userId, @Param("followedId") Integer userId1);
 
-    FollowVo queryFollowUser(@Param("userId") Integer userId, @Param("userNickName") String userNickName);
+    List<FollowVo> queryFollowUser(@Param("userId") Integer userId, @Param("userNickName") String userNickName);
 }

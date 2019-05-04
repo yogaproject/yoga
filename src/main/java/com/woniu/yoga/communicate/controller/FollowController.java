@@ -45,7 +45,7 @@ public class FollowController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "state", value = "传入0查找我的粉丝,传入1查找我的关注人列表", required = true, paramType = "path"),
     })
-    @GetMapping("/showFollowList")
+    @PostMapping("/showFollowList")
     public Result<List<FollowVo>> showFollowList(@RequestBody Integer state, HttpSession session){
         return followService.showFollowList(state, session);
     }
@@ -106,9 +106,9 @@ public class FollowController {
     @PostMapping("/searchFollow")
     public Result<FollowVo> searchFollow(@RequestBody String userNickName, HttpSession session){
         User user = (User)session.getAttribute(SysConstant.CURRENT_USER);
-        if (user == null){
+        /*if (user == null){
             return  Result.error("未登录");
-        }
-        return followService.searchFollow(userNickName, user.getUserId());
+        }*/
+        return followService.searchFollow(userNickName, 1);
     }
 }
