@@ -67,17 +67,17 @@ public class UserAppController {
      */
     @RequestMapping(value = "/sendRegEmailCode")
     @ResponseBody
-    public Result sendRegEmailCode(@RequestBody String userEmail, @RequestBody User user){
-        if("".equals(userEmail)){
+    public Result sendRegEmailCode(@RequestBody User user){
+        if("".equals(user.getUserEmail())){
             return ResultUtil.errorOperation("邮箱号不能为空");
         }
         if(!user.getUserEmail().matches(RegexpUtil.RegExp_Mail)) {
             return ResultUtil.errorOperation("邮箱格式不匹配");
         }
-        if (userService.queryUserByEmail(userEmail)!=null){
+        if (userService.queryUserByEmail(user.getUserEmail())!=null){
             return ResultUtil.errorOperation("该邮箱号已被注册，请重新输入");
         }
-        user.setUserEmail(userEmail);
+        user.setUserEmail(user.getUserEmail());
         if (!userService.sendRegEmailCode(user)){
             return ResultUtil.connectDatabaseFail();
         }
@@ -86,7 +86,7 @@ public class UserAppController {
     }
     /**
      * 方法实现说明 注册邮箱，注册后直接通过shiro令牌登录
-     * 插入默认的头像和昵称,判断角色，分别插入userid到学员，教练，场馆
+     * 插入默认的头像和昵称,插入userid到学员
      * @author      lxy
      * @Param:      userVerifyCode，userPhone,active
      * @return      json对象 Result
@@ -95,41 +95,36 @@ public class UserAppController {
      */
     @RequestMapping("regByEmail")
     @ResponseBody
-    public Result regByEmail(String userEmail, String userPwd, String userVerifyCode, User user, HttpSession session,
-                             String roleName, Student student){
-        if (userPwd.equals("")){
+    public Result regByEmail(@RequestBody User user,HttpSession session, Student student){
+        if ("".equals(user.getUserPwd())){
             return ResultUtil.errorOperation("密码不能为空");
         }
-        if (userEmail.equals("")){
+        if ("".equals(user.getUserEmail())){
             return ResultUtil.errorOperation("邮箱号不能为空");
         }
-        if (userVerifyCode.equals("")){
+        if ("".equals(user.getUserVerifyCode())){
             return ResultUtil.errorOperation("验证码不能为空");
         }
-        if(!userEmail.matches(RegexpUtil.RegExp_Mail)) {
+        if(!RegexpUtil.RegExp_Mail.matches(user.getUserEmail())) {
             return ResultUtil.errorOperation("邮箱格式不匹配");
         }
-        if (!userPwd.matches(RegexpUtil.RegExp_PASS)){
+        if (!RegexpUtil.RegExp_PASS.matches(user.getUserPwd())){
             return ResultUtil.errorOperation("密码格式不匹配");
         }
-        User exit=userService.queryUserByEmail(userEmail);
+        User exit=userService.queryUserByEmail(user.getUserEmail());
         if (exit!=null){
             return ResultUtil.errorOperation("该邮箱号已被注册，请重新输入");
         }
-        Role role=roleService.findByRoleName(roleName);
-        if (role == null){
-            return ResultUtil.errorOperation("职业选择错误，请重新选择职业");
-        }
-        if(!stringRedisTemplate.hasKey(userEmail)){
+        if(!stringRedisTemplate.hasKey(user.getUserEmail())){
             return ResultUtil.errorOperation("验证码过期，请重新发送验证码");
         }
-        if (!stringRedisTemplate.opsForValue().get(userEmail).equals(userVerifyCode)){
+        if (!stringRedisTemplate.opsForValue().get(user.getUserEmail()).equals(user.getUserVerifyCode())){
             return ResultUtil.errorOperation("验证码错误，请重新输入");
         }
         user.setUserVerifyCode("");
-        user.setRoleId(role.getRoleId());
+        user.setRoleId(1);
         user.setSalt(CodeUtil.userNumber());
-        SimpleHash userHashPwd = new SimpleHash("MD5",userPwd,user.getSalt(),2);
+        SimpleHash userHashPwd = new SimpleHash("MD5",user.getUserPwd(),user.getSalt(),2);
         user.setUserPwd(userHashPwd.toString());
         user.setUserNickname(NickNameUtil.getRandomNickName());
         user.setActive(1);
@@ -138,7 +133,7 @@ public class UserAppController {
             return ResultUtil.errorOperation("注册失败");
         }
         Subject subject=SecurityUtils.getSubject();
-        UsernamePasswordToken token = new UsernamePasswordToken(userEmail,userPwd);
+        UsernamePasswordToken token = new UsernamePasswordToken(user.getUserEmail(),user.getUserPwd());
         subject.login(token);
         student.setUserId(user.getUserId());
         studentService.saveStudent(student);
@@ -156,8 +151,8 @@ public class UserAppController {
      */
     @RequestMapping(value = "/loginByEmailAndPwd")
     @ResponseBody
-    public Result loginByEmailAndPwd(String userEmail, String userPwd, User user, HttpSession session){
-        user=userService.queryUserByEmail(userEmail);
+    public Result loginByEmailAndPwd(@RequestBody User user, HttpSession session){
+        user=userService.queryUserByEmail(user.getUserEmail());
         if (user==null){
             return ResultUtil.errorOperation("该邮箱号没有被注册，请先注册再登录");
         }
@@ -166,12 +161,11 @@ public class UserAppController {
         }
         Subject subject= SecurityUtils.getSubject();
         if (!subject.isAuthenticated()){
-            UsernamePasswordToken token = new UsernamePasswordToken(userEmail,userPwd);
+            UsernamePasswordToken token = new UsernamePasswordToken(user.getUserEmail(),user.getUserPwd());
             try {
                 subject.login(token);
                 //认证成功
                 System.out.println("认证成功!");
-
                 session.setAttribute(SysConstant.CURRENT_USER, user);
                 Result result=ResultUtil.actionSuccess("登录成功",user);
                 return ResultUtil.actionSuccess("登录成功",user);
@@ -195,26 +189,26 @@ public class UserAppController {
      */
     @RequestMapping(value = "/getCodeByEmail")
     @ResponseBody
-    public Result getCodeByEmail(String userEmail,User user){
-        if(userEmail.equals("")){
+    public Result getCodeByEmail(@RequestBody User user){
+        if("".equals(user.getUserEmail())){
             return ResultUtil.errorOperation("邮箱号不能为空");
         }
-        if(!userEmail.matches(RegexpUtil.RegExp_Mail)) {
+        if(!RegexpUtil.RegExp_Mail.matches(user.getUserEmail())) {
             return ResultUtil.errorOperation("邮箱格式不匹配");
         }
-        user=userService.queryUserByEmail(userEmail);
+        user=userService.queryUserByEmail(user.getUserEmail());
         if (user==null){
             return ResultUtil.errorOperation("该邮箱号不存在，请重新输入");
         }
         String userVerifyCode = CodeUtil.userNumber();
         String content = "<html><head></head><body><h1>这是一封绝密邮件,不要随便将内容透露给别人。" +
                 "</h1><br><h3>您本次找回密码所需的验证码为：" + userVerifyCode + "。</h3></body></html>";
-        stringRedisTemplate.opsForValue().set(userEmail,userVerifyCode);
-        if (!stringRedisTemplate.hasKey(userEmail)){
+        stringRedisTemplate.opsForValue().set(user.getUserEmail(),userVerifyCode);
+        if (!stringRedisTemplate.hasKey(user.getUserEmail())){
             return ResultUtil.connectDatabaseFail();
         }
-         new Thread(new MailUtil(userEmail,userVerifyCode,content)).start();
-        stringRedisTemplate.expire(userEmail,30, TimeUnit.SECONDS);
+         new Thread(new MailUtil(user.getUserEmail(),userVerifyCode,content)).start();
+        stringRedisTemplate.expire(user.getUserEmail(),30, TimeUnit.SECONDS);
          return ResultUtil.actionSuccess("前往邮箱获取验证码",user);
 
     }
@@ -228,20 +222,20 @@ public class UserAppController {
      */
         @RequestMapping("/getPwdByEmail")
         @ResponseBody
-        public Result getPwdByEmail(String userEmail,String userVerifyCode,User user,HttpSession session){
-            if (userEmail.equals("")){
+        public Result getPwdByEmail(@RequestBody User user,HttpSession session){
+            if ("".equals(user.getUserEmail())){
                 return ResultUtil.errorOperation("邮箱号不能为空");
             }
-            if (userVerifyCode.equals("")){
+            if ("".equals(user.getUserVerifyCode())){
                 return ResultUtil.errorOperation("验证码不能为空");
             }
-            if(!userEmail.matches(RegexpUtil.RegExp_Mail)) {
+            if(!RegexpUtil.RegExp_Mail.matches(user.getUserEmail())) {
                 return ResultUtil.errorOperation("邮箱格式不匹配");
             }
-            if (!stringRedisTemplate.hasKey(userEmail)){
+            if (!stringRedisTemplate.hasKey(user.getUserEmail())){
                 return ResultUtil.errorOperation("验证码已过期，请重新点击获取");
             }
-            if (!stringRedisTemplate.opsForValue().get(userEmail).equals(userVerifyCode)){
+            if (!stringRedisTemplate.opsForValue().get(user.getUserEmail()).equals(user.getUserVerifyCode())){
                 return ResultUtil.errorOperation("验证码错误，请重新输入");
             }
             session.setAttribute(SysConstant.CURRENT_USER,user);
@@ -258,25 +252,25 @@ public class UserAppController {
      */
         @RequestMapping("/updateUserPwdByEmail")
         @ResponseBody
-        public Result updateUserPwdByEmail(String userPwd, String confirmPwd,User user,HttpSession session){
-            if (userPwd.equals("")){
+        public Result updateUserPwdByEmail(@RequestBody User user, String confirmPwd,HttpSession session){
+            if ("".equals(user.getUserPwd())){
                 return ResultUtil.errorOperation("密码不能为空");
             }
-            if (confirmPwd.equals("")){
+            if ("".equals(confirmPwd)){
                 return ResultUtil.errorOperation("确认密码不能为空");
             }
-            if (!userPwd.matches(RegexpUtil.RegExp_PASS) || !confirmPwd.matches(RegexpUtil.RegExp_PASS)){
+            if (!RegexpUtil.RegExp_PASS.matches(user.getUserPwd()) || !RegexpUtil.RegExp_PASS.matches(confirmPwd)){
                 return ResultUtil.errorOperation("密码格式不匹配");
             }
-            user= (User) session.getAttribute(SysConstant.CURRENT_USER);
-            if (!userPwd.equals(confirmPwd)){
+            User sessionUser= (User) session.getAttribute(SysConstant.CURRENT_USER);
+            if (!user.getUserPwd().equals(confirmPwd)){
                 return ResultUtil.errorOperation("确认密码错误，请重新输入");
             }
-                user=userService.queryUserByEmail(user.getUserEmail());
-                user.setSalt(CodeUtil.userNumber());
-                SimpleHash userHashPwd = new SimpleHash("MD5",userPwd,user.getSalt(),2);
-                user.setUserPwd(userHashPwd.toString());
-                return ResultUtil.actionSuccess("重置密码成功",user);
+                User newUser=userService.queryUserByEmail(sessionUser.getUserEmail());
+                newUser.setSalt(CodeUtil.userNumber());
+                SimpleHash userHashPwd = new SimpleHash("MD5",user.getUserPwd(),newUser.getSalt(),2);
+                newUser.setUserPwd(userHashPwd.toString());
+                return ResultUtil.actionSuccess("重置密码成功",newUser);
 
         }
 
@@ -292,11 +286,11 @@ public class UserAppController {
      */
     @RequestMapping("/sendRegPhonePwd")
     @ResponseBody
-    public Result sendRegPhonePwd(User user) {
-        if(user.getUserPhone().equals("") || user==null){
+    public Result sendRegPhonePwd(@RequestBody User user) {
+        if("".equals(user.getUserPhone()) || user==null){
             return ResultUtil.errorOperation("手机号不能为空");
         }
-        if(!user.getUserPhone().matches(RegexpUtil.RegExp_PHONE)) {
+        if(!RegexpUtil.RegExp_PHONE.matches(user.getUserPhone())) {
             return ResultUtil.errorOperation("手机格式不匹配");
         }
         if (userService.queryUserByPhone(user.getUserPhone())!=null){
@@ -320,32 +314,32 @@ public class UserAppController {
      */
     @RequestMapping("/regByPhone")
     @ResponseBody
-    public Result regByPhone(String userPhone, String userPwd, User user, String roleName, HttpSession session,
+    public Result regByPhone(@RequestBody User user, String roleName, HttpSession session,
                              Student student, Coach coach){
-        if (userPwd.equals("")){
+        if ("".equals(user.getUserPwd())){
             return ResultUtil.errorOperation("密码不能为空");
         }
-        if (userPhone.equals("")){
+        if ("".equals(user.getUserPhone())){
             return ResultUtil.errorOperation("手机号不能为空");
         }
-        if (roleName.equals("")){
+        if ("".equals(roleName)){
             return ResultUtil.errorOperation("职业不能为空");
         }
-        if(!userPhone.matches(RegexpUtil.RegExp_PHONE)) {
+        if(!RegexpUtil.RegExp_PHONE.matches(user.getUserPhone())) {
             return ResultUtil.errorOperation("手机格式不匹配");
         }
-         User exist=userService.queryUserByPhone(userPhone);
+         User exist=userService.queryUserByPhone(user.getUserPhone());
         if (exist!=null){
             return ResultUtil.errorOperation("该手机号已经被绑定，请重新输入");
         }
-        if (!stringRedisTemplate.hasKey(userPhone)){
+        if (!stringRedisTemplate.hasKey(user.getUserPhone())){
             return ResultUtil.errorOperation("密码已过期，请重新获取密码");
         }
-        if(!stringRedisTemplate.opsForValue().get(userPhone).equals(userPwd)){
+        if(!stringRedisTemplate.opsForValue().get(user.getUserPhone()).equals(user.getUserPwd())){
             return ResultUtil.errorOperation("密码错误，请重新输入");
         }
         user.setSalt(CodeUtil.userNumber());
-        SimpleHash userHashPwd = new SimpleHash("MD5",userPwd,user.getSalt(),2);
+        SimpleHash userHashPwd = new SimpleHash("MD5",user.getUserPwd(),user.getSalt(),2);
         user.setUserPwd(userHashPwd.toString());
         Role role=roleService.findByRoleName(roleName);
         if (role == null){
@@ -368,7 +362,7 @@ public class UserAppController {
             coachService.saveCoach(coach);
         }
         Subject subject=SecurityUtils.getSubject();
-        UsernamePasswordToken token = new UsernamePasswordToken(userPhone,userPwd);
+        UsernamePasswordToken token = new UsernamePasswordToken(user.getUserPhone(),user.getUserPwd());
         subject.login(token);
         session.setAttribute(SysConstant.CURRENT_USER,user);
         return ResultUtil.actionSuccess("注册成功",user);
@@ -383,15 +377,14 @@ public class UserAppController {
      */
     @RequestMapping("/sendLoginPhonePwd")
     @ResponseBody
-    public Result sendLoginPhonePwd(User user){
-        if(user.getUserPhone().equals("") || user==null){
+    public Result sendLoginPhonePwd(@RequestBody User user){
+        if("".equals(user.getUserPhone()) || user==null){
             return ResultUtil.errorOperation("手机号不能为空");
         }
-        if(!user.getUserPhone().matches(RegexpUtil.RegExp_PHONE)) {
+        if(!RegexpUtil.RegExp_PHONE.matches(user.getUserPhone())) {
             return ResultUtil.errorOperation("手机格式不匹配");
         }
        if (userService.queryUserByPhone(user.getUserPhone())==null){
-           System.out.println();
            return ResultUtil.errorOperation("该手机号没有注册，请先注册再登录");
        }
         Integer templateId = 316608;
@@ -412,18 +405,17 @@ public class UserAppController {
      */
     @RequestMapping("/loginByPhoneAndCode")
     @ResponseBody
-    public Result loginByPhoneAndCode(String userPhone,String userVerifyCode,User user,HttpSession session){
-        if(userPhone.equals("")){
+    public Result loginByPhoneAndCode(@RequestBody User user,HttpSession session){
+        if("".equals(user.getUserPhone()) || user==null){
             return ResultUtil.errorOperation("手机号不能为空");
         }
-        if(userVerifyCode.equals("")){
+        if("".equals(user.getUserVerifyCode())){
             return ResultUtil.errorOperation("验证码不能为空");
         }
-        if (!userPhone.matches(RegexpUtil.RegExp_PHONE)){
+        if (!RegexpUtil.RegExp_PHONE.matches(user.getUserPhone())){
             return ResultUtil.errorOperation("手机格式不匹配");
         }
-        System.out.println(userPhone);
-        user=userService.queryUserByPhone(userPhone);
+        user=userService.queryUserByPhone(user.getUserPhone());
         if (user==null){
             return ResultUtil.errorOperation("该手机号没有注册，请先注册再登录");
         }
@@ -431,13 +423,13 @@ public class UserAppController {
             System.out.println(user.getRoleId());
             return ResultUtil.errorOperation("该用户因权限无法登录App端，请重新输入");
         }
-        if (!stringRedisTemplate.hasKey(userPhone)){
+        if (!stringRedisTemplate.hasKey(user.getUserPhone())){
             return ResultUtil.errorOperation("验证码已过期，请重新点击获取");
         }
-        if (!stringRedisTemplate.opsForValue().get(userPhone).equals(userVerifyCode)){
+        if (!stringRedisTemplate.opsForValue().get(user.getUserPhone()).equals(user.getUserVerifyCode())){
             return ResultUtil.errorOperation("验证码错误，请重新输入");
         }
-        PhoneToken token = new PhoneToken(userPhone);
+        PhoneToken token = new PhoneToken(user.getUserPhone());
         Subject subject = SecurityUtils.getSubject();
         subject.login(token);
         user = (User) subject.getPrincipal();
@@ -457,15 +449,15 @@ public class UserAppController {
      */
     @RequestMapping(value = "/getCodeByPhone")
     @ResponseBody
-    public Result getCodeByPhone(String userPhone,User user){
-        if(userPhone.equals("")){
+    public Result getCodeByPhone(@RequestBody User user){
+        if("".equals(user.getUserPhone())){
             return ResultUtil.errorOperation("手机号不能为空");
         }
-        if(!user.getUserPhone().matches(RegexpUtil.RegExp_PHONE)) {
+        if(!RegexpUtil.RegExp_PHONE.matches(user.getUserPhone())) {
             return ResultUtil.errorOperation("手机格式不匹配");
         }
-        user=userService.queryUserByPhone(userPhone);
-        if (user!=null){
+        User exist=userService.queryUserByPhone(user.getUserPhone());
+        if (exist!=null){
             return ResultUtil.errorOperation("手机号没有注册，请重新输入");
         }
         int templateId= 316608;
@@ -486,25 +478,25 @@ public class UserAppController {
      */
     @RequestMapping("/getPwdByPhone")
     @ResponseBody
-    public Result getPwdByPhone(String userPhone,String userVerifyCode,User user,HttpSession session){
-        if (userPhone.equals("")){
+    public Result getPwdByPhone(@RequestBody User user,HttpSession session){
+        if ("".equals(user.getUserPhone())){
             return ResultUtil.errorOperation("手机号不能为空");
         }
-        if (userVerifyCode.equals("")){
+        if ("".equals(user.getUserVerifyCode())){
             return ResultUtil.errorOperation("验证码不能为空");
         }
 
-        if(!userPhone.matches(RegexpUtil.RegExp_PHONE)) {
+        if(!RegexpUtil.RegExp_PHONE.matches(user.getUserPhone())) {
             return ResultUtil.errorOperation("手机格式不匹配");
         }
-        user=userService.queryUserByPhone(userPhone);
-        if (user==null){
+        User exist=userService.queryUserByPhone(user.getUserPhone());
+        if (exist==null){
             return ResultUtil.errorOperation("手机号没有注册，请重新输入");
         }
-        if (!stringRedisTemplate.hasKey(userPhone)){
+        if (!stringRedisTemplate.hasKey(user.getUserPhone())){
             return ResultUtil.errorOperation("验证码已过期，请重新点击获取");
         }
-        if (!stringRedisTemplate.opsForValue().get(userPhone).equals(userVerifyCode)){
+        if (!stringRedisTemplate.opsForValue().get(user.getUserPhone()).equals(user.getUserVerifyCode())){
             return ResultUtil.errorOperation("验证码错误，请重新输入");
         }
         session.setAttribute(SysConstant.CURRENT_USER,user);
@@ -521,26 +513,27 @@ public class UserAppController {
      */
     @RequestMapping("/updateUserPwdByPhone")
     @ResponseBody
-    public Result updateUserPwdByPhone(String userPwd, String confirmPwd,User user,HttpSession session){
-        if (userPwd.equals("")){
+    public Result updateUserPwdByPhone(@RequestBody User user,String confirmPwd,HttpSession session){
+        if ("".equals(user.getUserPwd())){
             return ResultUtil.errorOperation("密码不能为空");
         }
-        if (confirmPwd.equals("")){
+        if ("".equals(confirmPwd)){
             return ResultUtil.errorOperation("确认密码不能为空");
         }
-        if (!userPwd.matches(RegexpUtil.RegExp_PASS) || !confirmPwd.matches(RegexpUtil.RegExp_PASS)){
+        if (!RegexpUtil.RegExp_PASS.matches(user.getUserPwd()) || !RegexpUtil.RegExp_PASS.matches(confirmPwd)){
             return ResultUtil.errorOperation("密码格式不匹配");
         }
-        user= (User) session.getAttribute(SysConstant.CURRENT_USER);
-        if (userPwd.equals(confirmPwd)){
-            user=userService.queryUserByPhone(user.getUserPhone());
-            user.setSalt(CodeUtil.userNumber());
-            SimpleHash userHashPwd = new SimpleHash("MD5",userPwd,user.getSalt(),2);
-            user.setUserPwd(userHashPwd.toString());
-            return ResultUtil.actionSuccess("重置密码成功",user);
-        }else {
+        if (user.getUserPwd().equals(confirmPwd)){
             return ResultUtil.errorOperation("确认密码错误，请重新输入");
         }
+            User sessionUser= (User) session.getAttribute(SysConstant.CURRENT_USER);
+            User newUser=userService.queryUserByPhone(sessionUser.getUserPhone());
+            newUser.setSalt(CodeUtil.userNumber());
+            SimpleHash userHashPwd = new SimpleHash("MD5",user.getUserPwd(),newUser.getSalt(),2);
+            newUser.setUserPwd(userHashPwd.toString());
+            return ResultUtil.actionSuccess("重置密码成功",newUser);
+
+
     }
 
     /**
@@ -573,14 +566,14 @@ public class UserAppController {
      */
     @RequestMapping(value = "/sendBindPhoneCode")
     @ResponseBody
-    public Result sendBindPhoneCode(String userPhone,User user,HttpSession session){
-        if(userPhone.equals("")){
+    public Result sendBindPhoneCode(@RequestBody User user,HttpSession session){
+        if("".equals(user.getUserPhone())){
             return ResultUtil.errorOperation("手机号不能为空");
         }
-        if(!user.getUserPhone().matches(RegexpUtil.RegExp_PHONE)) {
+        if(!RegexpUtil.RegExp_PHONE.matches(user.getUserPhone())) {
             return ResultUtil.errorOperation("手机格式不匹配");
         }
-        User exist=userService.queryUserByPhone(userPhone);
+        User exist=userService.queryUserByPhone(user.getUserPhone());
         if (exist!=null){
             return ResultUtil.errorOperation("手机号已被绑定，请重新输入手机号");
         }
@@ -591,7 +584,6 @@ public class UserAppController {
         User userSession=(User)session.getAttribute(SysConstant.CURRENT_USER);
         user=userService.queryUserByEmail(userSession.getUserEmail());
         return ResultUtil.actionSuccess("请在手机上查收验证码",user);
-
     }
 
 
@@ -606,31 +598,31 @@ public class UserAppController {
      */
     @RequestMapping("/bindPhone")
     @ResponseBody
-    public Result bindPhone(String userPhone,String userVerifyCode,User user,HttpSession session){
-        if (userPhone.equals("")){
+    public Result bindPhone(@RequestBody User user,HttpSession session){
+        if("".equals(user.getUserPhone())){
             return ResultUtil.errorOperation("手机号不能为空");
         }
-        if (userVerifyCode.equals("")){
+        if ("".equals(user.getUserVerifyCode())){
             return ResultUtil.errorOperation("验证码不能为空");
         }
-        if(!userPhone.matches(RegexpUtil.RegExp_PHONE)) {
+        if(!RegexpUtil.RegExp_PHONE.matches(user.getUserPhone())) {
             return ResultUtil.errorOperation("手机格式不匹配");
         }
-        User exist=userService.queryUserByPhone(userPhone);
+        User exist=userService.queryUserByPhone(user.getUserPhone());
         if (exist!=null){
             return ResultUtil.errorOperation("手机号已被绑定，请重新输入手机号");
         }
-        if (!stringRedisTemplate.hasKey(userPhone)){
+        if (!stringRedisTemplate.hasKey(user.getUserPhone())){
             return ResultUtil.errorOperation("验证码已经过期，请重新点击获取");
         }
-        if (!stringRedisTemplate.opsForValue().get(userPhone).equals(userVerifyCode)){
+        if (!stringRedisTemplate.opsForValue().get(user.getUserPhone()).equals(user.getUserVerifyCode())){
             return ResultUtil.errorOperation("验证码错误，请重新输入");
         }
         User userSession= (User) session.getAttribute(SysConstant.CURRENT_USER);
-        user=userService.queryUserByEmail(userSession.getUserEmail());
-        user.setUserPhone(userPhone);
-        session.setAttribute(SysConstant.CURRENT_USER,user);
-        return ResultUtil.actionSuccess("绑定手机成功",user);
+        User existUser=userService.queryUserByEmail(userSession.getUserEmail());
+        existUser.setUserPhone(user.getUserPhone());
+        session.setAttribute(SysConstant.CURRENT_USER,existUser);
+        return ResultUtil.actionSuccess("绑定手机成功",existUser);
     }
 
     /**
@@ -643,7 +635,7 @@ public class UserAppController {
      */
     @RequestMapping("/showStudentInfo")
     @ResponseBody
-    public Result showStudentInfo(User user, HttpSession session){
+    public Result showStudentInfo(@RequestBody User user, HttpSession session){
         User userSession=(User)session.getAttribute(SysConstant.CURRENT_USER);
         if (userSession == null){
             return ResultUtil.errorOperation("展现信息失败");
@@ -668,17 +660,17 @@ public class UserAppController {
 
 @RequestMapping("/updateStudentInfo")
 @ResponseBody
-public Result updateStudentInfo(User user,HttpSession session){
-            if (user.getRealName().equals("")){
-                return ResultUtil.errorOperation("请完善身份证信息和真实名字");
-            }
-            if (user.getIdcard().equals("")){
+public Result updateStudentInfo(@RequestBody User user,HttpSession session){
+            if ("".equals(user.getRealName())){
                 return ResultUtil.errorOperation("请完善真实名字");
             }
-            if (!user.getIdcard().matches(RegexpUtil.RegExp_ID)){
+            if ("".equals(user.getIdcard())){
+                return ResultUtil.errorOperation("请完善身份证信息");
+            }
+            if (!RegexpUtil.RegExp_ID.matches(user.getIdcard())){
                 return ResultUtil.errorOperation("身份证格式不匹配，请重新输入");
             }
-            if (!user.getUserEmail().matches(RegexpUtil.RegExp_Mail)){
+            if (!RegexpUtil.RegExp_Mail.matches(user.getUserEmail())){
                 return ResultUtil.errorOperation("邮箱格式不匹配，请重新输入");
             }
             User exit=userService.queryUserByEmail(user.getUserEmail());
@@ -712,7 +704,7 @@ public Result updateStudentInfo(User user,HttpSession session){
      */
     @RequestMapping("/showCoachInfo")
     @ResponseBody
-    public Map<String,Object> showCoachInfo(User user,Coach coach, String info,HttpSession session){
+    public Map<String,Object> showCoachInfo(@RequestBody User user,@RequestBody Coach coach, String info,HttpSession session){
         Map<String,Object> result=new HashMap<>();
         User userSession=(User)session.getAttribute(SysConstant.CURRENT_USER);
         if (userSession == null){
@@ -720,7 +712,7 @@ public Result updateStudentInfo(User user,HttpSession session){
             result.put(SysConstant.CURRENT_MESSAGE,info);
             return result;
         }
-        if (userSession.getUserPhone().equals("")){
+        if ("".equals(userSession.getUserPhone())){
             user=userService.queryUserByEmail(userSession.getUserEmail());
         }
         user=userService.queryUserByPhone(userSession.getUserPhone());
@@ -744,11 +736,11 @@ public Result updateStudentInfo(User user,HttpSession session){
 
     @RequestMapping("/updateCoachInfo")
     @ResponseBody
-    public Map<String,Object> updateCoachInfo(User user,HttpSession session,Coach coach,String info){
+    public Map<String,Object> updateCoachInfo(@RequestBody User user,@RequestBody Coach coach,HttpSession session,String info){
         User userSession= (User) session.getAttribute(SysConstant.CURRENT_USER);
         Map<String,Object> result=new HashMap<>();
-        if (!user.getUserEmail().equals("")){
-            if (!user.getUserEmail().matches(RegexpUtil.RegExp_Mail)){
+        if (!"".equals(user.getUserEmail())){
+            if (!RegexpUtil.RegExp_Mail.matches(user.getUserEmail())){
                 info="邮箱格式不匹配，请重新输入";
                 result.put(SysConstant.CURRENT_MESSAGE,info);
                 return result;
@@ -760,12 +752,17 @@ public Result updateStudentInfo(User user,HttpSession session){
                 return result;
             }
         }
-        if (user.getRealName().equals("") || user.getIdcard().equals("")){
-            info="请完善身份证信息和真实名字";
+        if ("".equals(user.getRealName())){
+            info="请完善真实名字";
             result.put(SysConstant.CURRENT_MESSAGE,info);
             return result;
         }
-        if (!user.getIdcard().matches(RegexpUtil.RegExp_ID)){
+        if ("".equals(user.getIdcard()) ){
+            info="请完善身份证信息";
+            result.put(SysConstant.CURRENT_MESSAGE,info);
+            return result;
+        }
+        if (!RegexpUtil.RegExp_ID.matches(user.getIdcard())){
             info="身份证格式不匹配，请重新输入";
             result.put(SysConstant.CURRENT_MESSAGE,info);
             return result;
@@ -851,7 +848,7 @@ public Result updateStudentInfo(User user,HttpSession session){
      */
     @RequestMapping("/showPrivacy")
     @ResponseBody
-    public Result showPrivacy(User user, HttpSession session){
+    public Result showPrivacy(@RequestBody User user, HttpSession session){
         User userSession=(User)session.getAttribute(SysConstant.CURRENT_USER);
         if (userSession == null){
             return ResultUtil.errorOperation("展现信息失败");
@@ -873,7 +870,7 @@ public Result updateStudentInfo(User user,HttpSession session){
      */
     @RequestMapping("/updatePrivacy")
     @ResponseBody
-    public Result updatePrivacy(User user,HttpSession session){
+    public Result updatePrivacy(@RequestBody User user,HttpSession session){
         User userSession= (User) session.getAttribute(SysConstant.CURRENT_USER);
         User userReal=userService.queryUserByEmail(userSession.getUserEmail());
         if (userReal==null){
@@ -942,16 +939,14 @@ public Result updateStudentInfo(User user,HttpSession session){
      */
     @RequestMapping("/modifyUserPwd")
     @ResponseBody
-    public Result modifyUserPwd(User user,HttpSession session,String confirmPwd,
+    public Result modifyUserPwd(@RequestBody User user,HttpSession session,String confirmPwd,
                                 String userNewPwd,String userOldPwd){
         User userSession= (User) session.getAttribute(SysConstant.CURRENT_USER);
         User userReal=userService.queryUserByEmail(userSession.getUserEmail());
         if (userReal==null){
             userReal=userService.queryUserByPhone(userSession.getUserPhone());
         }
-        System.out.println(userReal.getUserPwd());
         SimpleHash userHashOldPwd = new SimpleHash("MD5",userOldPwd,userReal.getSalt(),2);
-
         if (!userHashOldPwd.toString().equals(userReal.getUserPwd())){
             return  ResultUtil.errorOperation("输入的旧密码不正确，请重新输入");
         }

@@ -57,10 +57,10 @@ public class UserPcController {
     @RequestMapping("/sendRegPhoneCode")
     @ResponseBody
     public Result sendRegPhoneCode(User user) {
-        if(user.getUserPhone().equals("") || user==null){
+        if("".equals(user.getUserPhone()) || user==null){
             return ResultUtil.errorOperation("手机号不能为空");
         }
-        if(!user.getUserPhone().matches(RegexpUtil.RegExp_PHONE)) {
+        if(!RegexpUtil.RegExp_PHONE.matches(user.getUserPhone())) {
             return ResultUtil.errorOperation("手机格式不匹配");
         }
         if (userService.queryUserByPhone(user.getUserPhone())!=null){
@@ -85,19 +85,19 @@ public class UserPcController {
     @ResponseBody
     public Result regByPhone(String userPhone, String userPwd, String userVerifyCode ,User user, HttpSession session,
                           Venue venue){
-        if (userPwd.equals("")){
+        if ("".equals(userPwd)){
             return ResultUtil.errorOperation("密码不能为空");
         }
-        if (userPhone.equals("")){
+        if ("".equals(userPhone)){
             return ResultUtil.errorOperation("手机号不能为空");
         }
-        if (userVerifyCode.equals("")){
+        if ("".equals(userVerifyCode)){
             return ResultUtil.errorOperation("验证码不能为空");
         }
-        if(!userPhone.matches(RegexpUtil.RegExp_PHONE)) {
+        if(!RegexpUtil.RegExp_PHONE.matches(userPhone)) {
             return ResultUtil.errorOperation("手机格式不匹配，请重新输入");
         }
-        if(!userPwd.matches(RegexpUtil.RegExp_PASS)){
+        if(!RegexpUtil.RegExp_PASS.matches(userPwd)){
             return ResultUtil.errorOperation("密码格式不匹配，请重新输入");
         }
          User exist=userService.queryUserByPhone(userPhone);
@@ -149,16 +149,16 @@ public class UserPcController {
         if (user==null){
             return ResultUtil.errorOperation("该手机号没有被注册，请先登录再注册");
         }
-        if(userPhone.equals("")){
+        if("".equals(userPhone)){
             return ResultUtil.errorOperation("手机号不能为空");
         }
-        if(userPwd.equals("")){
+        if("".equals(userPwd)){
             return ResultUtil.errorOperation("密码不能为空");
         }
-        if (!userPhone.matches(RegexpUtil.RegExp_PHONE)){
+        if (!RegexpUtil.RegExp_PHONE.matches(userPhone)){
             return ResultUtil.errorOperation("手机格式不匹配，请重新输入");
         }
-        if (!userPwd.matches(RegexpUtil.RegExp_PASS)){
+        if (!RegexpUtil.RegExp_PASS.matches(userPwd)){
             return ResultUtil.errorOperation("密码格式不匹配，请重新输入");
         }
         if (user.getRoleId()!=3 && user.getRoleId()!=4){
