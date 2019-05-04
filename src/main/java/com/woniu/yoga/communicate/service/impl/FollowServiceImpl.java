@@ -32,31 +32,29 @@ public class FollowServiceImpl implements FollowService {
 
 
     @Override
-    public Result showFollowList(Integer state, Integer currentPage, Integer pageSize, HttpSession session) {
+    public Result showFollowList(Integer state, HttpSession session) {
         User user = (User) session.getAttribute(SysConstant.CURRENT_USER);
         if (user == null){
             return Result.error("未登录");
         }
         List<FollowVo> list = new ArrayList<>();
         if (state == 1){
-           list  = followMapper.queryFollowList(user.getUserId(), currentPage, pageSize);
+           list  = followMapper.queryFollowList(user.getUserId());
         }else if (state == 0){
-            list = followMapper.queryFans(user.getUserId(), currentPage, pageSize);
+            list = followMapper.queryFans(user.getUserId());
         } else {
             return Result.error("参数错误");
         }
-        PageInfo pageInfo = new PageInfo(list);
         return Result.success("成功",list);
     }
 
     @Override
-    public Result showFollowHomepage(Integer currentPage, Integer pageSize, HttpSession session) {
+    public Result showFollowHomepage(HttpSession session) {
         User user = (User) session.getAttribute(SysConstant.CURRENT_USER);
         if (user == null){
             return Result.error("未登录");
         }
-        List<HomepageVo> list = followMapper.queryFollowHomepages(user.getUserId(), currentPage, pageSize);
-        PageInfo pageInfo = new PageInfo(list);
+        List<HomepageVo> list = followMapper.queryFollowHomepages(user.getUserId());
         for (int i = 0; i < list.size(); i++){
             HomepageVo vo = list.get(i);
             //用户设置权限为好友，如果不是相互关注，不能查看

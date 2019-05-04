@@ -16,7 +16,7 @@ import javax.servlet.http.HttpSession;
 /**
  * @author guochxi
  */
-@Controller
+@RestController
 @RequestMapping("/comment")
 public class CommentController {
 
@@ -36,7 +36,6 @@ public class CommentController {
             @ApiImplicitParam(name = "mid", value = "动态的id", required = true, paramType = "body")
     })
     @GetMapping("/showComments")
-    @ResponseBody
     public Result<CommentVo> showComments(@RequestBody Integer mid){
         return commentService.showComments(mid);
     }
@@ -51,7 +50,6 @@ public class CommentController {
     @ApiOperation(value = "添加评论")
     @ApiImplicitParam(name = "comment", value = "评论", required = true, paramType = "body")
     @PutMapping("/addComment")
-    @ResponseBody
     public Result addComment(@RequestBody Comment comment, HttpSession session){
         return commentService.addComment(comment, session);
     }
@@ -59,7 +57,6 @@ public class CommentController {
     @ApiOperation(value = "删除评论")
     @ApiImplicitParam(name = "commentId", value = "评论id", required = true, paramType = "body")
     @DeleteMapping("/deleteComment")
-    @ResponseBody
     public Result deleteComment(@RequestBody Integer commentId){
         return commentService.deleteComment(commentId);
     }
