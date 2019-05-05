@@ -14,7 +14,6 @@ import com.woniu.yoga.pay.pojo.Wallet;
 import com.woniu.yoga.pay.pojo.WalletRecord;
 import com.woniu.yoga.pay.service.WalletRecordService;
 import com.woniu.yoga.pay.service.WalletService;
-
 import com.woniu.yoga.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -237,7 +236,6 @@ public class WalletController {
         //goodsIds,goodscount,goodsprice，生成订单时要用的数据
         //获得初始化的AlipayClient
         AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.gatewayUrl, AlipayConfig.app_id, AlipayConfig.merchant_private_key, "json", AlipayConfig.charset, AlipayConfig.alipay_public_key, AlipayConfig.sign_type);
-
         //设置请求参数
 
         AlipayTradePagePayRequest alipayRequest = new AlipayTradePagePayRequest();
