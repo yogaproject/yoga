@@ -7,17 +7,15 @@ import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayFundTransToaccountTransferRequest;
 import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.alipay.api.response.AlipayFundTransToaccountTransferResponse;
+import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.manage.pojo.Coupon;
 import com.woniu.yoga.pay.alipayConfig.AlipayConfig;
 import com.woniu.yoga.pay.pojo.Wallet;
 import com.woniu.yoga.pay.pojo.WalletRecord;
 import com.woniu.yoga.pay.service.WalletRecordService;
 import com.woniu.yoga.pay.service.WalletService;
-import com.woniu.yoga.pay.util.Result;
-import com.woniu.yoga.user.dao.CoachMapper;
+
 import com.woniu.yoga.user.service.UserService;
-import com.woniu.yoga.user.vo.StudentVO;
-import jdk.nashorn.internal.ir.LiteralNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -214,7 +212,7 @@ public class WalletController {
         if (coupons==null){
             return Result.error("亲，您还没有优惠券");
         }
-        return Result.success(coupons);
+        return Result.success("",coupons);
     }
 
 
