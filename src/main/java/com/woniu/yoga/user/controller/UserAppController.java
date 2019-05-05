@@ -252,7 +252,7 @@ public class UserAppController {
      */
         @RequestMapping("/updateUserPwdByEmail")
         @ResponseBody
-        public Result updateUserPwdByEmail(@RequestBody User user, String confirmPwd,HttpSession session){
+        public Result updateUserPwdByEmail(@RequestBody User user,@RequestBody String confirmPwd,HttpSession session){
             if ("".equals(user.getUserPwd())){
                 return ResultUtil.errorOperation("密码不能为空");
             }
@@ -314,7 +314,7 @@ public class UserAppController {
      */
     @RequestMapping("/regByPhone")
     @ResponseBody
-    public Result regByPhone(@RequestBody User user, String roleName, HttpSession session,
+    public Result regByPhone(@RequestBody User user,@RequestBody String roleName, HttpSession session,
                              Student student, Coach coach){
         if ("".equals(user.getUserPwd())){
             return ResultUtil.errorOperation("密码不能为空");
@@ -513,7 +513,7 @@ public class UserAppController {
      */
     @RequestMapping("/updateUserPwdByPhone")
     @ResponseBody
-    public Result updateUserPwdByPhone(@RequestBody User user,String confirmPwd,HttpSession session){
+    public Result updateUserPwdByPhone(@RequestBody User user,@RequestBody String confirmPwd,HttpSession session){
         if ("".equals(user.getUserPwd())){
             return ResultUtil.errorOperation("密码不能为空");
         }
@@ -939,8 +939,8 @@ public Result updateStudentInfo(@RequestBody User user,HttpSession session){
      */
     @RequestMapping("/modifyUserPwd")
     @ResponseBody
-    public Result modifyUserPwd(@RequestBody User user,HttpSession session,String confirmPwd,
-                                String userNewPwd,String userOldPwd){
+    public Result modifyUserPwd(User user,HttpSession session,@RequestBody String confirmPwd,
+                                @RequestBody String userNewPwd,@RequestBody String userOldPwd){
         User userSession= (User) session.getAttribute(SysConstant.CURRENT_USER);
         User userReal=userService.queryUserByEmail(userSession.getUserEmail());
         if (userReal==null){
