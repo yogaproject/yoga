@@ -4,6 +4,7 @@ import com.woniu.yoga.commom.utils.OrderIdUtil;
 import com.woniu.yoga.user.pojo.Order;
 import org.springframework.beans.BeanUtils;
 
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -26,10 +27,10 @@ public class OrderUtil {
 
     public static int checkOrderStatus(String status) {
         if (status.equals("新下单")) {
-            return NEWORDER;
+            return NEWORDER;//15
         }
         if (status.equals("教练已确认")) {
-            return STARTORDER;
+            return STARTORDER;//29
         }
         if (status.equals("待付款")) {
             return WAITTOPAY;
@@ -55,6 +56,37 @@ public class OrderUtil {
         return -1;
     }
 
+    public static String checkStatus(Integer status) {
+        if (status == NEWORDER) {
+            return "待确认";//15
+        }
+        if (status == STARTORDER) {
+            return ("教练已确认");//29
+        }
+        if (status == WAITTOPAY) {
+            return ("待付款");
+        }
+        if (status == PAIED) {
+            return ("待评价");
+        }
+        if (status == END) {
+            return ("已完成");
+        }
+        if (status == CANCELED) {
+            return ("已取消");
+        }
+        if (status == APPLICATIONFORDRAWBACK) {
+            return ("申请退款");
+        }
+        if (status == REFUNDSUCCESS) {
+            return ("退款成功");
+        }
+        if (status == REFUNDFAILURE) {
+            return ("退款失败");
+        }
+        return "";
+    }
+
     public static Order getRepeatOrder(Order order) {
         Order repeatOrder = new Order();
         BeanUtils.copyProperties(order, repeatOrder);
@@ -66,7 +98,7 @@ public class OrderUtil {
         return repeatOrder;
     }
 
-    public static int[] getOrderStatus(String orderStatus) {
+    public static String getOrderStatus(String orderStatus) {
         int[] status = null;
         if (orderStatus.equals("未完成订单")) {
             status = new int[5];
@@ -78,11 +110,30 @@ public class OrderUtil {
         }
         if (orderStatus.equals("已完成订单")) {
             status = new int[4];
-            status[0]=CANCELED;
-            status[1]=END;
-            status[2]=REFUNDFAILURE;
-            status[3]=REFUNDSUCCESS;
+            status[0] = CANCELED;
+            status[1] = END;
+            status[2] = REFUNDFAILURE;
+            status[3] = REFUNDSUCCESS;
         }
-        return status;
+        return convertByArray(status);
+    }
+
+    public static String convertByArray(int[] array) {
+        if (array == null || array.length == 0) {
+            return null;
+        }
+        String s = "";
+        for (int i = 0; i < array.length; i++) {
+            if (i != array.length - 1) {
+                s += array[i] + ",";
+            } else {
+                s += array[i];
+            }
+        }
+        return s;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(getOrderStatus("未完成订单"));
     }
 }

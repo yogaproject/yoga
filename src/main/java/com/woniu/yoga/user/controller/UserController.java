@@ -113,8 +113,9 @@ public class UserController {
             @ApiImplicitParam(name = "orderStatus", value = "订单状态：未完成订单、已完成订单、所有订单")
     })
     public Result listOrder(HttpSession session, @RequestBody String orderStatus) {
-        User user = (User) session.getAttribute("user");
-        Integer userId = user.getUserId();
+//        User user = (User) session.getAttribute("user");
+//        Integer userId = user.getUserId();
+        Integer userId = 4;//教练
         return userService.listOrder(userId, orderStatus);
     }
 
@@ -129,11 +130,12 @@ public class UserController {
      **/
     @ApiOperation(value = "查找用户有效的优惠券")
     @ApiImplicitParam(name = "session", value = "HttpSession")
-    @RequestMapping("listCouponByUserId")
+    @RequestMapping("listCouponsByUserId")
     @ResponseBody
     public Result listCouponsByUserId(HttpSession session) {
-        User user = (User) session.getAttribute("user");
-        Integer userId = user.getUserId();
+//        User user = (User) session.getAttribute("user");
+//        Integer userId = user.getUserId();
+        Integer userId = 5;//学员
         return userService.listCouponsByUserId(userId);
     }
 

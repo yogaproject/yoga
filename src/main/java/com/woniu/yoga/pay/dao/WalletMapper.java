@@ -41,4 +41,9 @@ public interface WalletMapper {
     //添加银行卡
     @Update("update wallet set bankcard=#{bankcard},pay_pwd=#{pwd} where user_id=#{userid}")
     int addBankcardByWalletId(@Param("userid") Integer walletid,@Param("pwd") String pwd, String againPwd,@Param("bankcard") String bankcard);
+
+
+    //liufeng
+    @Select("select * from wallet where user_id =#{userId}")
+    Wallet selectWalletByUserId(Integer userId);
 }

@@ -4,6 +4,7 @@ import com.woniu.yoga.user.pojo.Coach;
 import com.woniu.yoga.user.pojo.Course;
 import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.service.CoachService;
+import com.woniu.yoga.user.vo.DealOrder;
 import com.woniu.yoga.user.vo.Result;
 import com.woniu.yoga.venue.pojo.Recruitment;
 import com.woniu.yoga.venue.pojo.Venue;
@@ -58,11 +59,12 @@ public class CoachController {
     @ResponseBody
     @ApiOperation(value = "瑜伽师对学员新下订单进行处理")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "orderId", value = "订单ID",paramType = "String"),
-            @ApiImplicitParam(name = "result", value = "接受或拒绝",paramType = "String"),
+            @ApiImplicitParam(name = "orderId", value = "订单ID", paramType = "String"),
+            @ApiImplicitParam(name = "result", value = "接受或拒绝", paramType = "String"),
     })
-    public Result updateOrderForNewOrder(@RequestBody String orderId, @RequestBody String result) {
-        return coachService.updateOrder(orderId, result);
+    public Result updateOrderForNewOrder(@RequestBody DealOrder result) {
+//        System.out.println(result);
+        return coachService.updateOrder(result.getOrderId(), result.getResult());
     }
 
     /*
@@ -90,16 +92,17 @@ public class CoachController {
      * @Param
      * @return
      **/
-    @PostMapping("/updateOrderForWaiToPay")
+    @PostMapping("/updateOrderForWaitToPay")
     @ResponseBody
     @ApiOperation(value = "订单课程完成之后，瑜伽师修改订单状态为待付款")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "orderId", value = "订单编号",paramType = "String"),
+            @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "String"),
             @ApiImplicitParam(name = "session", value = "HttpSession")
     })
     public Result updateOrderForWaitToPay(@RequestBody String orderId, HttpSession session) {
-        User user = (User) session.getAttribute("user");
-        int userId = user.getUserId();
+//        User user = (User) session.getAttribute("user");
+//        int userId = user.getUserId();
+        Integer userId = 4;
         return coachService.updateOrderForWaitToPay(userId, orderId);
     }
 
@@ -129,11 +132,12 @@ public class CoachController {
     @ApiOperation(value = "瑜伽师添加新的课程")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "session", value = "HttpSession"),
-            @ApiImplicitParam(name = "course", value = "一个课程对象",paramType = "pojo")
+            @ApiImplicitParam(name = "course", value = "一个课程对象", paramType = "pojo")
     })
-    public Result insertCourse(HttpSession session,@RequestBody Course course) {
-        User user = (User) session.getAttribute("user");
-        int userId = user.getUserId();
+    public Result insertCourse(HttpSession session, @RequestBody Course course) {
+//        User user = (User) session.getAttribute("user");
+//        int userId = user.getUserId();
+        Integer userId = 4;
         return coachService.insertCourse(userId, course);
     }
 
@@ -149,11 +153,12 @@ public class CoachController {
     @ApiOperation(value = "瑜伽师删除课程")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "session", value = "HttpSession"),
-            @ApiImplicitParam(name = "courseId", value = "课ID",paramType = "Integer")
+            @ApiImplicitParam(name = "courseId", value = "课ID", paramType = "Integer")
     })
-    public Result deleteCourse(HttpSession session,@RequestBody  Integer courseId) {
-        User user = (User) session.getAttribute("user");
-        int userId = user.getUserId();
+    public Result deleteCourse(HttpSession session, @RequestBody Integer courseId) {
+//        User user = (User) session.getAttribute("user");
+//        int userId = user.getUserId();
+        Integer userId = 4;
         return coachService.deleteCourse(userId, courseId);
     }
 
@@ -171,9 +176,10 @@ public class CoachController {
             @ApiImplicitParam(name = "session", value = "HttpSession"),
             @ApiImplicitParam(name = "course", value = "修改后的课程对象")
     })
-    public Result updateCourse(HttpSession session,@RequestBody  Course course) {
-        User user = (User) session.getAttribute("user");
-        int userId = user.getUserId();
+    public Result updateCourse(HttpSession session, @RequestBody Course course) {
+//        User user = (User) session.getAttribute("user");
+//        int userId = user.getUserId();
+        Integer userId = 4;
         return coachService.updateCourse(userId, course);
     }
 
@@ -191,9 +197,10 @@ public class CoachController {
             @ApiImplicitParam(name = "session", value = "HttpSession"),
             @ApiImplicitParam(name = "venueId", value = "场馆id，或者平台id")
     })
-    public Result applyForSign(HttpSession session,@RequestBody  Integer venueId) {
-        User user = (User) session.getAttribute("user");
-        int userId = user.getUserId();
+    public Result applyForSign(HttpSession session, @RequestBody Integer venueId) {
+//        User user = (User) session.getAttribute("user");
+//        int userId = user.getUserId();
+        Integer userId = 4;
         return coachService.applyForSign(userId, venueId);
     }
 
@@ -209,13 +216,15 @@ public class CoachController {
     @ResponseBody
     @ApiOperation(value = "瑜伽师处理场馆（平台）发出的认证请求")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "session",value = "HttpSession"),
-            @ApiImplicitParam(name = "venueId",value = "场馆（平台）Id",paramType = "Integer"),
-            @ApiImplicitParam(name = "result",value = "接受或拒绝",paramType = "String"),
+            @ApiImplicitParam(name = "session", value = "HttpSession"),
+            @ApiImplicitParam(name = "venueId", value = "场馆（平台）Id", paramType = "Integer"),
+            @ApiImplicitParam(name = "result", value = "接受或拒绝", paramType = "String"),
     })
-    public Result dealVenueRequestSign(HttpSession session,@RequestBody Integer venueId,@RequestBody  String result) {
-        User user = (User) session.getAttribute("user");
-        int userId = user.getUserId();
+    public Result dealVenueRequestSign(HttpSession session, @RequestBody Integer venueId, @RequestBody String result) {
+//        User user = (User) session.getAttribute("user");
+//        int userId = user.getUserId();
+        Integer userId = 4;
+
         return coachService.dealVenueRequest(userId, venueId, result);
     }
 
@@ -230,8 +239,9 @@ public class CoachController {
     @ResponseBody
     @ApiOperation(value = "瑜伽师借阅")
     public Result cancelContract(HttpSession session) {
-        User user = (User) session.getAttribute("user");
-        int userId = user.getUserId();
+//        User user = (User) session.getAttribute("user");
+//        int userId = user.getUserId();
+        Integer userId = 4;
         return coachService.cancelContract(userId);
     }
 

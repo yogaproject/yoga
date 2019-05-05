@@ -1,11 +1,18 @@
 package com.woniu.yoga.user.util;
 
 import com.woniu.yoga.user.dto.CoachDTO;
+import com.woniu.yoga.user.dto.OrderDTO;
 import com.woniu.yoga.user.dto.SearchConditionDTO;
+import com.woniu.yoga.user.pojo.Course;
+import com.woniu.yoga.user.pojo.Order;
 import com.woniu.yoga.user.vo.CoachVO;
+import com.woniu.yoga.user.vo.OrderVO;
 import com.woniu.yoga.user.vo.SearchConditionVO;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -67,13 +74,41 @@ public class ConvertVOToDTOUtil {
             coachVO.setRealName(coachDTO.getRealName());
             coachVO.setUserId(coachDTO.getUserId());
             int commentCount = coachDTO.getBadComment() + coachDTO.getCommonComment() + coachDTO.getGoodComment();
-            float feedback = (coachDTO.getBadComment() * 1 + coachDTO.getCommonComment() * 3 + coachDTO.getGoodComment() * 5) / (float)commentCount;
+            float feedback = (coachDTO.getBadComment() * 1 + coachDTO.getCommonComment() * 3 + coachDTO.getGoodComment() * 5) / (float) commentCount;
 //            (float)(Math.round(totalPrice*100)/100)
-            feedback = (Math.round(feedback * 10) / (float)10);
+            feedback = (Math.round(feedback * 10) / (float) 10);
             coachVO.setFeedback(feedback);
             coachVO.setLevel(coachDTO.getLevel());
             coachVOS.add(coachVO);
         }
         return coachVOS;
     }
+
+    public static OrderVO convertOrderToOrderVO(OrderDTO order) {
+        OrderVO orderVO = new OrderVO();
+        orderVO.setCourseId(order.getCourseId());
+        orderVO.setAccepter(order.getAccepter());
+        orderVO.setCourseId(order.getCourseId());
+        orderVO.setCourse(order.getCourse());
+        orderVO.setOrderStatus(OrderUtil.checkStatus(order.getOrderStatus()));
+        orderVO.setCreateTime(order.getCreateTime());
+        orderVO.setCouponId(order.getCouponId());
+        orderVO.setOrderId(order.getOrderId());
+        orderVO.setPayer(order.getPayer());
+        orderVO.setOrderMoney(order.getOrderMoney());
+        orderVO.setCourseCount(1);
+        orderVO.setUpdateTime(order.getUpdateTime());
+        orderVO.setCouponId(order.getCouponId());
+        return orderVO;
+    }
+
+    public static List<OrderVO> convertList(List<OrderDTO> orders){
+        List<OrderVO> orderVOS = new LinkedList<>();
+        for (int i = 0; i < orders.size(); i++) {
+            OrderVO orderVO = convertOrderToOrderVO(orders.get(i));
+            orderVOS.add(orderVO);
+        }
+        return  orderVOS;
+    }
+
 }

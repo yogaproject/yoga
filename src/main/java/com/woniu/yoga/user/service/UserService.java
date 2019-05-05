@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -45,7 +46,7 @@ public interface UserService {
 
     Result getDetailInfoByUserId(Integer userId, Integer coachId) throws RuntimeException;
     //查询用户优惠券
-    List<Coupon> fandCouponByUserId(int userid);
+    List<Coupon> fandCouponByUserId(int userid) throws RuntimeException;
 
     //插入 lxy
     void saveUser(User user);

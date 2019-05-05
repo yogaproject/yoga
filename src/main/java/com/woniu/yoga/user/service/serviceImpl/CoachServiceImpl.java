@@ -70,15 +70,15 @@ public class CoachServiceImpl implements CoachService {
                 ResultUtil.illegalOperation();
             }
             int orderStatus = 0;
-            if (result.equals("接受")) {
+            if (result.equals("accept")) {
                 orderStatus = OrderUtil.STARTORDER;
-            } else if (result.equals("拒绝")) {
+            } else if (result.equals("cancel")) {
                 orderStatus = OrderUtil.CANCELED;
             } else {
                 ResultUtil.illegalOperation();
             }
             order.setOrderStatus(orderStatus);
-            orderMapper.updateByPrimaryKeySelective(order);
+            orderMapper.updateStatusByOrderId(orderId,orderStatus);
             return ResultUtil.actionSuccess("已接单，请联系学员安排课程", order);
         } catch (SQLException e) {
             e.printStackTrace();

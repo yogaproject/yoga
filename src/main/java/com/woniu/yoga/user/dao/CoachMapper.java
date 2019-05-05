@@ -71,13 +71,13 @@ public interface CoachMapper {
      * @Author liufeng
      * @Description //根据瑜伽师的id，查找场馆id（如果瑜伽师没有签约场馆，场馆id为空）
      **/
-    @Select("select venue_id from user,coach where user.user_id = coach.user_id and user.user_id = #{userId}")
+    @Select("select venue_id from venue_coach where coach_id =(select coach_id from coach where user_id =#{userId} and authentication =1 ) and cv_status = 1")
     Integer findVenueBycoachId(Integer userId)throws SQLException;
     /*
      * @Author liufeng
      * @Description //根据场馆id，查询场馆的用户id
      **/
-    @Select("select user_id from user,venue where venue.user_id = user.user_id and venue.user_id =#{venueId} and user_flag = 0")
+    @Select("select user_id from user where user_id = (select venue_id from venue where venue_id =#{venueId}) and user_flag = 0")
     Integer findVenueByVenueId(Integer venueId)throws SQLException;
     /*
      * @Author liufeng

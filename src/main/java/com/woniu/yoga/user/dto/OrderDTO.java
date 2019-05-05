@@ -1,7 +1,8 @@
-package com.woniu.yoga.user.vo;
+package com.woniu.yoga.user.dto;
 
 import com.woniu.yoga.user.pojo.Course;
 import com.woniu.yoga.user.pojo.User;
+import com.woniu.yoga.user.vo.UserVO;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -10,23 +11,22 @@ import java.util.Date;
 /**
  * @Description TODO
  * @Author Administrator
- * @Date 2019/5/5 9:47
+ * @Date 2019/5/5 11:25
  * @Version 1.0
  */
 @Data
-public class OrderVO {
+public class OrderDTO {
     private String orderId;
     //支付方的userId
     private UserVO payer;
     //接收方的userId
-    private Integer accepterId;
     private UserVO accepter;
     //包含的课程
     private Course course;
     //订单金额
     private BigDecimal orderMoney;
     //订单状态
-    private String orderStatus;
+    private Integer orderStatus;
 
     private Integer courseId;
 
