@@ -63,7 +63,7 @@
       #{orderFlag,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.woniu.yoga.user.pojo.Order" >
-    insert into order
+    insert into `order`
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="orderId != null">
         order_id,

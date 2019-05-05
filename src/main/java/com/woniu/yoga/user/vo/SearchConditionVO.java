@@ -27,7 +27,7 @@ public class SearchConditionVO {
     private String freeTime;
 
     public SearchConditionVO() {
-        round = 5000;
+        round = 10000;
         coachStyle = 0;
         authentication = "不限";
         freeTime = "不限";

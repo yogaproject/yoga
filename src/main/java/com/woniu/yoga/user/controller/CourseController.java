@@ -26,6 +26,7 @@ import javax.servlet.http.HttpSession;
 public class CourseController {
     @Autowired
     private CourseService courseService;
+
     /*
      * @Author liufeng
      * @Date
@@ -33,13 +34,19 @@ public class CourseController {
      * @Param：课程di（Integer）
      * @return  Result(通用返回类型，包含状态码，提示信息和详细内容)
      **/
-    @GetMapping("findCourseByCourseId")
+    @PostMapping("listCourseByCoachId")
     @ResponseBody
     @ApiOperation(value = "根据瑜伽师的用户ID查询课程信息")
-    @ApiImplicitParam(name = "courseId",value = "课程ID")
-    public Result listCoursesByCoachId(HttpSession session){
-        User user = (User) session.getAttribute("user");
-        Integer usrId = user.getUserId();
-        return courseService.listCourseByUserId(usrId);
+    @ApiImplicitParam(name = "courseId", value = "课程ID")
+    public Result listCoursesByCoachId(HttpSession session, @RequestBody Integer userId) {
+        if (userId == null) {
+            User user = (User) session.getAttribute("user");
+            Integer myId = user.getUserId();
+            if (myId == null) {
+                myId = 1;
+            }
+            userId = myId;
+        }
+        return courseService.listCourseByUserId(userId);
     }
 }

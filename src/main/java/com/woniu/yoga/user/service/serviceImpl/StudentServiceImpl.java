@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -62,58 +63,36 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private StudentRepository studentRepository;
 
+    private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-
-    //如果是教练，查找头像、姓名、简介、流派、认证方式（单击查看场馆）、课程（单击查看课程），交易次数，好评数
-    //好友或者公开才能查看qq、微信、电话等信息
-    @Override
-    public Result getDetailInfoByUserId(Integer userId, Integer coachId) {
-        if (coachId == null) {
-            return ResultUtil.errorOperation("请选择想了解的瑜伽师!");
-        }
-        CoachDetailInfoVO coachDetailInfoVO = null;
-        try {
-            coachDetailInfoVO = userMapper.getDetailInfoByUserId(coachId);
-            //如果是场馆认证，设置venueName：场馆名
-            if (coachDetailInfoVO.getAuthentication() == 1) {
-                coachDetailInfoVO.setVenueName(coachMapper.getVenueByCoachId(coachId));
-            }
-        } catch (Exception e){
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
-        //如果学员和瑜伽师不是好友，隐藏个人信息；或者瑜伽师设置保密
-        if ((coachDetailInfoVO.getPrivacy() == 0) || (coachDetailInfoVO.getPrivacy() == 1 && !("学员和瑜伽师是好友" == ""))) {
-            coachDetailInfoVO.setQq(null);
-            coachDetailInfoVO.setWechat(null);
-            coachDetailInfoVO.setPhone(null);
-        }
-        //如果是官方认证，设置venueName：平台认证
-        if (coachDetailInfoVO.getAuthentication() == 2) {
-            coachDetailInfoVO.setVenueName("平台认证");
-        }
-        return ResultUtil.actionSuccess("查询成功", coachDetailInfoVO);
-    }
 
     //学员下单
     @Override
-    public Result saveOrder(Integer userId, Order order) {
+    public Result saveOrder(Integer userId, OrderVO orderVO) {
         try {
+//            Course course = courseMapper.selectByCoachAndName(orderVO.getCoachId(), orderVO.getCourseName());
+            Course course = courseMapper.selectByPrimaryKey(orderVO.getCourseId());
+            if (course == null || course.getCourseId() == null) {
+                return ResultUtil.errorOperation("该课程无效！");
+            }
+            Order order = new Order();
             order.setPayerId(userId);
-            Wallet wallet = walletMapper.selectByPrimaryKey(order.getPayerId());
-            Course course = courseMapper.selectByPrimaryKey(order.getCourse().getCourseId());
-            BigDecimal orderMoney = course.getCoursePrice().multiply(new BigDecimal(order.getCourseCount()));
-            if (orderMoney.compareTo(wallet.getBalance()) < 0) {
+            order.setAccepterId(orderVO.getCoachId());
+            order.setCourseId(course.getCourseId());
+            Wallet wallet = walletMapper.selectWalletByUserId(userId);
+            System.out.println(course.getCoursePrice().compareTo(wallet.getBalance()));
+            if (!(course.getCoursePrice().compareTo(wallet.getBalance()) < 0)) {
                 return ResultUtil.errorOperation("余额不足，请充值");
             }
-            order.setOrderMoney(orderMoney);
+            order.setOrderMoney(course.getCoursePrice());
             order.setOrderStatus(OrderUtil.NEWORDER);
             order.setOrderId(OrderIdUtil.getOrderId());
             order.setCreateTime(new Date());
             //插入订单，
+//            orderMapper.insertNewOrder(order);
             orderMapper.insertSelective(order);
             return ResultUtil.actionSuccess("已下单，等待处理中...", order);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException();
         }
@@ -147,7 +126,7 @@ public class StudentServiceImpl implements StudentService {
             order.setCouponId(couponId);
             orderMapper.updateByPrimaryKeySelective(order);
             return ResultUtil.actionSuccess("订单信息更新，请确认...", order);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException();
         }
@@ -195,7 +174,7 @@ public class StudentServiceImpl implements StudentService {
             walletRecordMapper.insertSelective(platfotmPayCourseRecord);
             walletRecordMapper.insertSelective(coachCourseRecord);
             return ResultUtil.actionSuccess("支付成功", order);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException();
         }
@@ -235,7 +214,7 @@ public class StudentServiceImpl implements StudentService {
             userMapper.updateByPrimaryKeySelective(cUser);
             orderMapper.updateStatusByOrderId(orderId, OrderUtil.END);
             return ResultUtil.actionSuccess("评论成功", comment);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException();
         }
@@ -262,7 +241,7 @@ public class StudentServiceImpl implements StudentService {
             order.setOrderStatus(OrderUtil.APPLICATIONFORDRAWBACK);
             orderMapper.updateByPrimaryKeySelective(order);
             return ResultUtil.actionSuccess("已提交申请，等待客服处理中...", order);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException();
         }
@@ -280,7 +259,7 @@ public class StudentServiceImpl implements StudentService {
             }
             orderMapper.updateStatusByOrderId(orderId, OrderUtil.CANCELED);
             return ResultUtil.actionSuccess("订单已取消", order);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException();
         }
@@ -292,7 +271,7 @@ public class StudentServiceImpl implements StudentService {
         try {
             String phone = userMapper.selectPhoneByUserId(userId);
             return ResultUtil.actionSuccess("查找成功", phone);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException();
         }
@@ -300,18 +279,18 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Result repeatOrder(Integer userId, String orderId) {
-       try {
-           Order order = orderMapper.selectByPrimaryKey(orderId);
-           if (order.getPayerId() != userId) {
-               return ResultUtil.illegalOperation();
-           }
-           Order repeatOrder = OrderUtil.getRepeatOrder(order);
-           orderMapper.insertSelective(repeatOrder);
-           return ResultUtil.actionSuccess("已下单，等待瑜伽师处理中...", repeatOrder);
-       }catch (SQLException e){
-           e.printStackTrace();
-           throw new RuntimeException();
-       }
+        try {
+            Order order = orderMapper.selectByPrimaryKey(orderId);
+            if (order.getPayerId() != userId) {
+                return ResultUtil.illegalOperation();
+            }
+            Order repeatOrder = OrderUtil.getRepeatOrder(order);
+            orderMapper.insertSelective(repeatOrder);
+            return ResultUtil.actionSuccess("已下单，等待瑜伽师处理中...", repeatOrder);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
     }
 
     /*
@@ -332,7 +311,7 @@ public class StudentServiceImpl implements StudentService {
      * @Author liufeng
      * @Description //生成一条钱包记录：学员付款后，平台为瑜伽师或所在平台付款
      **/
-    WalletRecord getPlatfotmPayCourseRecord(Order order)throws SQLException {
+    WalletRecord getPlatfotmPayCourseRecord(Order order) throws SQLException {
         WalletRecord platfotmPayCourseRecord = new WalletRecord();
         platfotmPayCourseRecord.setFromId(Attributes.PLATFORMNUMBER);
         Integer acceptId = order.getAccepterId();

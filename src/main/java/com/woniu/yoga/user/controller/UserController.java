@@ -57,19 +57,24 @@ public class UserController {
     @ResponseBody
     @ApiOperation(value = "学员查看附近的瑜伽师")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "searchConditionVO",value = "多个搜索条件封装成的对象，包含以下属性"),
-            @ApiImplicitParam(name = "realName",value = "要查询的瑜伽师的名称"),
-            @ApiImplicitParam(name="longitude",value = "学员位置：经度（百度地图）",paramType = "double",required = true),
-            @ApiImplicitParam(name = "latitude",value = "学员位置：纬度（百度地图）",paramType = "double",required = true),
-            @ApiImplicitParam(name = "round",value = "距离‘我的距离’",defaultValue = "2000"),
-            @ApiImplicitParam(name = "roleId",value = "2:瑜伽师；3：场馆；其余默认为瑜伽师",defaultValue = "2",paramType = "integer"),
-            @ApiImplicitParam(name = "coachStyle",value = "瑜伽师流派，从数据库中查询，0为不限;场馆无需此项",required = false,defaultValue = "0",paramType = "integer"),
-            @ApiImplicitParam(name = "authentication",value = "瑜伽师认证方式：不限、平台认证或场馆认证;场馆无需此项",required = false,defaultValue = "不限",paramType = "String"),
-            @ApiImplicitParam(name = "freeTime",value = "瑜伽师自定义的空闲时间，值为不限、早、中、晚、全天",required = false,defaultValue = "不限",paramType = "String")
+            @ApiImplicitParam(name = "searchConditionVO", value = "多个搜索条件封装成的对象，包含以下属性"),
+            @ApiImplicitParam(name = "realName", value = "要查询的瑜伽师的名称"),
+            @ApiImplicitParam(name = "longitude", value = "学员位置：经度（百度地图）", paramType = "double", required = true),
+            @ApiImplicitParam(name = "latitude", value = "学员位置：纬度（百度地图）", paramType = "double", required = true),
+            @ApiImplicitParam(name = "round", value = "距离‘我的距离’", defaultValue = "2000"),
+            @ApiImplicitParam(name = "roleId", value = "2:瑜伽师；3：场馆；其余默认为瑜伽师", defaultValue = "2", paramType = "integer"),
+            @ApiImplicitParam(name = "coachStyle", value = "瑜伽师流派，从数据库中查询，0为不限;场馆无需此项", required = false, defaultValue = "0", paramType = "integer"),
+            @ApiImplicitParam(name = "authentication", value = "瑜伽师认证方式：不限、平台认证或场馆认证;场馆无需此项", required = false, defaultValue = "不限", paramType = "String"),
+            @ApiImplicitParam(name = "freeTime", value = "瑜伽师自定义的空闲时间，值为不限、早、中、晚、全天", required = false, defaultValue = "不限", paramType = "String")
     })
     public Result listAroundCoachByAddress(@RequestBody SearchConditionVO searchConditionVO) {
-        return userService.listAroundCoachs(searchConditionVO);
+
+        System.out.println(searchConditionVO);
+        Result result = userService.listAroundCoachs(searchConditionVO);
+        System.out.println(result);
+        return result;
     }
+
     /*
      * @Author liufeng
      * @Description //根据用户注册的地址或定位地址查询附近一定范围的教练、场馆(默认查找教练)
@@ -78,15 +83,19 @@ public class UserController {
     @ResponseBody
     @ApiOperation(value = "学员查看附近的场馆")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "realName",value = "要查询的场馆的名称"),
-            @ApiImplicitParam(name = "searchConditionVO",value = "多个搜索条件封装成的对象，包含以下属性"),
-            @ApiImplicitParam(name="longitude",value = "学员位置：经度（百度地图）",paramType = "double",required = true),
-            @ApiImplicitParam(name = "latitude",value = "学员位置：纬度（百度地图）",paramType = "double",required = true),
-            @ApiImplicitParam(name = "round",value = "距离‘我的距离’",defaultValue = "2000"),
+            @ApiImplicitParam(name = "realName", value = "要查询的场馆的名称"),
+            @ApiImplicitParam(name = "searchConditionVO", value = "多个搜索条件封装成的对象，包含以下属性"),
+            @ApiImplicitParam(name = "longitude", value = "学员位置：经度（百度地图）", paramType = "double", required = true),
+            @ApiImplicitParam(name = "latitude", value = "学员位置：纬度（百度地图）", paramType = "double", required = true),
+            @ApiImplicitParam(name = "round", value = "距离‘我的距离’", defaultValue = "2000"),
     })
     public Result listAroundVenueByAddress(@RequestBody SearchConditionVO searchConditionVO) {
-        return userService.listAroundVenues(searchConditionVO);
+        System.out.println(searchConditionVO);
+        Result result = userService.listAroundVenues(searchConditionVO);
+        System.out.println(result);
+        return result;
     }
+
     /*
      * @Author liufeng
      * @Date
@@ -100,13 +109,13 @@ public class UserController {
     @ResponseBody
     @ApiOperation(value = "查看我的订单")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "session",value = "HttpSession"),
-            @ApiImplicitParam(name = "orderStatus",value = "订单状态：未完成订单、已完成订单、所有订单")
+            @ApiImplicitParam(name = "session", value = "HttpSession"),
+            @ApiImplicitParam(name = "orderStatus", value = "订单状态：未完成订单、已完成订单、所有订单")
     })
-    public Result listOrder(HttpSession session,@RequestBody  String orderStatus) {
+    public Result listOrder(HttpSession session, @RequestBody String orderStatus) {
         User user = (User) session.getAttribute("user");
         Integer userId = user.getUserId();
-        return userService.listOrder(userId,orderStatus);
+        return userService.listOrder(userId, orderStatus);
     }
 
     /*
@@ -119,7 +128,7 @@ public class UserController {
      *  返回可用优惠券的集合
      **/
     @ApiOperation(value = "查找用户有效的优惠券")
-    @ApiImplicitParam(name = "session",value = "HttpSession")
+    @ApiImplicitParam(name = "session", value = "HttpSession")
     @RequestMapping("listCouponByUserId")
     @ResponseBody
     public Result listCouponsByUserId(HttpSession session) {
@@ -128,6 +137,27 @@ public class UserController {
         return userService.listCouponsByUserId(userId);
     }
 
-
+    /*
+     * @Author liufeng
+     * @Date
+     * @Description //根据userId查询用户(瑜伽师，场馆)的详细信息
+     * @Param
+     *  HttpSession session:
+     * @return
+     *  封装了用户详细信息的数据类
+     **/
+    @PostMapping("getDetailInfoByUserId")
+    @ResponseBody
+    @ApiOperation(value = "学员查看瑜伽师信息，非好友私人信息为null")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "session", value = "HttpSession"),
+            @ApiImplicitParam(name = "coachId", value = "瑜伽师的用户ID", paramType = "integer"),
+    })
+    public Result getDetailInfoByUserId(HttpSession session, @RequestBody Integer coachId) {
+//        User user = (User) session.getAttribute("user");
+//        Integer myId = user.getUserId();
+        Integer userId = 2;
+        return userService.getDetailInfoByUserId(userId, coachId);
+    }
 
 }

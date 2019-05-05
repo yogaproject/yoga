@@ -21,4 +21,5 @@ public class VenueVOR {
     //瑜伽师数量
     private int coachCount;
 
+
 }

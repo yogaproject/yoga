@@ -29,8 +29,6 @@ public interface CourseMapper {
     @Select("select * from course where coach_id = (select coach_id from coach where user_id =(select user_id from user where user_id = #{userId}))")
     @Results(value = {
             @Result(column = "course_id", property = "courseId"),
-//            @Result(column = "user_id", property = "userId"),
-//            @Result(column = "real_name", property = "coachName"),
             @Result(column = "course_name", property = "courseName"),
             @Result(column = "course_detail", property = "detail"),
             @Result(column = "course_img", property = "img"),
@@ -48,5 +46,6 @@ public interface CourseMapper {
     @Update("update course set course_flag = 1 where course_id = #{courseId} and course_flag = 0")
     int deleteCourse()throws SQLException;
 
-
+//    @Select("select * from course where coach_id = (select coach_id from coach where user_id = #{coachId}) and course_name =#{courseName} and course_flag =0")
+//    Course selectByCoachAndName(int coachId, String courseName);
 }

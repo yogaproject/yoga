@@ -45,6 +45,7 @@
     </appender>
     <logger name="com.woniu.yoga.home.dao" level="Debug"/>
     <logger name="com.woniu.yoga.communicate.dao" level="Debug"/>
+    <logger name="com.woniu.yoga.user.dao" level="Debug"/>
     <root level="info">
         <appender-ref ref="consoleLog"></appender-ref>
         <!--<appender-ref ref="STDOUT"></appender-ref>-->

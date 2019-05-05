@@ -14,6 +14,7 @@ import java.util.List;
  **/
 @Data
 public class CoachDetailInfoVO {
+    private int userId;
     //    真实姓名
     private String realName;
     //    头像

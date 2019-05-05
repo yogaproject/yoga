@@ -14,9 +14,9 @@ import org.apache.ibatis.jdbc.SQL;
 public class UserMapperProviderUtil {
     public String findAroundCoachs(SearchConditionDTO searchConditionDTO) {
         //联合user，coach表，条件1：userId相同；条件2：教练接受约教；条件3：经度纬度；条件2：只返回20条数据
-        SQL sql = new SQL().SELECT(" real_name realName,user.user_id userId,latitude,longitude,user_headimg headImg,good_comment goodComment,bad_comment badComment,common_comment commonComment,dict_item_name coachStyle ").FROM(" coach,user,base_dict ");
+        SQL sql = new SQL().SELECT(" real_name realName,user.user_id userId,latitude,longitude,user_headimg headImg,good_comment goodComment,bad_comment badComment,common_comment commonComment,dict_item_name coachStyle,user_level level ").FROM(" coach,user,base_dict ");
         //约束：用户ID相等，且角色为瑜伽
-        sql.WHERE(" coach.user_id = user.user_id  and role_id =2");
+        sql.WHERE(" coach.user_id = user.user_id and coach.coach_style = base_dict.dict_id and role_id = 2");
         //约束：姓名，模糊查询
         if (searchConditionDTO.getRealName() != null) {
             sql.WHERE(" real_name like '%" + searchConditionDTO.getRealName() + "%' ");
@@ -40,8 +40,8 @@ public class UserMapperProviderUtil {
             sql.WHERE(" end_time < '" + searchConditionDTO.getFreeTimeEnd() + "' ");
         }
         //约束：限定在一定区域
-        sql.WHERE(" longitude <= " + searchConditionDTO.getWestLongitude() + "and longitude >= " + searchConditionDTO.getEastLongitude());
-        sql.WHERE(" latitude <= " + searchConditionDTO.getNothLatitude() + "and latitude >= " + searchConditionDTO.getSouthLatitude());
+        sql.WHERE(" longitude <= " + searchConditionDTO.getWestLongitude() + " and longitude >= " + searchConditionDTO.getEastLongitude());
+        sql.WHERE(" latitude <= " + searchConditionDTO.getNothLatitude() + " and latitude >= " + searchConditionDTO.getSouthLatitude());
         sql.WHERE(" user_flag = 0 ");
         //约束：限定查询的数量
         String limit = sql.toString() + " limit 20";
@@ -54,8 +54,8 @@ public class UserMapperProviderUtil {
         if (searchConditionDTO.getRealName() != null) {
             sql.WHERE(" real_name like '%" + searchConditionDTO.getRealName() + "%' ");
         }
-        sql.WHERE(" longitude <= " + searchConditionDTO.getWestLongitude() + "and longitude >= " + searchConditionDTO.getEastLongitude());
-        sql.WHERE(" latitude <= " + searchConditionDTO.getNothLatitude() + "and latitude >= " + searchConditionDTO.getSouthLatitude());
+        sql.WHERE(" longitude <= " + searchConditionDTO.getWestLongitude() + " and longitude >= " + searchConditionDTO.getEastLongitude());
+        sql.WHERE(" latitude <= " + searchConditionDTO.getNothLatitude() + " and latitude >= " + searchConditionDTO.getSouthLatitude());
         sql.WHERE(" user_flag = 0 ");
         //约束：限定查询的数量
         String limit = sql.toString() + " limit 20";

@@ -2,6 +2,7 @@ package com.woniu.yoga.user.service.serviceImpl;
 
 import com.woniu.yoga.manage.dao.CouponMapper;
 import com.woniu.yoga.manage.pojo.Coupon;
+import com.woniu.yoga.user.dao.CoachMapper;
 import com.woniu.yoga.user.dao.OrderMapper;
 import com.woniu.yoga.user.dao.UserMapper;
 import com.woniu.yoga.user.dto.SearchConditionDTO;
@@ -10,10 +11,7 @@ import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.repository.UserRepository;
 import com.woniu.yoga.user.service.UserService;
 import com.woniu.yoga.user.util.*;
-import com.woniu.yoga.user.vo.CoachVO;
-import com.woniu.yoga.user.vo.Result;
-import com.woniu.yoga.user.vo.SearchConditionVO;
-import com.woniu.yoga.user.vo.VenueVOR;
+import com.woniu.yoga.user.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -43,6 +41,8 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+    @Autowired
+    private CoachMapper coachMapper;
 
     //查询用户所有订单
     @Override
@@ -112,7 +112,37 @@ public class UserServiceImpl implements UserService {
     public List<Coupon> fandCouponByUserId(int userid) {
         return userMapper.fandCouponByUserId(userid);
     }
-
+    //如果是教练，查找头像、姓名、简介、流派、认证方式（单击查看场馆）、课程（单击查看课程），交易次数，好评数
+    //好友或者公开才能查看qq、微信、电话等信息
+    @Override
+    public Result getDetailInfoByUserId(Integer userId, Integer coachId) {
+        if (coachId == null) {
+            return ResultUtil.errorOperation("请选择想了解的瑜伽师!");
+        }
+        CoachDetailInfoVO coachDetailInfoVO = null;
+        try {
+            coachDetailInfoVO = userMapper.getDetailInfoByUserId(coachId);
+            //如果是场馆认证，设置venueName：场馆名
+            if (coachDetailInfoVO.getAuthentication() == 1) {
+                coachDetailInfoVO.setVenueName(coachMapper.getVenueByCoachId(coachId));
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+        //如果学员和瑜伽师不是好友，隐藏个人信息；或者瑜伽师设置保密
+        if ((coachDetailInfoVO.getPrivacy() == 0) || (coachDetailInfoVO.getPrivacy() == 1 && !("学员和瑜伽师是好友" == ""))) {
+            coachDetailInfoVO.setQq(null);
+            coachDetailInfoVO.setWechat(null);
+            coachDetailInfoVO.setPhone(null);
+        }
+        //如果是官方认证，设置venueName：平台认证
+        if (coachDetailInfoVO.getAuthentication() == 2) {
+            coachDetailInfoVO.setVenueName("平台认证");
+        }
+        System.out.println("coach detail "+coachDetailInfoVO);
+        return ResultUtil.actionSuccess("查询成功", coachDetailInfoVO);
+    }
     @Transactional
     @Override
     public void saveUser(User user) {

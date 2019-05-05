@@ -8,6 +8,9 @@ import java.util.Date;
 
 @Data
 public class Order {
+    public Order(){
+        this.courseCount=1;
+    }
     //订单编号
     private String orderId;
     //支付方的userId

@@ -43,6 +43,7 @@ public interface UserService {
 
     Result listAroundVenues(SearchConditionVO searchConditionVO) throws RuntimeException;
 
+    Result getDetailInfoByUserId(Integer userId, Integer coachId) throws RuntimeException;
     //查询用户优惠券
     List<Coupon> fandCouponByUserId(int userid);
 

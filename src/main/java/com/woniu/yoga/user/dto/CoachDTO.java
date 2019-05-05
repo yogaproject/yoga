@@ -21,4 +21,5 @@ public class CoachDTO {
     private int badComment;
     private int commonComment;
     private String CoachStyle;
+    private int level;
 }

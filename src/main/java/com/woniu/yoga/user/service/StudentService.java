@@ -22,10 +22,11 @@ public interface StudentService {
 
 
 
-    Result getDetailInfoByUserId(Integer userId, Integer coachId) throws RuntimeException;
 
 
-    Result saveOrder(Integer userId,Order order) throws RuntimeException;
+
+
+    Result saveOrder(Integer userId,OrderVO orderVO) throws RuntimeException;
 
 
     Result updateOrderWithCoupon(Integer userId,String orderId, @RequestParam(required = false) Integer couponId) throws RuntimeException;

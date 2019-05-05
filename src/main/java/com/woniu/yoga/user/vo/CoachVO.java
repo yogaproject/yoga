@@ -19,4 +19,5 @@ public class CoachVO {
     //好评率
     private float feedback;
     private String CoachStyle;
+    private int level;
 }

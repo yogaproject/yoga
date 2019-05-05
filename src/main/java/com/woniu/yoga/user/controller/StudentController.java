@@ -34,27 +34,7 @@ public class StudentController {
 
 
 
-    /*
-     * @Author liufeng
-     * @Date
-     * @Description //根据userId查询用户(瑜伽师，场馆)的详细信息
-     * @Param
-     *  HttpSession session:
-     * @return
-     *  封装了用户详细信息的数据类
-     **/
-    @PostMapping("getDetailInfoByUserId")
-    @ResponseBody
-    @ApiOperation(value = "学员查看瑜伽师信息，非好友私人信息为null")
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "session", value = "HttpSession"),
-            @ApiImplicitParam(name = "coachId", value = "瑜伽师的用户ID", paramType = "integer"),
-    })
-    public Result getDetailInfoByUserId(HttpSession session,@RequestBody Integer coachId) {
-        User user = (User) session.getAttribute("user");
-        Integer userId = user.getUserId();
-        return studentService.getDetailInfoByUserId(userId, coachId);
-    }
+
 
     /*
      * @Author liufeng
@@ -72,10 +52,11 @@ public class StudentController {
             @ApiImplicitParam(name = "order", value = "新的订单对象，无需传入用户ID", paramType = "pojo"),
             @ApiImplicitParam(name = "session", value = "HttpSession"),
     })
-    public Result saveOrder(HttpSession session,@RequestBody Order order) {
-        User user = (User) session.getAttribute("user");
-        Integer userId = user.getUserId();
-        return studentService.saveOrder(userId,order);
+    public Result saveOrder(HttpSession session,@RequestBody OrderVO orderVO) {
+//        User user = (User) session.getAttribute("user");
+//        Integer userId = user.getUserId();
+        Integer userId = 5;
+        return studentService.saveOrder(userId,orderVO);
     }
 
     /*

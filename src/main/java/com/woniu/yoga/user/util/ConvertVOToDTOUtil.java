@@ -71,6 +71,7 @@ public class ConvertVOToDTOUtil {
 //            (float)(Math.round(totalPrice*100)/100)
             feedback = (Math.round(feedback * 10) / (float)10);
             coachVO.setFeedback(feedback);
+            coachVO.setLevel(coachDTO.getLevel());
             coachVOS.add(coachVO);
         }
         return coachVOS;

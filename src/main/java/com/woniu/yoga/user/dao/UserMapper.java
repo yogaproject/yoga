@@ -1,6 +1,7 @@
 package com.woniu.yoga.user.dao;
 
 import com.woniu.yoga.manage.pojo.Coupon;
+import com.woniu.yoga.pay.pojo.Wallet;
 import com.woniu.yoga.user.dto.CoachDTO;
 import com.woniu.yoga.user.dto.SearchConditionDTO;
 import com.woniu.yoga.user.pojo.User;
@@ -41,7 +42,7 @@ public interface UserMapper {
      * @Author liufeng
      * @Description //查询瑜伽师的详细信息
      **/
-    @Select("select real_name,user_headimg,user_phone,user_qq,user_wechat,coach_detail,coach_id,coach_style,authentication,deal_account,good_comment,user_privacy,user_level level from user,coach where user.user_id = coach.user_id and user.user_id = #{userId} and user_flag = 0")
+    @Select("select user.user_id userId,real_name,user_headimg,user_phone,user_qq,user_wechat,coach_detail,coach_id,coach_style,authentication,deal_account,good_comment,user_privacy,user_level level from user,coach where user.user_id = coach.user_id and user.user_id = #{userId} and user_flag = 0")
     @Results(value = {
             @Result(column = "real_name", property = "realName"),
             @Result(column = "user_headimg", property = "headImg"),
@@ -93,4 +94,6 @@ public interface UserMapper {
     String selectPhoneByUserId(Integer userId);
     @Select("select * from Coupon where coupon_id in (select coupon_id from user_coupon where user_id=#{userid})")
     List<Coupon> fandCouponByUserId(@Param("userid") int userid);
+
+
 }
