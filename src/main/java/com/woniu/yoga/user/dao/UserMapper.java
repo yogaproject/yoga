@@ -7,6 +7,7 @@ import com.woniu.yoga.user.dto.SearchConditionDTO;
 import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.util.UserMapperProviderUtil;
 import com.woniu.yoga.user.vo.CoachDetailInfoVO;
+import com.woniu.yoga.user.vo.UserVO;
 import com.woniu.yoga.user.vo.VenueVOR;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
@@ -92,8 +93,9 @@ public interface UserMapper {
 
     @Select("select user_phone from user where user_id = #{userId}")
     String selectPhoneByUserId(Integer userId);
-    @Select("select * from Coupon where coupon_id in (select coupon_id from user_coupon where user_id=#{userid})")
-    List<Coupon> fandCouponByUserId(@Param("userid") int userid);
+    @Select("select * from coupon where coupon_id in (select coupon_id from user_coupon where user_id=#{userid}) and now() >= effective_date and now() < expiration_date")
+    List<Coupon> findCouponByUserId(@Param("userid") int userid) throws SQLException;
 
-
+    @Select("select user_nickname nickname,user_headimg img,user_level level from user where user_id = #{userId}" )
+    UserVO findBriefInfoByUserId(Integer userId) throws SQLException;
 }

@@ -5,6 +5,7 @@ import com.woniu.yoga.manage.pojo.Coupon;
 import com.woniu.yoga.user.dao.CoachMapper;
 import com.woniu.yoga.user.dao.OrderMapper;
 import com.woniu.yoga.user.dao.UserMapper;
+import com.woniu.yoga.user.dto.OrderDTO;
 import com.woniu.yoga.user.dto.SearchConditionDTO;
 import com.woniu.yoga.user.pojo.Order;
 import com.woniu.yoga.user.pojo.User;
@@ -47,28 +48,35 @@ public class UserServiceImpl implements UserService {
     //查询用户所有订单
     @Override
     public Result listOrder(Integer userId, String orderStatus) {
-        int[] status = OrderUtil.getOrderStatus(orderStatus);//利用工具将状态转为字符串（数组）
-        List<Order> data = null;
+        User user = userMapper.selectByPrimaryKey(userId);
+        String status = OrderUtil.getOrderStatus(orderStatus);//利用工具将状态转为字符串（数组）
+        List<OrderVO> data = null;
         try {
-            data = orderMapper.findOrderByUserIdAndStatus(userId, status);
+            if (user.getRoleId() == 1) {
+                data = ConvertVOToDTOUtil.convertList(orderMapper.findStudentOrder(userId, status));
+            }
+            if (user.getRoleId() == 2) {
+                data = ConvertVOToDTOUtil.convertList(orderMapper.findCoachOrder(userId, status));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException();
         }
-        return ResultUtil.actionSuccess("查询成功",data);
+        return ResultUtil.actionSuccess("查询成功", data);
     }
 
     //查询用户所有有效的优惠券
     @Override
-    public Result listCouponsByUserId(Integer userId) throws RuntimeException{
+    public Result listCouponsByUserId(Integer userId) throws RuntimeException {
         try {
-            List<Coupon> coupons = couponMapper.selectByUserId(userId);
-            return ResultUtil.actionSuccess("查询成功",coupons);
-        }catch (SQLException e){
+            List<Coupon> coupons = userMapper.findCouponByUserId(userId);
+            return ResultUtil.actionSuccess("查询成功", coupons);
+        } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException();
         }
     }
+
     //查找学员周边的瑜伽师
     @Override
     public Result listAroundCoachs(SearchConditionVO searchConditionVO) {
@@ -82,7 +90,7 @@ public class UserServiceImpl implements UserService {
         List<CoachVO> data = null;
         try {
             data = ConvertVOToDTOUtil.convertCoachDTOtoVO(userMapper.listAroundCoach(searchConditionDTO));
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException();
         }
@@ -101,7 +109,7 @@ public class UserServiceImpl implements UserService {
         List<VenueVOR> data = null;
         try {
             data = userMapper.listAroundVenue(searchConditionDTO);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException();
         }
@@ -109,9 +117,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<Coupon> fandCouponByUserId(int userid) {
-        return userMapper.fandCouponByUserId(userid);
+    public List<Coupon> fandCouponByUserId(int userid) throws RuntimeException {
+        List<Coupon> coupons = null;
+        try {
+            coupons = userMapper.findCouponByUserId(userid);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+        return coupons;
     }
+
     //如果是教练，查找头像、姓名、简介、流派、认证方式（单击查看场馆）、课程（单击查看课程），交易次数，好评数
     //好友或者公开才能查看qq、微信、电话等信息
     @Override
@@ -126,7 +142,7 @@ public class UserServiceImpl implements UserService {
             if (coachDetailInfoVO.getAuthentication() == 1) {
                 coachDetailInfoVO.setVenueName(coachMapper.getVenueByCoachId(coachId));
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException();
         }
@@ -140,9 +156,10 @@ public class UserServiceImpl implements UserService {
         if (coachDetailInfoVO.getAuthentication() == 2) {
             coachDetailInfoVO.setVenueName("平台认证");
         }
-        System.out.println("coach detail "+coachDetailInfoVO);
+        System.out.println("coach detail " + coachDetailInfoVO);
         return ResultUtil.actionSuccess("查询成功", coachDetailInfoVO);
     }
+
     @Transactional
     @Override
     public void saveUser(User user) {
@@ -155,26 +172,27 @@ public class UserServiceImpl implements UserService {
      * 1、生成验证码,保存验证码和邮箱，插入到redis中，键为邮箱，值为验证码
      * 2、在redis中，查找邮箱是否存在，存在代表插入成功，为true，此时不能更改激活状态，激活码改变在注册成功改变
      * 3、成功，则通过线程的方式给用户发送一封邮件，并且发送的时候在Redis设置验证码过期时间
-     *
+     * <p>
      * 2、
-     * @author      lxy
-     * @Param:      userName,email,password,code,
-     * @return      boolean true-->注册成功 false-->注册失败
-     * @exception
-     * @date        2019/4/17 17:03
+     *
+     * @return boolean true-->注册成功 false-->注册失败
+     * @throws
+     * @author lxy
+     * @Param: userName, email, password, code,
+     * @date 2019/4/17 17:03
      */
     @Override
     public boolean sendRegEmailCode(User user) {
-        String userVerifyCode= CodeUtil.userNumber();
+        String userVerifyCode = CodeUtil.userNumber();
         user.setUserVerifyCode(userVerifyCode);
         String content = "<html><head></head><body><h1>这是一封绝密邮件,不要随便将内容透露给别人。" +
                 "</h1><br><h3>您本次注册的所需验证码为：" + user.getUserVerifyCode() + "。请尽快注册，验证码有效时间为3分钟，超出时间范围内，需重新获取。</h3></body></html>";
-        stringRedisTemplate.opsForValue().set(user.getUserEmail(),user.getUserVerifyCode());
-        if(stringRedisTemplate.hasKey(user.getUserEmail())){
-            new Thread(new MailUtil(user.getUserEmail(), userVerifyCode,content)).start();
-            stringRedisTemplate.expire(user.getUserEmail(),100, TimeUnit.SECONDS);
+        stringRedisTemplate.opsForValue().set(user.getUserEmail(), user.getUserVerifyCode());
+        if (stringRedisTemplate.hasKey(user.getUserEmail())) {
+            new Thread(new MailUtil(user.getUserEmail(), userVerifyCode, content)).start();
+            stringRedisTemplate.expire(user.getUserEmail(), 100, TimeUnit.SECONDS);
             return true;
-        }else {
+        } else {
             return false;
         }
     }
@@ -194,22 +212,23 @@ public class UserServiceImpl implements UserService {
      * 1、生成验证码,保存密码（验证码）和手机，插入到redis中，键为邮箱，值为密码（验证码）
      * 2、在redis中，查找邮箱是否存在，存在代表插入成功，为true，此时不能更改激活状态，激活码改变在注册成功改变
      * 3、成功，则通过线程的方式给用户发送短信，并且发送的时候在Redis设置密码（验证码）过期时间
-     * @author      lxy
+     *
+     * @return boolean
+     * @throws
+     * @author lxy
      * @Param:
-     * @return      boolean
-     * @exception
-     * @date        2019/4/21 1:53
+     * @date 2019/4/21 1:53
      */
     @Override
-    public boolean sendPhoneMessage(User user,Integer templateId) {
-        String userPwd= CodeUtil.userNumber();
+    public boolean sendPhoneMessage(User user, Integer templateId) {
+        String userPwd = CodeUtil.userNumber();
         user.setUserPwd(userPwd);
-        stringRedisTemplate.opsForValue().set(user.getUserPhone(),userPwd);
-        if(!stringRedisTemplate.hasKey(user.getUserPhone())){
+        stringRedisTemplate.opsForValue().set(user.getUserPhone(), userPwd);
+        if (!stringRedisTemplate.hasKey(user.getUserPhone())) {
             return false;
         }
-        new PhoneUtil(templateId).sendPhoneMessage(user.getUserPhone(),userPwd);
-        stringRedisTemplate.expire(user.getUserPhone(),100,TimeUnit.SECONDS);
+        new PhoneUtil(templateId).sendPhoneMessage(user.getUserPhone(), userPwd);
+        stringRedisTemplate.expire(user.getUserPhone(), 100, TimeUnit.SECONDS);
         return true;
 
     }

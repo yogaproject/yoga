@@ -1,15 +1,14 @@
 package com.woniu.yoga.user.dao;
 
 
+import com.woniu.yoga.user.dto.OrderDTO;
 import com.woniu.yoga.user.pojo.Order;
 import com.woniu.yoga.user.util.UserMapperProviderUtil;
 import com.woniu.yoga.user.vo.Result;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.SelectProvider;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
+import javax.naming.Name;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
@@ -32,15 +31,13 @@ public interface OrderMapper {
      * @Author liufeng
      * @Description //根据用户id和订单状态查询订单
      **/
-    List<Order> findOrderByUserIdAndStatus(Integer userId, int[] orderStatus) throws SQLException;
-
+    List<OrderDTO> findStudentOrder(Integer userId, String status) throws SQLException;
+    List<OrderDTO> findCoachOrder(Integer userId, String status) throws SQLException;
     /*
      * @Author liufeng
      * @Description //根据订单编号更新订单状态
      **/
-    @Update("update order set order_status = #{orderStatus} where order_id =#{orderId} and order_flag = 0")
+    @Update("update `order` set order_status = #{orderStatus} where order_id =#{orderId} and order_flag = 0")
     int updateStatusByOrderId(String orderId, Integer orderStatus) throws SQLException;
 
-    @Insert("insert into `order` ( order_id, payer_id,accepter_id,course_id, order_money, order_status, create_time ) values ( #{orderId}, #{payerId},#{accepterId},#{courseId} #{money}, 15,  now() )")
-    void insertNewOrder(Order order);
 }

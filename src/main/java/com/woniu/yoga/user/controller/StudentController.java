@@ -69,18 +69,18 @@ public class StudentController {
      * @return
      *  通用返回类型，包含处理完成的订单详细信息
      **/
-    @PutMapping("updateOrderWithCoupon")
+    @PostMapping("updateOrderWithCoupon")
     @ResponseBody
     @ApiOperation(value = "学员选择要使用的优惠券，准备付款")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "String"),
             @ApiImplicitParam(name = "session", value = "HttpSession"),
-            @ApiImplicitParam(name = "couponId",value = "优惠券的ID",required = false,paramType = "Integer")
+            @ApiImplicitParam(name = "orderCoupon",value = "包含：订单ID，优惠券的ID",required = false,paramType = "Integer")
     })
-    public Result updateOrderWithCoupon(HttpSession session,@RequestBody String orderId,@RequestBody  Integer couponId) {
-        User user = (User) session.getAttribute("user");
-        Integer userId = user.getUserId();
-        return studentService.updateOrderWithCoupon(userId,orderId, couponId);
+    public Result updateOrderWithCoupon(HttpSession session,@RequestBody OrderCoupon orderCoupon) {
+//        User user = (User) session.getAttribute("user");
+//        Integer userId = user.getUserId();
+        Integer userId = 5;
+        return studentService.updateOrderWithCoupon(userId,orderCoupon.getOrderId(), orderCoupon.getCouponId());
     }
 
     /*
@@ -90,7 +90,7 @@ public class StudentController {
      * @Param
      * @return
      **/
-    @PutMapping("updateOrderForPay")
+    @PostMapping("updateOrderForPay")
     @ResponseBody
     @ApiOperation(value = "学员付款")
     @ApiImplicitParams(value = {
@@ -98,8 +98,9 @@ public class StudentController {
             @ApiImplicitParam(name = "session", value = "HttpSession"),
     })
     public Result updateOrderForPay(HttpSession session,@RequestBody  String orderId) {
-        User user = (User) session.getAttribute("user");
-        Integer userId = user.getUserId();
+//        User user = (User) session.getAttribute("user");
+//        Integer userId = user.getUserId();
+        Integer userId = 5;
         return studentService.updateOrderForPay(userId, orderId);
     }
 
@@ -118,8 +119,9 @@ public class StudentController {
             @ApiImplicitParam(name = "session", value = "HttpSession"),
     })
     public Result updateOrderForRefund(HttpSession session,@RequestBody  String orderId) {
-        User user = (User) session.getAttribute("user");
-        Integer userId = user.getUserId();
+//        User user = (User) session.getAttribute("user");
+//        Integer userId = user.getUserId();
+        Integer userId = 5;
         return studentService.updateOrderForRefund(userId, orderId);
     }
 
@@ -140,10 +142,14 @@ public class StudentController {
             @ApiImplicitParam(name = "session", value = "HttpSession"),
             @ApiImplicitParam(name = "comment", value = "一个新的评论对象")
     })
-    public Result saveComment(HttpSession session,@RequestBody  String orderId,@RequestBody  Comment comment) {
-        User user = (User) session.getAttribute("user");
-        Integer userId = user.getUserId();
-        return studentService.saveComment(userId, orderId, comment);
+    public Result saveComment(HttpSession session,@RequestBody  CommentVO commentVO) {
+//        User user = (User) session.getAttribute("user");
+//        Integer userId = user.getUserId();
+        Integer userId = 5;
+        Comment comment = new Comment();
+        comment.setCommentDegree(commentVO.getRate());
+        comment.setCommentDetail(commentVO.getComment());
+        return studentService.saveComment(userId, commentVO.getOrderId(), comment);
     }
 
     /*
@@ -175,8 +181,9 @@ public class StudentController {
             @ApiImplicitParam(name = "session", value = "HttpSession")
     })
     public Result updateOrderForCancel(HttpSession session,@RequestBody  String orderId) {
-        User user = (User) session.getAttribute("user");
-        Integer userId = user.getUserId();
+//        User user = (User) session.getAttribute("user");
+//        Integer userId = user.getUserId();
+        Integer userId = 5;
         return studentService.updateOrderForCancel(userId, orderId);
     }
 
@@ -210,8 +217,9 @@ public class StudentController {
             @ApiImplicitParam(name = "orderId", value = "旧的订单ID", paramType = "String")
     })
     public Result repeatOrder(HttpSession session,@RequestBody  String orderId) {
-        User user = (User) session.getAttribute("user");
-        Integer userId = user.getUserId();
+//        User user = (User) session.getAttribute("user");
+//        Integer userId = user.getUserId();
+        Integer userId = 5;
         return studentService.repeatOrder(userId, orderId);
     }
 
