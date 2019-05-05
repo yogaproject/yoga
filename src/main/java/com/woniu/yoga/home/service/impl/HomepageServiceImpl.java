@@ -51,10 +51,7 @@ public class HomepageServiceImpl implements HomepageService {
 
     @Override
     public Result<List<HomepageVo>> showOtherHomepage(Integer roleId, Float latitude, Float longitude) {
-        if (latitude == null && longitude == null){
-            return Result.error("未获取到位置信息，请重新定位");
-        }
-        List<HomepageVo> list = homepageMapper.queryOtherHomepages(roleId,latitude, longitude);
+        List<HomepageVo> list = homepageMapper.queryOtherHomepages(roleId, latitude, longitude);
         return dealWithList(list);
     }
 

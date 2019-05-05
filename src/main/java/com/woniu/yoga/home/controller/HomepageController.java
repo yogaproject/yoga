@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -44,7 +45,6 @@ public class HomepageController {
     })
     @PostMapping("/showHomepage")
     public Result<List<HomepageVo>> showHomepage( @RequestBody Address address){
-        System.out.println(address);
         return homepageService.selectHomepages(address.getLatitude(),address.getLongitude());
     }
 
@@ -59,7 +59,6 @@ public class HomepageController {
     @ApiImplicitParam(name = "mid", value = "动态内容id", required = true, paramType = "body")
     @PostMapping("/showHomepageDetail")
     public Result<HomepageVo> showHomepageDetail(@RequestBody Integer mid){
-        System.out.println(mid);
         return homepageService.showHomepageDetail(mid);
     }
 
@@ -76,26 +75,24 @@ public class HomepageController {
     @PostMapping("/pushHomepage")
     public Result pushHomepage(@RequestBody Homepage homepage, HttpSession session){
         User user = (User)session.getAttribute(SysConstant.CURRENT_USER);
-        if ("".equals(homepage.getContent()) || "".equals(homepage.getTitle())){
-            return Result.error("内容或标题不能为空");
+        if ("".equals(homepage.getContent()) || homepage.getContent() == null){
+            return Result.error("内容不能为空");
         }
-        System.out.println(homepage);
-        /*if (user == null){
+        if ("".equals(homepage.getTitle()) || homepage.getTitle() == null){
+            return Result.error("标题不能为空");
+        }
+        if (user == null){
             return Result.error("未登录");
-        }*/
-        return homepageService.pushHomepage(homepage, 1);
+        }
+        return homepageService.pushHomepage(homepage, user.getUserId());
     }
 
     /**
     * @Description 根据roleId决定查询附近场馆动态还是教练动态
-    * @param roleId
-    * @param latitude
-    * @param longitude
-    * @param currentPage
-    * @param pageSize
+    * @param address
     * @author huijie yan
-    * @date 2019/4/26
-    * @return java.lang.String
+    * @date 2019/5/5
+    * @return com.woniu.yoga.home.vo.Result<java.util.List<com.woniu.yoga.home.vo.HomepageVo>>
     */
     @ApiOperation(value = "展示附近教练或者场馆发布的动态内容")
     @ApiImplicitParams({
@@ -105,7 +102,6 @@ public class HomepageController {
     })
     @PostMapping(value = "/showOtherHomepage")
     public Result<List<HomepageVo>> showOtherHomepage(@RequestBody Address address){
-        System.out.println(address);
         return homepageService.showOtherHomepage(address.getRoleId(),address.getLatitude(), address.getLongitude());
     }
 

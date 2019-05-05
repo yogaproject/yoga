@@ -106,9 +106,23 @@ public class FollowController {
     @PostMapping("/searchFollow")
     public Result<FollowVo> searchFollow(@RequestBody String userNickName, HttpSession session){
         User user = (User)session.getAttribute(SysConstant.CURRENT_USER);
-        /*if (user == null){
+        if (user == null){
             return  Result.error("未登录");
-        }*/
-        return followService.searchFollow(userNickName, 1);
+        }
+        return followService.searchFollow(userNickName, user.getUserId());
+    }
+
+    /**
+    * @Description 查找我的主页信息
+    * @param session
+    * @author huijie yan
+    * @date 2019/5/5
+    * @return com.woniu.yoga.home.vo.Result
+    */
+    @ApiOperation(value = "查找我的主页信息")
+    @PostMapping("/showMyself")
+    public Result showMyself(HttpSession session){
+        User user = (User)session.getAttribute(SysConstant.CURRENT_USER);
+        return  followService.showMyself(user.getUserId());
     }
 }

@@ -7,6 +7,7 @@ import com.woniu.yoga.communicate.dao.FollowMapper;
 import com.woniu.yoga.communicate.pojo.Follow;
 import com.woniu.yoga.communicate.service.FollowService;
 import com.woniu.yoga.communicate.vo.FollowVo;
+import com.woniu.yoga.communicate.vo.MyVo;
 import com.woniu.yoga.home.vo.HomepageVo;
 import com.woniu.yoga.home.vo.Result;
 import com.woniu.yoga.user.pojo.User;
@@ -125,5 +126,18 @@ public class FollowServiceImpl implements FollowService {
             return Result.error("未搜索到相关用户");
         }
         return Result.success("成功",list);
+    }
+
+    @Override
+    public Result showMyself(Integer userId) {
+        Integer fansCount = followMapper.selectFansCount(userId);
+        Integer followCount = followMapper.selectFollowCount(userId);
+        MyVo myVo = followMapper.selectMyVo(userId);
+        Integer homepageCount = followMapper.selectHomepageCount(userId);
+
+        myVo.setFansCount(fansCount);
+        myVo.setFollowCount(followCount);
+        myVo.setHomepageCount(homepageCount);
+        return Result.success("成功", myVo);
     }
 }

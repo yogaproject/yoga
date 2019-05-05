@@ -35,6 +35,12 @@
     <result column="follow_status" jdbcType="INTEGER" property="followStatus" />
   </resultMap>
 
+  <resultMap id="MyVoResultMap" type="com.woniu.yoga.home.vo.HomepageVo">
+    <result column="user_nickname" jdbcType="VARCHAR" property="userNickName" />
+    <result column="user_level" jdbcType="INTEGER" property="userLevel" />
+    <result column="user_headimg" jdbcType="VARCHAR" property="userHeadimg" />
+  </resultMap>
+
   <sql id="Base_Column_List">
     follow_id, user_id, followed_id, create_time, follow_status
   </sql>
@@ -105,6 +111,26 @@
     set follow_flag=1 and follow_status=0
     where user_id=#{userId} and followed_id=#{followedId}
   </update>
+  <select id="selectFansCount" resultType="java.lang.Integer">
+    select count(followed_id)
+    from follow
+    where user_id=#{userId} and follow_flag=0
+  </select>
+  <select id="selectFollowCount" resultType="java.lang.Integer">
+    select count(follow_id)
+    from follow
+    where followed_id=#{userId} and follow_flag=0
+  </select>
+  <select id="selectHomepageCount" resultType="java.lang.Integer">
+    select count(m_id)
+    from homepage
+    where user_id=#{userId} and homepage_flag=0
+  </select>
+  <select id="selectMyVo" resultMap="MyVoResultMap">
+    select user_nickname,user_headimg,user_level
+    from user
+    where user_id=#{userId}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from follow
     where follow_id = #{followId,jdbcType=INTEGER}
