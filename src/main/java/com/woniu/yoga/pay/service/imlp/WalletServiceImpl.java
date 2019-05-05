@@ -32,13 +32,13 @@ public class WalletServiceImpl implements WalletService {
     private UserService userService;
 
     @Override
-    public Wallet findWalletByUserId(int userid) {
-        return walletMapper.findWalletByUserId(userid);
+    public Wallet findWalletByuserId(int userId) {
+        return walletMapper.findWalletByuserId(userId);
     }
 
     @Override
-    public List<WalletRecord> selectOrderByUserId(int userid) {
-        return walletMapper.selectOrderByUserId(userid);
+    public List<WalletRecord> selectOrderByuserId(int userId) {
+        return walletMapper.selectOrderByuserId(userId);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class WalletServiceImpl implements WalletService {
         user.setUserId(1);//测试数据
         BigDecimal money = new BigDecimal(map.get("total_amount"));
         //根据用户id,找到对应钱包
-        Wallet wallet = walletMapper.findWalletByUserId(user.getUserId());
+        Wallet wallet = walletMapper.findWalletByuserId(user.getUserId());
         //修改钱包余额 充值
         int updatResult = walletMapper.updateUserMoneyByWalletId(wallet.getWalletId(), money);
         WalletRecord walletRecord = new WalletRecord();
@@ -78,8 +78,8 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public int addBankcardByUserId(Integer userid, String pwd, String againPwd, String bankcard) {
-        return walletMapper.addBankcardByWalletId(userid, pwd, againPwd, bankcard);
+    public int addBankcardByuserId(Integer userId, String pwd, String againPwd, String bankcard) {
+        return walletMapper.addBankcardByWalletId(userId, pwd, againPwd, bankcard);
     }
 
     @Override

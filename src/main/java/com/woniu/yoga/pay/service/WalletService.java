@@ -13,9 +13,9 @@ import java.util.List;
 import java.util.Map;
 
 public interface WalletService {
-    Wallet findWalletByUserId(int userid);
+    Wallet findWalletByuserId(int userId);
 
-    List<WalletRecord> selectOrderByUserId(int userid);
+    List<WalletRecord> selectOrderByuserId(int userId);
 
     int UpdateUserMoneyAndCreateRecord(Map<String, String> map, HttpServletRequest request);
 
@@ -23,7 +23,7 @@ public interface WalletService {
 
     int saveMoney(int walletId, BigDecimal money);
 
-    int addBankcardByUserId(Integer userid, String pwd, String againPwd, String bankcard);
+    int addBankcardByuserId(Integer userId, String pwd, String againPwd, String bankcard);
 
     Wallet findWalletByWalletId(int walletId);
 
