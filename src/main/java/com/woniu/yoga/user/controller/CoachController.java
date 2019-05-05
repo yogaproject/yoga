@@ -100,9 +100,9 @@ public class CoachController {
             @ApiImplicitParam(name = "session", value = "HttpSession")
     })
     public Result updateOrderForWaitToPay(@RequestBody String orderId, HttpSession session) {
-//        User user = (User) session.getAttribute("user");
-//        int userId = user.getUserId();
-        Integer userId = 4;
+        User user = (User) session.getAttribute("user");
+        int userId = user.getUserId();
+        //Integer userId = 4;
         return coachService.updateOrderForWaitToPay(userId, orderId);
     }
 

@@ -62,6 +62,7 @@
     <if test="status != null and status != '' ">
       find_in_set(order_status,#{param2})
     </if>
+    order by update_time
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from `order`

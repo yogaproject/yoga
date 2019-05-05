@@ -113,9 +113,9 @@ public class UserController {
             @ApiImplicitParam(name = "orderStatus", value = "订单状态：未完成订单、已完成订单、所有订单")
     })
     public Result listOrder(HttpSession session, @RequestBody String orderStatus) {
-//        User user = (User) session.getAttribute("user");
-//        Integer userId = user.getUserId();
-        Integer userId = 4;//教练
+        User user = (User) session.getAttribute("user");
+        Integer userId = user.getUserId();
+        //Integer userId = 4;//教练
         return userService.listOrder(userId, orderStatus);
     }
 
@@ -133,9 +133,9 @@ public class UserController {
     @RequestMapping("listCouponsByUserId")
     @ResponseBody
     public Result listCouponsByUserId(HttpSession session) {
-//        User user = (User) session.getAttribute("user");
-//        Integer userId = user.getUserId();
-        Integer userId = 5;//学员
+        User user = (User) session.getAttribute("user");
+        Integer userId = user.getUserId();
+        //Integer userId = 5;//学员
         return userService.listCouponsByUserId(userId);
     }
 
@@ -156,10 +156,83 @@ public class UserController {
             @ApiImplicitParam(name = "coachId", value = "瑜伽师的用户ID", paramType = "integer"),
     })
     public Result getDetailInfoByUserId(HttpSession session, @RequestBody Integer coachId) {
-//        User user = (User) session.getAttribute("user");
-//        Integer myId = user.getUserId();
-        Integer userId = 2;
+        User user = (User) session.getAttribute("user");
+        Integer userId = user.getUserId();
+//        Integer userId = 2;
         return userService.getDetailInfoByUserId(userId, coachId);
+    }
+
+    /*
+     * @Author liufeng
+     * @Date
+     * @Description //查询场馆的详细信息
+     * @Param
+     * @return
+     **/
+    @RequestMapping("getVenueDetailInfoByUserId")
+    @ResponseBody
+    public Result getVenueDetailInfoByUserId(HttpSession session, Integer venueId) {
+        if (venueId == null) {
+            User user = (User) session.getAttribute("user");
+            Integer userId = user.getUserId();
+            venueId = userId;
+        }
+        return userService.getVenueDetailInfoByUserId(venueId);
+    }
+    /*
+     * @Author liufeng
+     * @Date
+     * @Description //查看我发表的动态
+     * @Param
+     * @return
+     **/
+    @RequestMapping("getAllMyInfos")
+    @ResponseBody
+    public Result getAllMyInfos(HttpSession session) {
+        Integer userId = null;
+        try {
+            User user = (User) session.getAttribute("user");
+            userId = user.getUserId();
+        } catch (Exception e) {
+            userId = 1;
+        }
+        return userService.getAllMyInfos(userId);
+    }
+    @RequestMapping("getAllMyComments")
+    @ResponseBody
+    public Result getAllMyComments(HttpSession session) {
+        Integer userId = null;
+        try {
+            User user = (User) session.getAttribute("user");
+            userId = user.getUserId();
+        } catch (Exception e) {
+            userId = 4;
+        }
+        return userService.getAllMyComments(userId);
+    }
+    @RequestMapping("getAllMyFocus")
+    @ResponseBody
+    public Result getAllMyFocus(HttpSession session) {
+        Integer userId = null;
+        try {
+            User user = (User) session.getAttribute("user");
+            userId = user.getUserId();
+        } catch (Exception e) {
+            userId = 1;
+        }
+        return userService.getAllMyFocus(userId);
+    }
+    @RequestMapping("getAllMyFans")
+    @ResponseBody
+    public Result getAllMyFans(HttpSession session) {
+        Integer userId = null;
+        try {
+            User user = (User) session.getAttribute("user");
+            userId = user.getUserId();
+        } catch (Exception e) {
+            userId = 1;
+        }
+        return userService.getAllMyFans(userId);
     }
 
 }
