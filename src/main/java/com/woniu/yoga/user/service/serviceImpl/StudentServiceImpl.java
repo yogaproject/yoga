@@ -79,7 +79,7 @@ public class StudentServiceImpl implements StudentService {
             order.setPayerId(userId);
             order.setAccepterId(orderVO.getCoachId());
             order.setCourseId(course.getCourseId());
-            Wallet wallet = walletMapper.selectWalletByUserId(userId);
+            Wallet wallet = walletMapper.findWalletByUserId(userId);
             System.out.println(course.getCoursePrice().compareTo(wallet.getBalance()));
             if (!(course.getCoursePrice().compareTo(wallet.getBalance()) < 0)) {
                 return ResultUtil.errorOperation("余额不足，请充值");

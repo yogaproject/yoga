@@ -20,6 +20,7 @@ import com.woniu.yoga.user.vo.StudentVO;
 import jdk.nashorn.internal.ir.LiteralNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -55,7 +56,7 @@ public class WalletController {
 
     @RequestMapping(value = "/selectwallet",method = RequestMethod.GET)
     @ResponseBody
-    public Result findWalletByUserId(int userid) {
+    public Result findWalletByUserId(@RequestBody int userid) {
         Wallet wallet = walletService.findWalletByUserId(userid);
         if (wallet != null) {
             return Result.success("我的钱包", wallet);
@@ -73,7 +74,7 @@ public class WalletController {
      */
     @RequestMapping(value = "/updateusermoney",method = RequestMethod.POST)
     @ResponseBody
-    public Result updateUserMoneyByWalletId(int walletId, BigDecimal money) {
+    public Result updateUserMoneyByWalletId(@RequestBody int walletId,@RequestBody BigDecimal money) {
         if ((walletService.findWalletByWalletId(walletId).getBalance().compareTo(money)) < 0) {
             return Result.error("余额不足");
         }
@@ -93,7 +94,7 @@ public class WalletController {
      */
     @RequestMapping(value = "/withdrawDeposit",method = RequestMethod.POST)
     @ResponseBody
-    public Result withdrawDeposit(Integer userid, String account, BigDecimal money, String pwd) {
+    public Result withdrawDeposit(@RequestBody Integer userid,@RequestBody String account,@RequestBody BigDecimal money,@RequestBody String pwd) {
         Wallet wallet = walletService.findWalletByUserId(userid);
         if (!(wallet.getPayPwd().toString()).equals(pwd)) {
             return Result.error("密码错误，请重新输入密码");
@@ -125,6 +126,7 @@ public class WalletController {
             return Result.error("请检查用户名是否正确！请重新操作");
         }
         if (response.isSuccess() && n > 0) {
+            //插入订单
             WalletRecord walletRecord = new WalletRecord();
             walletRecord.setFromId(Integer.MAX_VALUE);
             walletRecord.setMoney(money);
@@ -172,7 +174,7 @@ public class WalletController {
      */
     @RequestMapping(value = "/saveMoney",method = RequestMethod.POST)
     @ResponseBody
-    public Result saveMoney(int walletId, BigDecimal money) {
+    public Result saveMoney(@RequestBody int walletId,@RequestBody BigDecimal money) {
 
         if (walletService.saveMoney(walletId, money) > 0) {
             return Result.success("充值成功", walletService.findWalletByWalletId(walletId).getBalance());
@@ -190,7 +192,7 @@ public class WalletController {
 
     @RequestMapping(value = "/selectorder",method = RequestMethod.GET)
     @ResponseBody
-    public Result selectOrderByUserId(int userid) {
+    public Result selectOrderByUserId(@RequestBody int userid) {
         List<WalletRecord> walletRecords = walletService.selectOrderByUserId(userid);
         if (walletRecords != null) {
             return Result.success("交易记录", walletRecords);
@@ -207,7 +209,7 @@ public class WalletController {
      */
     @RequestMapping(value = "/selectcoupon",method = RequestMethod.GET)
     @ResponseBody
-    public Result selectUserCouponByUserId(int userid) {
+    public Result selectUserCouponByUserId(@RequestBody int userid) {
       List<Coupon> coupons = userService.fandCouponByUserId(userid);
         if (coupons==null){
             return Result.error("亲，您还没有优惠券");
@@ -231,7 +233,7 @@ public class WalletController {
      */
     @RequestMapping("/alipay")
     @ResponseBody
-    public String alipay(String allmoney, String goodsIds, String goodscount, HttpServletRequest request, String goodsprice, HttpServletResponse response) throws AlipayApiException {
+    public String alipay(@RequestBody String allmoney,@RequestBody String goodsIds,@RequestBody String goodscount, HttpServletRequest request,@RequestBody String goodsprice, HttpServletResponse response) throws AlipayApiException {
         System.out.println("获取前端参数数据==" + goodsIds + "=====数量===" + goodscount);
         //goodsIds,goodscount,goodsprice，生成订单时要用的数据
         //获得初始化的AlipayClient
@@ -316,7 +318,7 @@ public class WalletController {
      * 返回值为空
      */
     @RequestMapping("/Unionpaypay")
-    public void Unionpaypay (String money, HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void Unionpaypay (@RequestBody String money, HttpServletRequest req, HttpServletResponse resp) throws IOException {
         resp.setContentType("text/html;charset=utf-8");
         String pay = walletService.Unionpaypay(money, req, resp);
         PrintWriter out = resp.getWriter();
