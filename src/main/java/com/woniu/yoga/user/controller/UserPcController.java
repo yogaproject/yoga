@@ -60,7 +60,7 @@ public class UserPcController {
         if("".equals(user.getUserPhone()) || user==null){
             return ResultUtil.errorOperation("手机号不能为空");
         }
-        if(!RegexpUtil.RegExp_PHONE.matches(user.getUserPhone())) {
+        if(!user.getUserPhone().matches(RegexpUtil.RegExp_PHONE)) {
             return ResultUtil.errorOperation("手机格式不匹配");
         }
         if (userService.queryUserByPhone(user.getUserPhone())!=null){
@@ -85,6 +85,7 @@ public class UserPcController {
     @ResponseBody
     public Result regByPhone(String userPhone, String userPwd, String userVerifyCode ,User user, HttpSession session,
                           Venue venue){
+        System.out.println(userVerifyCode+userPwd);
         if ("".equals(userPwd)){
             return ResultUtil.errorOperation("密码不能为空");
         }
@@ -94,10 +95,10 @@ public class UserPcController {
         if ("".equals(userVerifyCode)){
             return ResultUtil.errorOperation("验证码不能为空");
         }
-        if(!RegexpUtil.RegExp_PHONE.matches(userPhone)) {
+        if(!userPhone.matches(RegexpUtil.RegExp_PHONE)) {
             return ResultUtil.errorOperation("手机格式不匹配，请重新输入");
         }
-        if(!RegexpUtil.RegExp_PASS.matches(userPwd)){
+        if(!userPwd.matches(RegexpUtil.RegExp_PASS)){
             return ResultUtil.errorOperation("密码格式不匹配，请重新输入");
         }
          User exist=userService.queryUserByPhone(userPhone);
@@ -107,7 +108,7 @@ public class UserPcController {
         if (!stringRedisTemplate.hasKey(userPhone)){
             return ResultUtil.errorOperation("验证码已过期，请重新获取验证码");
         }
-        if(!stringRedisTemplate.opsForValue().get(userPhone).equals(userPwd)){
+        if(!stringRedisTemplate.opsForValue().get(userPhone).equals(userVerifyCode)){
             return ResultUtil.errorOperation("验证码错误，请重新输入");
         }
         user.setSalt(CodeUtil.userNumber());
@@ -129,6 +130,7 @@ public class UserPcController {
         subject.login(token);
         user = (User) subject.getPrincipal();
         session.setAttribute(SysConstant.CURRENT_USER,user);
+        System.out.println(user);
         return ResultUtil.actionSuccess("注册成功",user);
     }
 
@@ -155,10 +157,10 @@ public class UserPcController {
         if("".equals(userPwd)){
             return ResultUtil.errorOperation("密码不能为空");
         }
-        if (!RegexpUtil.RegExp_PHONE.matches(userPhone)){
+        if (!userPhone.matches(RegexpUtil.RegExp_PHONE)){
             return ResultUtil.errorOperation("手机格式不匹配，请重新输入");
         }
-        if (!RegexpUtil.RegExp_PASS.matches(userPwd)){
+        if (!userPwd.matches(RegexpUtil.RegExp_PASS)){
             return ResultUtil.errorOperation("密码格式不匹配，请重新输入");
         }
         if (user.getRoleId()!=3 && user.getRoleId()!=4){
@@ -182,6 +184,7 @@ public class UserPcController {
                 return ResultUtil.errorOperation("登录失败");
             }
         }
+        System.out.println("sssssssssssssssssssss"+user);
         return ResultUtil.actionSuccess("登录成功",user);
     }
 

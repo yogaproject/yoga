@@ -33,6 +33,7 @@ public class ConfigMVC implements WebMvcConfigurer {
         registry.addViewController("/index.html").setViewName("index");
         registry.addViewController("/charts.html").setViewName("charts");
         registry.addViewController("/tables.html").setViewName("tables");
+        registry.addViewController("/register.html").setViewName("register");
         // registry.addViewController("/house_list.html").setViewName("houseList");
         // registry.addViewController("/loupanchart.html").setViewName("loupanchart");
     }
