@@ -28,4 +28,6 @@ public interface WalletService {
     Wallet findWalletByWalletId(int walletId);
 
     String Unionpaypay(String money,HttpServletRequest req, HttpServletResponse resp);
+
+    void saveWallet(Integer userId);
 }

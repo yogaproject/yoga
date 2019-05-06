@@ -2,6 +2,7 @@ package com.woniu.yoga.pay.dao;
 
 import com.woniu.yoga.pay.pojo.Wallet;
 import com.woniu.yoga.pay.pojo.WalletRecord;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -41,4 +42,7 @@ public interface WalletMapper {
     //添加银行卡
     @Update("update wallet set bankcard=#{bankcard},pay_pwd=#{pwd} where user_id=#{userId}")
     int addBankcardByWalletId(@Param("userId") Integer walletid,@Param("pwd") String pwd, String againPwd,@Param("bankcard") String bankcard);
+
+    @Insert("INSERT INTO wallet (user_id) VALUES (#{userId});")
+    void saveWallet(@Param("userId")Integer userId);
 }

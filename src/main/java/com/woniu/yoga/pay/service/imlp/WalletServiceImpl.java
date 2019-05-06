@@ -1,6 +1,5 @@
 package com.woniu.yoga.pay.service.imlp;
 
-import com.woniu.yoga.commom.utils.Attributes;
 import com.woniu.yoga.pay.UnionpayConfig.sdk.AcpService;
 import com.woniu.yoga.pay.UnionpayConfig.sdk.DemoBase;
 import com.woniu.yoga.pay.UnionpayConfig.sdk.LogUtil;
@@ -14,6 +13,7 @@ import com.woniu.yoga.pay.service.WalletService;
 import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -156,5 +156,11 @@ public class WalletServiceImpl implements WalletService {
         return html;
 
     }
+
+    @Override
+    public void saveWallet(Integer userId) {
+        walletMapper.saveWallet(userId);
+    }
+
 
 }

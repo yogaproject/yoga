@@ -77,9 +77,8 @@ public class StudentServiceImpl implements StudentService {
             order.setPayerId(userId);
             order.setAccepterId(orderVO.getAccepterId());
             order.setCourseId(course.getCourseId());
-            Wallet wallet = walletMapper.findWalletByUserId(userId);
-            //System.out.println(course.getCoursePrice().compareTo(wallet.getBalance()));
             Wallet wallet = walletMapper.findWalletByuserId(userId);
+            //System.out.println(course.getCoursePrice().compareTo(wallet.getBalance()));
             System.out.println(course.getCoursePrice().compareTo(wallet.getBalance()));
             if (!(course.getCoursePrice().compareTo(wallet.getBalance()) < 0)) {
                 return ResultUtil.errorOperation("余额不足，请充值");
@@ -150,7 +149,6 @@ public class StudentServiceImpl implements StudentService {
             }
             //System.out.println("student service order=" + order);
             User user = userMapper.selectByPrimaryKey(order.getPayerId());
-            Wallet studentWallet = walletMapper.findWalletByUserId(user.getUserId());
             //System.out.println(studentWallet);
             Wallet studentWallet = walletMapper.findWalletByuserId(user.getUserId());
             System.out.println(studentWallet);
@@ -166,10 +164,9 @@ public class StudentServiceImpl implements StudentService {
             WalletRecord coachCourseRecord = this.getCoachCourseRecord(order);
             platfotmPayCourseRecord.setFromId(Attributes.PLATFORMNUMBER);
             //更新瑜伽师（场馆）钱包余额
-            Wallet acceptWallet = walletMapper.findWalletByUserId(platfotmPayCourseRecord.getToId());
+            Wallet acceptWallet = walletMapper.findWalletByuserId(platfotmPayCourseRecord.getToId());
             //System.out.println("student service accept wallet=" + acceptWallet);
             //System.out.println("student service platfotm record =" + platfotmPayCourseRecord);
-            Wallet acceptWallet = walletMapper.findWalletByuserId(platfotmPayCourseRecord.getToId());
             System.out.println("student service accept wallet=" + acceptWallet);
             System.out.println("student service platfotm record =" + platfotmPayCourseRecord);
             BigDecimal accepterBalance = acceptWallet.getBalance().add(platfotmPayCourseRecord.getMoney());

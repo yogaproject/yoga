@@ -1,6 +1,8 @@
 package com.woniu.yoga.user.controller;
 
 import com.woniu.yoga.commom.vo.Result;
+import com.woniu.yoga.pay.pojo.Wallet;
+import com.woniu.yoga.pay.service.WalletService;
 import com.woniu.yoga.user.constant.SysConstant;
 import com.woniu.yoga.user.pojo.Coach;
 import com.woniu.yoga.user.pojo.Role;
@@ -54,6 +56,8 @@ public class UserAppController {
     private CoachService coachService;
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+    @Autowired
+    private WalletService walletService;
 
     //-----------------------------------邮箱方式-----------------------------
 
@@ -95,7 +99,7 @@ public class UserAppController {
      */
     @RequestMapping("regByEmail")
     @ResponseBody
-    public Result regByEmail(@RequestBody User user,HttpSession session, Student student){
+    public Result regByEmail(@RequestBody User user, HttpSession session, Student student, Wallet wallet){
         if ("".equals(user.getUserPwd())){
             return ResultUtil.errorOperation("密码不能为空");
         }
@@ -137,6 +141,8 @@ public class UserAppController {
             return ResultUtil.errorOperation("注册失败");
         }
         student.setUserId(user.getUserId());
+        wallet.setUserId(user.getUserId());
+        walletService.saveWallet(user.getUserId());
         studentService.saveStudent(student);
         session.setAttribute(SysConstant.CURRENT_USER,newUser);
         return ResultUtil.actionSuccess("注册成功",newUser);
@@ -309,7 +315,7 @@ public class UserAppController {
     @RequestMapping("/regByPhone")
     @ResponseBody
     public Result regByPhone(@RequestBody User user, HttpSession session,
-                             Student student, Coach coach){
+                             Student student, Coach coach,Wallet wallet){
         if ("".equals(user.getUserPwd())){
             return ResultUtil.errorOperation("密码不能为空");
         }
@@ -337,6 +343,8 @@ public class UserAppController {
         user.setUserPwd(userHashPwd.toString());
         user.setUserNickname(NickNameUtil.getRandomNickName());
         user.setActive(1);
+        wallet.setUserId(user.getUserId());
+        walletService.saveWallet(user.getUserId());
         userService.saveUser(user);
         if (user.getActive()==0){
             return ResultUtil.errorOperation("注册失败");
@@ -726,7 +734,7 @@ public class UserAppController {
     public Result updateCoachInfo(@RequestBody User user,@RequestBody Coach coach,HttpSession session,String info){
         User userSession= (User) session.getAttribute(SysConstant.CURRENT_USER);
         if (!"".equals(user.getUserEmail())){
-            if (!RegexpUtil.RegExp_Mail.matches(user.getUserEmail())){
+            if (!user.getUserEmail().matches(RegexpUtil.RegExp_Mail)){
                 return ResultUtil.errorOperation("邮箱格式不匹配，请重新输入");
             }
             User exit=userService.queryUserByEmail(user.getUserEmail());
@@ -740,7 +748,7 @@ public class UserAppController {
         if ("".equals(user.getIdcard()) ){
             return ResultUtil.errorOperation("请完善身份证信息");
         }
-        if (!RegexpUtil.RegExp_ID.matches(user.getIdcard())){
+        if (!user.getIdcard().matches(RegexpUtil.RegExp_ID)){
             return ResultUtil.errorOperation("身份证格式不匹配，请重新输入");
         }
         User userReal=userService.queryUserByEmail(user.getUserEmail());
@@ -904,6 +912,7 @@ public class UserAppController {
         }
         return ResultUtil.actionSuccess("修改成功",userReal);
     }
+
 
 
 
