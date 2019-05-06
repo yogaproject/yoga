@@ -1,3 +1,21 @@
+//定义场馆id
+var  venueId = null;
+//getVenueId()
+function getVenueId(){
+    $.ajax({
+        url : "/venue/getVenueId",
+        type : "post",
+        dataType :"json",
+        //contentType : "application/json;charset=utf-8",
+        data:{
+            userId:$("#userId").val()
+        },
+        success: function(result) {
+            venueId = result
+        }
+    });
+}
+
 //根据场馆id查找属于这个场馆的教练
 venueSelectCoach()
 function venueSelectCoach(){
@@ -40,7 +58,7 @@ function venueBreakCoach(coachId){
             coachId:coachId
         },
         success: function(result) {
-            alert(result)
+            alert(result.message)
         }
     });
 }

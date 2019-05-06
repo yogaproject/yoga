@@ -1,3 +1,21 @@
+//定义场馆id
+var  venueId = null;
+//getVenueId()
+function getVenueId(){
+    $.ajax({
+        url : "/venue/getVenueId",
+        type : "post",
+        dataType :"json",
+        //contentType : "application/json;charset=utf-8",
+        data:{
+            userId:$("#userId").val()
+        },
+        success: function(result) {
+            venueId = result
+        }
+    });
+}
+
 //根据场馆id 查询所有产品的信息
 venueAllProduct()
 function venueAllProduct(){

@@ -1,3 +1,21 @@
+//定义场馆id
+var  venueId = null;
+//getVenueId()
+function getVenueId(){
+    $.ajax({
+        url : "/venue/getVenueId",
+        type : "post",
+        dataType :"json",
+        //contentType : "application/json;charset=utf-8",
+        data:{
+            userId:$("#userId").val()
+        },
+        success: function(result) {
+            venueId = result
+        }
+    });
+}
+
 //根据场馆id，展示场馆信息
 selectVenueVOByVenueId()
 function selectVenueVOByVenueId(){
@@ -23,9 +41,6 @@ function selectVenueVOByVenueId(){
                 + "</li>"
                 + "<li class='list-group-item' style='text-align:center;'>场馆名称: "
                 + result.realName
-                + "</li>"
-                + "<li class='list-group-item' style='text-align:center;'>图片1: "
-                + result.img1
                 + "</li>"
                 + "<li class='list-group-item' style='text-align:center;'>产管详情: "
                 + result.venueDetail

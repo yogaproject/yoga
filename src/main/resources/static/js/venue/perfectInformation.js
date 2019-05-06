@@ -1,3 +1,21 @@
+//定义场馆id
+var  venueId = null;
+//getVenueId()
+function getVenueId(){
+    $.ajax({
+        url : "/venue/getVenueId",
+        type : "post",
+        dataType :"json",
+        //contentType : "application/json;charset=utf-8",
+        data:{
+            userId:$("#userId").val()
+        },
+        success: function(result) {
+            venueId = result
+        }
+    });
+}
+
 //场馆完善场馆信息(没有包含教练安排)
 function venuePerfectInformation(){
     $.ajax({
@@ -16,7 +34,7 @@ function venuePerfectInformation(){
         },
         //dataType:"json",
         success: function(result) {
-            alert(result)
+            alert(result.message)
         }
     });
 }

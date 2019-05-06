@@ -80,9 +80,6 @@ public class VenueController {
     @RequestMapping("/vagueConditions")
     @ResponseBody
     public List<Coach> selectCoachByVagueConditions(Coach coach, BigDecimal upExpectedSalary,BigDecimal downExpectedSalary){
-
-        System.out.println(coach.getCoachStyle());
-        System.out.println(coach.getCoachType());
         List<Coach> listCoach = venueService.findCoachByVagueConditions(coach,upExpectedSalary,downExpectedSalary);
         System.out.println(listCoach);
         return listCoach;

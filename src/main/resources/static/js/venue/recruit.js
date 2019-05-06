@@ -1,3 +1,21 @@
+//定义场馆id
+var  venueId = null;
+//getVenueId()
+function getVenueId(){
+    $.ajax({
+        url : "/venue/getVenueId",
+        type : "post",
+        dataType :"json",
+        //contentType : "application/json;charset=utf-8",
+        data:{
+            userId:$("#userId").val()
+        },
+        success: function(result) {
+            venueId = result
+        }
+    });
+}
+
 //查找所有教练类型
 allCoachType()
 function allCoachType(){
@@ -47,7 +65,7 @@ function venueAddRecruit(){
             salaryUp:$("#upExpectedSalary").val()
         },
         success: function(result) {
-            alert(result)
+            alert(result.message)
         }
     });
 }

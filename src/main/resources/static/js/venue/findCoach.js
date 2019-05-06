@@ -162,7 +162,7 @@ function applyForSign(){
             venueId:venueId,
         },
         success: function(result) {
-           alert(result)
+           alert(result.message)
         }
     });
 }
