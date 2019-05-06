@@ -58,3 +58,7 @@ pagehelper:
   helper-dialect: mysql
   support-methods-arguments: true
   params: pageNum=currentPage,pageSize=pageSize
+#  文件上传虚拟路径
+fileUpload:
+  rootSavePath: file:C:/images/
+  rootHttpPath: http://localhost:80/img

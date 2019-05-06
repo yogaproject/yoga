@@ -228,7 +228,7 @@ public class UserServiceImpl implements UserService {
             return false;
         }
         new PhoneUtil(templateId).sendPhoneMessage(user.getUserPhone(), userPwd);
-        stringRedisTemplate.expire(user.getUserPhone(), 100, TimeUnit.SECONDS);
+        stringRedisTemplate.expire(user.getUserPhone(), 180, TimeUnit.SECONDS);
         return true;
 
     }

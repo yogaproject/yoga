@@ -3,6 +3,7 @@ package com.woniu.yoga.config;
 
 import com.woniu.yoga.crowdfunding.interceptor.ResourceInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -16,7 +17,8 @@ public class ConfigMVC implements WebMvcConfigurer {
 
     @Autowired
     private ResourceInterceptor resourceInterceptor;
-
+    @Value("${fileUpload.rootSavePath}")
+    private String rootSavePath;
 
     @Bean(name = "transactionManager")
     public DataSourceTransactionManager manager(DataSource dataSource){
@@ -54,6 +56,7 @@ public class ConfigMVC implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/**").addResourceLocations(
                 ResourceUtils.CLASSPATH_URL_PREFIX + "/static/");
+        registry.addResourceHandler("/img/**").addResourceLocations(rootSavePath);
         WebMvcConfigurer.super.addResourceHandlers(registry);
     }
 
