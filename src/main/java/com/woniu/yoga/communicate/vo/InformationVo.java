@@ -11,5 +11,5 @@ import lombok.Data;
 @Data
 public class InformationVo {
     private Integer state;
-    private Integer userId;
+    private String userId;
 }
