@@ -4,6 +4,7 @@ import com.woniu.yoga.commom.utils.JsonUtil;
 import com.woniu.yoga.communicate.constant.SysConstant;
 import com.woniu.yoga.communicate.service.FollowService;
 import com.woniu.yoga.communicate.vo.FollowVo;
+import com.woniu.yoga.communicate.vo.InformationVo;
 import com.woniu.yoga.home.vo.HomepageVo;
 import com.woniu.yoga.home.vo.Result;
 import com.woniu.yoga.user.pojo.User;
@@ -46,8 +47,8 @@ public class FollowController {
             @ApiImplicitParam(name = "state", value = "传入0查找我的粉丝,传入1查找我的关注人列表", required = true, paramType = "path"),
     })
     @PostMapping("/showFollowList")
-    public Result<List<FollowVo>> showFollowList(@RequestBody Integer state, HttpSession session){
-        return followService.showFollowList(state, session);
+    public Result<List<FollowVo>> showFollowList(@RequestBody InformationVo vo){
+        return followService.showFollowList(vo.getState(), vo.getUserId());
     }
 
     /**

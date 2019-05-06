@@ -33,16 +33,12 @@ public class FollowServiceImpl implements FollowService {
 
 
     @Override
-    public Result showFollowList(Integer state, HttpSession session) {
-        User user = (User) session.getAttribute(SysConstant.CURRENT_USER);
-        /*if (user == null){
-            return Result.error("未登录");
-        }*/
+    public Result showFollowList(Integer state, Integer userId) {
         List<FollowVo> list = new ArrayList<>();
         if (state == 1){
-           list  = followMapper.queryFollowList(1);
+           list  = followMapper.queryFollowList(userId);
         }else if (state == 0){
-            list = followMapper.queryFans(1);
+            list = followMapper.queryFans(userId);
         } else {
             return Result.error("参数错误");
         }
@@ -52,9 +48,6 @@ public class FollowServiceImpl implements FollowService {
     @Override
     public Result showFollowHomepage(HttpSession session) {
         User user = (User) session.getAttribute(SysConstant.CURRENT_USER);
-        /*if (user == null){
-            return Result.error("未登录");
-        }*/
         List<HomepageVo> list = followMapper.queryFollowHomepages(1);
         for (int i = 0; i < list.size(); i++){
             HomepageVo vo = list.get(i);
@@ -81,9 +74,6 @@ public class FollowServiceImpl implements FollowService {
     @Transactional
     public Result addFollow(Integer userId, HttpSession session) {
         User user = (User) session.getAttribute(SysConstant.CURRENT_USER);
-        /*if (user == null){
-            return Result.error("未登录");
-        }*/
         Integer uid = 1;
         //先查看他们是不是互相关注
         int count = followMapper.selectIfFollow(userId, uid);
@@ -107,9 +97,6 @@ public class FollowServiceImpl implements FollowService {
     @Transactional
     public Result cancelFollow(Integer userId, HttpSession session) {
         User user = (User) session.getAttribute(SysConstant.CURRENT_USER);
-        if (user == null){
-            return Result.error("未登录");
-        }
         int followStatus = followMapper.selectFollowStatus(user.getUserId(), userId);
         //状态为0代表两个用户不是好友，取关只需要删除这个关注。为1需要修改被关注人的followStatus为0
         if (followStatus == 1){
