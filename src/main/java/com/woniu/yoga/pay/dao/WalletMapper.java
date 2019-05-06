@@ -23,12 +23,12 @@ public interface WalletMapper {
 
     int updateByPrimaryKey(Wallet record);
     //查找钱包
-    @Select("select * from wallet where user_id=#{userid}")
-    Wallet findWalletByUserId(@Param("userid") int userid);
+    @Select("select * from wallet where user_id=#{userId}")
+    Wallet findWalletByuserId(@Param("userId") int userId);
 
     //查询交易记录
-    @Select("select * from wallet_record where from_id =#{userid}")
-    List<WalletRecord> selectOrderByUserId(@Param("userid") int userid);
+    @Select("select * from wallet_record where from_id =#{userId}")
+    List<WalletRecord> selectOrderByuserId(@Param("userId") int userId);
 
     //更新钱余额用于付款
     @Update("update wallet set balance=balance-#{money} where wallet_id=#{walletId}")
@@ -39,6 +39,6 @@ public interface WalletMapper {
     int saveMoney(@Param("walletId") int walletId, @Param("money") BigDecimal money);
 
     //添加银行卡
-    @Update("update wallet set bankcard=#{bankcard},pay_pwd=#{pwd} where user_id=#{userid}")
-    int addBankcardByWalletId(@Param("userid") Integer walletid,@Param("pwd") String pwd, String againPwd,@Param("bankcard") String bankcard);
+    @Update("update wallet set bankcard=#{bankcard},pay_pwd=#{pwd} where user_id=#{userId}")
+    int addBankcardByWalletId(@Param("userId") Integer walletid,@Param("pwd") String pwd, String againPwd,@Param("bankcard") String bankcard);
 }

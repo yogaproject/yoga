@@ -73,8 +73,8 @@ public class Result {
     public static Result success(Object data){ return new Result(0,data); }
 
     public static Result error(){
-        return new Result(500);
+        return new Result(1);
     }
 
-    public static Result error(String msg){return new Result(500,msg); }
+    public static Result error(String msg){return new Result(1,msg); }
 }

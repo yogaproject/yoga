@@ -1,9 +1,11 @@
 package com.woniu.yoga.user.service;
 
+import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.communicate.pojo.Comment;
-import com.woniu.yoga.user.pojo.Order;
 import com.woniu.yoga.user.pojo.Student;
 import com.woniu.yoga.user.vo.*;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -13,8 +15,10 @@ import java.util.List;
  * @ClassName StudentService
  * @Date 2019/4/18 15:30
  * @Version 1.0
- * @Description TODO
+ * @Description
  **/
+@Service
+@Transactional
 public interface StudentService {
     Student findStudentByUserId(Integer userId);
 
@@ -26,7 +30,7 @@ public interface StudentService {
 
 
 
-    Result saveOrder(Integer userId,OrderVO orderVO) throws RuntimeException;
+    Result saveOrder(Integer userId, OrderVO orderVO) throws RuntimeException;
 
 
     Result updateOrderWithCoupon(Integer userId,String orderId, @RequestParam(required = false) Integer couponId) throws RuntimeException;

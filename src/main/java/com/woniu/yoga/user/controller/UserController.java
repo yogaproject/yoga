@@ -1,9 +1,9 @@
 package com.woniu.yoga.user.controller;
 
 
+import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.service.UserService;
-import com.woniu.yoga.user.vo.Result;
 import com.woniu.yoga.user.vo.SearchConditionVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -69,9 +69,9 @@ public class UserController {
     })
     public Result listAroundCoachByAddress(@RequestBody SearchConditionVO searchConditionVO) {
 
-        System.out.println(searchConditionVO);
+        // System.out.println(searchConditionVO);
         Result result = userService.listAroundCoachs(searchConditionVO);
-        System.out.println(result);
+        // System.out.println(result);
         return result;
     }
 
@@ -90,9 +90,9 @@ public class UserController {
             @ApiImplicitParam(name = "round", value = "距离‘我的距离’", defaultValue = "2000"),
     })
     public Result listAroundVenueByAddress(@RequestBody SearchConditionVO searchConditionVO) {
-        System.out.println(searchConditionVO);
+        //System.out.println(searchConditionVO);
         Result result = userService.listAroundVenues(searchConditionVO);
-        System.out.println(result);
+        //System.out.println(result);
         return result;
     }
 
@@ -115,6 +115,7 @@ public class UserController {
     public Result listOrder(HttpSession session, @RequestBody String orderStatus) {
         User user = (User) session.getAttribute("user");
         Integer userId = user.getUserId();
+        //Integer userId = 4;//教练
         return userService.listOrder(userId, orderStatus);
     }
 
@@ -129,11 +130,12 @@ public class UserController {
      **/
     @ApiOperation(value = "查找用户有效的优惠券")
     @ApiImplicitParam(name = "session", value = "HttpSession")
-    @RequestMapping("listCouponByUserId")
+    @RequestMapping("listCouponsByUserId")
     @ResponseBody
     public Result listCouponsByUserId(HttpSession session) {
         User user = (User) session.getAttribute("user");
         Integer userId = user.getUserId();
+        //Integer userId = 5;//学员
         return userService.listCouponsByUserId(userId);
     }
 
@@ -153,11 +155,93 @@ public class UserController {
             @ApiImplicitParam(name = "session", value = "HttpSession"),
             @ApiImplicitParam(name = "coachId", value = "瑜伽师的用户ID", paramType = "integer"),
     })
-    public Result getDetailInfoByUserId(HttpSession session, @RequestBody Integer coachId) {
-//        User user = (User) session.getAttribute("user");
-//        Integer myId = user.getUserId();
-        Integer userId = 2;
+    public Result getDetailInfoByUserId(HttpSession session, @RequestBody(required = false) Integer coachId) {
+        User user = (User) session.getAttribute("user");
+        Integer userId = user.getUserId();
+//        Integer userId = 2;
         return userService.getDetailInfoByUserId(userId, coachId);
+    }
+
+    /*
+     * @Author liufeng
+     * @Date
+     * @Description //查询场馆的详细信息
+     * @Param
+     * @return
+     **/
+    @ApiOperation(value = "查看场馆详细信息")
+    @ApiImplicitParam(name = "venueId", value = "场馆的用户Id")
+    @RequestMapping("getVenueDetailInfoByUserId")
+    @ResponseBody
+    public Result getVenueDetailInfoByUserId(HttpSession session, @RequestBody(required = false) Integer venueId) {
+        if (venueId == null) {
+            User user = (User) session.getAttribute("user");
+            Integer userId = user.getUserId();
+            venueId = userId;
+        }
+        return userService.getVenueDetailInfoByUserId(venueId);
+    }
+
+    /*
+     * @Author liufeng
+     * @Date
+     * @Description //查看我发表的动态
+     * @Param
+     * @return
+     **/
+    @RequestMapping("getAllMyInfos")
+    @ResponseBody
+    public Result getAllMyInfos(HttpSession session) {
+        //        Integer userId = null;
+        //        try {
+        User user = (User) session.getAttribute("user");
+        Integer userId = user.getUserId();
+        //        } catch (Exception e) {
+        //            userId = 1;
+        //        }
+        return userService.getAllMyInfos(userId);
+    }
+
+    @ApiOperation(value = "瑜伽室查看我的课程的评论")
+    @RequestMapping("getAllMyComments")
+    @ResponseBody
+    public Result getAllMyComments(HttpSession session) {
+//        Integer userId = null;
+//        try {
+        User user = (User) session.getAttribute("user");
+        Integer userId = user.getUserId();
+//        } catch (Exception e) {
+//            userId = 4;
+//        }
+        return userService.getAllMyComments(userId);
+    }
+
+    @ApiOperation(value = "用户查看我关注的用户")
+    @RequestMapping("getAllMyFocus")
+    @ResponseBody
+    public Result getAllMyFocus(HttpSession session) {
+        //        Integer userId = null;
+        //        try {
+        User user = (User) session.getAttribute("user");
+        Integer userId = user.getUserId();
+        //        } catch (Exception e) {
+        //            userId = 1;
+        //        }
+        return userService.getAllMyFocus(userId);
+    }
+
+    @ApiOperation(value = "用户查看我的粉丝")
+    @RequestMapping("getAllMyFans")
+    @ResponseBody
+    public Result getAllMyFans(HttpSession session) {
+        //        Integer userId = null;
+        //        try {
+        User user = (User) session.getAttribute("user");
+        Integer userId = user.getUserId();
+        //        } catch (Exception e) {
+        //            userId = 1;
+        //        }
+        return userService.getAllMyFans(userId);
     }
 
 }

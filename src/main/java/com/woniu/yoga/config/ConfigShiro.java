@@ -44,6 +44,7 @@ public class ConfigShiro {
         map.put("/regPc.html", "anon");
         map.put("/updateUserPwd.html", "anon");
         map.put("*.css", "anon");
+//        map.put("/userApp/*","anon");
 //        map.put("*.js", "anon");
         map.put("/*", "authc");
         map.put("/logout", "logout");

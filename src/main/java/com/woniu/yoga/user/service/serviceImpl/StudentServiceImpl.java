@@ -1,8 +1,10 @@
 package com.woniu.yoga.user.service.serviceImpl;
 
 import com.woniu.yoga.commom.utils.Attributes;
+import com.woniu.yoga.commom.utils.ExceptionUtil;
 import com.woniu.yoga.commom.utils.OrderIdUtil;
 import com.woniu.yoga.commom.utils.UserLevelUtil;
+import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.communicate.dao.CommentMapper;
 import com.woniu.yoga.communicate.pojo.Comment;
 import com.woniu.yoga.manage.dao.CouponMapper;
@@ -12,17 +14,15 @@ import com.woniu.yoga.pay.dao.WalletRecordMapper;
 import com.woniu.yoga.pay.pojo.Wallet;
 import com.woniu.yoga.pay.pojo.WalletRecord;
 import com.woniu.yoga.user.dao.*;
-import com.woniu.yoga.user.dto.SearchConditionDTO;
+import com.woniu.yoga.user.dto.OrderDTO;
 import com.woniu.yoga.user.pojo.*;
 import com.woniu.yoga.user.repository.StudentRepository;
 import com.woniu.yoga.user.service.StudentService;
 import com.woniu.yoga.user.util.ConvertVOToDTOUtil;
-import com.woniu.yoga.user.util.GetBmapDistanceUtil;
 import com.woniu.yoga.user.util.OrderUtil;
 import com.woniu.yoga.user.util.ResultUtil;
 import com.woniu.yoga.user.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -59,8 +59,6 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private WalletRecordMapper walletRecordMapper;
     @Autowired
-    private RedisTemplate redisTemplate;
-    @Autowired
     private StudentRepository studentRepository;
 
     private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -77,9 +75,11 @@ public class StudentServiceImpl implements StudentService {
             }
             Order order = new Order();
             order.setPayerId(userId);
-            order.setAccepterId(orderVO.getCoachId());
+            order.setAccepterId(orderVO.getAccepterId());
             order.setCourseId(course.getCourseId());
             Wallet wallet = walletMapper.findWalletByUserId(userId);
+            //System.out.println(course.getCoursePrice().compareTo(wallet.getBalance()));
+            Wallet wallet = walletMapper.findWalletByuserId(userId);
             System.out.println(course.getCoursePrice().compareTo(wallet.getBalance()));
             if (!(course.getCoursePrice().compareTo(wallet.getBalance()) < 0)) {
                 return ResultUtil.errorOperation("余额不足，请充值");
@@ -88,13 +88,18 @@ public class StudentServiceImpl implements StudentService {
             order.setOrderStatus(OrderUtil.NEWORDER);
             order.setOrderId(OrderIdUtil.getOrderId());
             order.setCreateTime(new Date());
+            order.setDiscount(order.getOrderMoney());
             //插入订单，
 //            orderMapper.insertNewOrder(order);
             orderMapper.insertSelective(order);
-            return ResultUtil.actionSuccess("已下单，等待处理中...", order);
+            List<OrderDTO> orders = orderMapper.findStudentOrder(userId, null);
+//            System.out.println("student service save order " + orders);
+            List<OrderVO> orderVOS = ConvertVOToDTOUtil.convertList(orders);
+//            System.out.println("student service save order " + orderVOS);
+            return ResultUtil.actionSuccess("已下单，等待处理中...", orderVOS);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -128,7 +133,7 @@ public class StudentServiceImpl implements StudentService {
             return ResultUtil.actionSuccess("订单信息更新，请确认...", order);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -137,14 +142,18 @@ public class StudentServiceImpl implements StudentService {
     public Result updateOrderForPay(Integer userId, String orderId) {
         try {
             Order order = orderMapper.selectByPrimaryKey(orderId);
-            if (order.getPayerId() != userId) {
+            if (order == null || order.getPayerId() != userId) {
                 return ResultUtil.illegalOperation();
             }
             if (order.getOrderStatus() != OrderUtil.WAITTOPAY) {
                 return ResultUtil.errorOperation("订单状态错误，请联系管理员");
             }
+            //System.out.println("student service order=" + order);
             User user = userMapper.selectByPrimaryKey(order.getPayerId());
             Wallet studentWallet = walletMapper.findWalletByUserId(user.getUserId());
+            //System.out.println(studentWallet);
+            Wallet studentWallet = walletMapper.findWalletByuserId(user.getUserId());
+            System.out.println(studentWallet);
             //更新钱包余额
             if (studentWallet.getBalance().compareTo(order.getDiscount()) > 0) {
                 studentWallet.setBalance(studentWallet.getBalance().subtract(order.getDiscount()));
@@ -157,8 +166,14 @@ public class StudentServiceImpl implements StudentService {
             WalletRecord coachCourseRecord = this.getCoachCourseRecord(order);
             platfotmPayCourseRecord.setFromId(Attributes.PLATFORMNUMBER);
             //更新瑜伽师（场馆）钱包余额
-            Wallet acceptWallet = walletMapper.selectByPrimaryKey(platfotmPayCourseRecord.getToId());
-            acceptWallet.setBalance(acceptWallet.getBalance().add(platfotmPayCourseRecord.getMoney()));
+            Wallet acceptWallet = walletMapper.findWalletByUserId(platfotmPayCourseRecord.getToId());
+            //System.out.println("student service accept wallet=" + acceptWallet);
+            //System.out.println("student service platfotm record =" + platfotmPayCourseRecord);
+            Wallet acceptWallet = walletMapper.findWalletByuserId(platfotmPayCourseRecord.getToId());
+            System.out.println("student service accept wallet=" + acceptWallet);
+            System.out.println("student service platfotm record =" + platfotmPayCourseRecord);
+            BigDecimal accepterBalance = acceptWallet.getBalance().add(platfotmPayCourseRecord.getMoney());
+            acceptWallet.setBalance(accepterBalance);
             //更新订单状态
             order.setOrderStatus(OrderUtil.PAIED);
             //更新优惠券状态
@@ -173,24 +188,26 @@ public class StudentServiceImpl implements StudentService {
             walletRecordMapper.insertSelective(studentPayCourseRecord);
             walletRecordMapper.insertSelective(platfotmPayCourseRecord);
             walletRecordMapper.insertSelective(coachCourseRecord);
+            orderMapper.updateByPrimaryKeySelective(order);
             return ResultUtil.actionSuccess("支付成功", order);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
     @Override
     public Result saveComment(Integer userId, String orderId, Comment comment) {
-        if (comment.getEntityType() == 1) {
-            return ResultUtil.illegalOperation();
-        }
         try {
+            Order order = orderMapper.selectByPrimaryKey(orderId);
+            comment.setEntityType(0);
+            comment.setEntityId(order.getCourseId());
+            comment.setUserId(userId);
             commentMapper.insertSelective(comment);
             //学员、瑜伽师 会员等级，积分变化，交易记录，并返回评论详细信息
             //根据金额转换积分，修改积分
             //根据积分转换等级
-            User student = userMapper.selectByPrimaryKey(comment.getUserId());
+            User student = userMapper.selectByPrimaryKey(userId);
             if (userId != student.getUserId()) {
                 ResultUtil.illegalOperation();
             }
@@ -216,7 +233,7 @@ public class StudentServiceImpl implements StudentService {
             return ResultUtil.actionSuccess("评论成功", comment);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -243,7 +260,7 @@ public class StudentServiceImpl implements StudentService {
             return ResultUtil.actionSuccess("已提交申请，等待客服处理中...", order);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -251,7 +268,7 @@ public class StudentServiceImpl implements StudentService {
     public Result updateOrderForCancel(Integer userId, String orderId) {
         try {
             Order order = orderMapper.selectByPrimaryKey(orderId);
-            if (order.getOrderStatus() != OrderUtil.NEWORDER) {
+            if (order == null || order.getOrderStatus() != OrderUtil.NEWORDER) {
                 return ResultUtil.errorOperation("订单状态出错，请与管理员联系");
             }
             if (order.getPayerId() != userId) {
@@ -261,7 +278,7 @@ public class StudentServiceImpl implements StudentService {
             return ResultUtil.actionSuccess("订单已取消", order);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
 
     }
@@ -273,7 +290,7 @@ public class StudentServiceImpl implements StudentService {
             return ResultUtil.actionSuccess("查找成功", phone);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -289,7 +306,7 @@ public class StudentServiceImpl implements StudentService {
             return ResultUtil.actionSuccess("已下单，等待瑜伽师处理中...", repeatOrder);
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -303,6 +320,7 @@ public class StudentServiceImpl implements StudentService {
         studentPayCourseRecord.setToId(Attributes.PLATFORMNUMBER);//平台id
         studentPayCourseRecord.setMoney(order.getDiscount());
         studentPayCourseRecord.setPayType(0);
+        studentPayCourseRecord.setRecordType(4);
         studentPayCourseRecord.setRemark("课程付款，订单号为：" + order.getOrderId());
         return studentPayCourseRecord;
     }
@@ -320,8 +338,10 @@ public class StudentServiceImpl implements StudentService {
             acceptId = coachMapper.findVenueByVenueId(venueId);
         }
         platfotmPayCourseRecord.setToId(acceptId);//瑜伽师或场馆
+        //System.out.println("student service toId=" + acceptId);
         platfotmPayCourseRecord.setMoney(order.getDiscount().subtract(new BigDecimal(Attributes.COMMISSION)));
         platfotmPayCourseRecord.setPayType(0);
+        platfotmPayCourseRecord.setRecordType(4);
         platfotmPayCourseRecord.setRemark("学员课程付款，转账给瑜伽师，订单号为：" + order.getOrderId());
         return platfotmPayCourseRecord;
     }
@@ -336,6 +356,7 @@ public class StudentServiceImpl implements StudentService {
         coachCourseRecord.setToId(order.getAccepterId());
         coachCourseRecord.setMoney(order.getDiscount().subtract(new BigDecimal(Attributes.COMMISSION)));
         coachCourseRecord.setPayType(0);
+        coachCourseRecord.setRecordType(4);
         coachCourseRecord.setRemark("学员课程付款，订单号为：" + order.getOrderId());
         return coachCourseRecord;
     }

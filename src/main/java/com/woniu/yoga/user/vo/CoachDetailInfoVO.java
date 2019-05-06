@@ -47,4 +47,13 @@ public class CoachDetailInfoVO {
     //是否保密
     private int privacy;
 
+    //我的关注
+    private int focus;
+    //我的粉丝
+    private int fans;
+    //我的动态
+    private int info;
+    //我的评论
+    private int comments;
+
 }

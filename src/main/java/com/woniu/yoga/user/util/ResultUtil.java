@@ -1,6 +1,7 @@
 package com.woniu.yoga.user.util;
 
-import com.woniu.yoga.user.vo.Result;
+
+import com.woniu.yoga.commom.vo.Result;
 
 /**
  * @Author liufeng
@@ -21,10 +22,10 @@ public class ResultUtil {
     }
     //    非法操作
     public static Result illegalOperation(){
-        return new Result(1, "操作非法，请联系管理员...");
+        return new Result(0, "操作非法，请联系管理员...");
     }
     //    错误操作
     public static Result errorOperation(String message){
-        return new Result(1, message);
+        return new Result(0, message);
     }
 }

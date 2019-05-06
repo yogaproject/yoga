@@ -55,6 +55,7 @@ public class AppPwdRealm extends AuthorizingRealm {
         if (userName.matches(RegexpUtil.RegExp_Mail)){
             System.out.println("邮箱");
             user=userService.queryUserByEmail(userName);
+            System.out.println("lianjie=-----------------");
             info=new SimpleAuthenticationInfo(user,user.getUserPwd(),this.getName());
         }
         if (userName == null || userName.equals("")){

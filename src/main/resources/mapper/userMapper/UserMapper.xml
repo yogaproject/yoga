@@ -291,4 +291,30 @@
       user_flag = #{userFlag,jdbcType=INTEGER}
     where user_id = #{userId,jdbcType=INTEGER}
   </update>
+
+  <resultMap id="venueMap" type="com.woniu.yoga.user.vo.VenueDetailInfoVO">
+    <result column="user_phone" jdbcType="VARCHAR" property="userPhone" />
+    <result column="user_email" jdbcType="VARCHAR" property="userEmail" />
+    <result column="user_wechat" jdbcType="VARCHAR" property="userWechat" />
+    <result column="user_qq" jdbcType="VARCHAR" property="userQq" />
+    <result column="user_nickname" jdbcType="VARCHAR" property="userNickname" />
+    <result column="user_headimg" jdbcType="VARCHAR" property="userHeadimg" />
+    <result column="longitude" jdbcType="REAL" property="longitude" />
+    <result column="latitude" jdbcType="REAL" property="latitude" />
+    <result column="user_location" jdbcType="VARCHAR" property="userLocation" />
+    <result column="real_name" jdbcType="VARCHAR" property="realName" />
+    <result column="user_level" jdbcType="INTEGER" property="userLevel" />
+    <result column="user_score" jdbcType="INTEGER" property="userScore" />
+    <result column="clicks" jdbcType="BIGINT" property="clicks" />
+    <result column="img1" jdbcType="VARCHAR" property="img1" />
+    <result column="img2" jdbcType="VARCHAR" property="img2" />
+    <result column="img3" jdbcType="VARCHAR" property="img3" />
+    <result column="venue_detail" jdbcType="VARCHAR" property="venueDetail" />
+  </resultMap>
+  <select id="getVenueDetailInfoByUserId" resultMap="venueMap">
+    select user.user_id userId, user_phone, user_email, user_wechat, user_qq, user_nickname,
+    user_headimg, longitude, latitude, user_location,  real_name, user_level,
+    user_score, clicks,img1,img2,venue_detail from user,venue where user.user_id = venue.user_id
+    and user.user_id =#{userId}
+  </select>
 </mapper>

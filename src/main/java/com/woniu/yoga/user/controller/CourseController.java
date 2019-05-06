@@ -1,9 +1,9 @@
 package com.woniu.yoga.user.controller;
 
+import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.service.CourseService;
 import com.woniu.yoga.user.vo.CourseVO;
-import com.woniu.yoga.user.vo.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;

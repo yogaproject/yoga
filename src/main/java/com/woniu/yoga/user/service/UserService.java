@@ -1,12 +1,11 @@
 package com.woniu.yoga.user.service;
 
+import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.manage.pojo.Coupon;
 import com.woniu.yoga.user.pojo.User;
-import com.woniu.yoga.user.vo.Result;
 import com.woniu.yoga.user.vo.SearchConditionVO;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -19,6 +18,7 @@ import java.util.List;
  * @Description
  **/
 @Service
+@Transactional
 public interface UserService {
 
     /*
@@ -45,7 +45,7 @@ public interface UserService {
 
     Result getDetailInfoByUserId(Integer userId, Integer coachId) throws RuntimeException;
     //查询用户优惠券
-    List<Coupon> fandCouponByUserId(int userid);
+    List<Coupon> fandCouponByUserId(int userid) throws RuntimeException;
 
     //插入 lxy
     void saveUser(User user);
@@ -58,4 +58,15 @@ public interface UserService {
     //注册，登录发送验证码（密码），并插入redis lxy
     boolean sendPhoneMessage(User user,Integer templateId);
 
+    Result getVenueDetailInfoByUserId(Integer userId) throws RuntimeException;
+
+    Result getAllMyInfos(Integer userId);
+
+    Result getAllMyFans(Integer userId);
+
+    Result getAllMyFocus(Integer userId);
+
+    Result getAllMyComments(Integer userId);
+
+    List<Coupon> selectCouponByUserId(int userId);
 }

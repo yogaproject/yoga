@@ -1,8 +1,8 @@
 package com.woniu.yoga.user.controller;
 
 
+import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.communicate.pojo.Comment;
-import com.woniu.yoga.user.pojo.Order;
 import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.service.serviceImpl.StudentServiceImpl;
 import com.woniu.yoga.user.util.ResultUtil;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import java.util.jar.Attributes;
 
 /**
  * @Author liufeng
@@ -31,9 +30,6 @@ import java.util.jar.Attributes;
 public class StudentController {
     @Autowired
     private StudentServiceImpl studentService;
-
-
-
 
 
     /*
@@ -52,11 +48,11 @@ public class StudentController {
             @ApiImplicitParam(name = "order", value = "新的订单对象，无需传入用户ID", paramType = "pojo"),
             @ApiImplicitParam(name = "session", value = "HttpSession"),
     })
-    public Result saveOrder(HttpSession session,@RequestBody OrderVO orderVO) {
-//        User user = (User) session.getAttribute("user");
-//        Integer userId = user.getUserId();
-        Integer userId = 5;
-        return studentService.saveOrder(userId,orderVO);
+    public Result saveOrder(HttpSession session, @RequestBody OrderVO orderVO) {
+        User user = (User) session.getAttribute("user");
+        Integer userId = user.getUserId();
+//        // Integer userId = 5;
+        return studentService.saveOrder(userId, orderVO);
     }
 
     /*
@@ -69,18 +65,18 @@ public class StudentController {
      * @return
      *  通用返回类型，包含处理完成的订单详细信息
      **/
-    @PutMapping("updateOrderWithCoupon")
+    @PostMapping("updateOrderWithCoupon")
     @ResponseBody
     @ApiOperation(value = "学员选择要使用的优惠券，准备付款")
     @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "String"),
             @ApiImplicitParam(name = "session", value = "HttpSession"),
-            @ApiImplicitParam(name = "couponId",value = "优惠券的ID",required = false,paramType = "Integer")
+            @ApiImplicitParam(name = "orderCoupon", value = "包含：订单ID，优惠券的ID", required = false, paramType = "Integer")
     })
-    public Result updateOrderWithCoupon(HttpSession session,@RequestBody String orderId,@RequestBody  Integer couponId) {
+    public Result updateOrderWithCoupon(HttpSession session, @RequestBody OrderCoupon orderCoupon) {
         User user = (User) session.getAttribute("user");
         Integer userId = user.getUserId();
-        return studentService.updateOrderWithCoupon(userId,orderId, couponId);
+//        // Integer userId = 5;
+        return studentService.updateOrderWithCoupon(userId, orderCoupon.getOrderId(), orderCoupon.getCouponId());
     }
 
     /*
@@ -90,16 +86,17 @@ public class StudentController {
      * @Param
      * @return
      **/
-    @PutMapping("updateOrderForPay")
+    @PostMapping("updateOrderForPay")
     @ResponseBody
     @ApiOperation(value = "学员付款")
     @ApiImplicitParams(value = {
             @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "String"),
             @ApiImplicitParam(name = "session", value = "HttpSession"),
     })
-    public Result updateOrderForPay(HttpSession session,@RequestBody  String orderId) {
+    public Result updateOrderForPay(HttpSession session, @RequestBody String orderId) {
         User user = (User) session.getAttribute("user");
         Integer userId = user.getUserId();
+//        // Integer userId = 5;
         return studentService.updateOrderForPay(userId, orderId);
     }
 
@@ -117,9 +114,10 @@ public class StudentController {
             @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "String"),
             @ApiImplicitParam(name = "session", value = "HttpSession"),
     })
-    public Result updateOrderForRefund(HttpSession session,@RequestBody  String orderId) {
+    public Result updateOrderForRefund(HttpSession session, @RequestBody String orderId) {
         User user = (User) session.getAttribute("user");
         Integer userId = user.getUserId();
+//        // Integer userId = 5;
         return studentService.updateOrderForRefund(userId, orderId);
     }
 
@@ -140,10 +138,14 @@ public class StudentController {
             @ApiImplicitParam(name = "session", value = "HttpSession"),
             @ApiImplicitParam(name = "comment", value = "一个新的评论对象")
     })
-    public Result saveComment(HttpSession session,@RequestBody  String orderId,@RequestBody  Comment comment) {
+    public Result saveComment(HttpSession session, @RequestBody CommentVO commentVO) {
         User user = (User) session.getAttribute("user");
         Integer userId = user.getUserId();
-        return studentService.saveComment(userId, orderId, comment);
+        // Integer userId = 5;
+        Comment comment = new Comment();
+        comment.setCommentDegree(commentVO.getRate());
+        comment.setCommentDetail(commentVO.getComment());
+        return studentService.saveComment(userId, commentVO.getOrderId(), comment);
     }
 
     /*
@@ -174,9 +176,10 @@ public class StudentController {
             @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "String"),
             @ApiImplicitParam(name = "session", value = "HttpSession")
     })
-    public Result updateOrderForCancel(HttpSession session,@RequestBody  String orderId) {
+    public Result updateOrderForCancel(HttpSession session, @RequestBody String orderId) {
         User user = (User) session.getAttribute("user");
         Integer userId = user.getUserId();
+        // // Integer userId = 5;
         return studentService.updateOrderForCancel(userId, orderId);
     }
 
@@ -209,9 +212,10 @@ public class StudentController {
             @ApiImplicitParam(name = "session", value = "HttpSession"),
             @ApiImplicitParam(name = "orderId", value = "旧的订单ID", paramType = "String")
     })
-    public Result repeatOrder(HttpSession session,@RequestBody  String orderId) {
+    public Result repeatOrder(HttpSession session, @RequestBody String orderId) {
         User user = (User) session.getAttribute("user");
         Integer userId = user.getUserId();
+        // // Integer userId = 5;
         return studentService.repeatOrder(userId, orderId);
     }
 
