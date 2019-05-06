@@ -1,6 +1,8 @@
 package com.woniu.yoga.user.controller;
 
 import com.woniu.yoga.commom.vo.Result;
+import com.woniu.yoga.pay.pojo.Wallet;
+import com.woniu.yoga.pay.service.WalletService;
 import com.woniu.yoga.user.constant.SysConstant;
 import com.woniu.yoga.user.pojo.Coach;
 import com.woniu.yoga.user.pojo.Role;
@@ -55,6 +57,8 @@ public class UserAppController {
     private CoachService coachService;
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
+    @Autowired
+    private WalletService walletService;
 
     //-----------------------------------邮箱方式-----------------------------
 
@@ -99,7 +103,7 @@ public class UserAppController {
      */
     @RequestMapping("regByEmail")
     @ResponseBody
-    public Result regByEmail(@RequestBody User user, HttpSession session, Student student) {
+    public Result regByEmail(@RequestBody User user, HttpSession session, Student student, Wallet wallet) {
         if ("".equals(user.getUserPwd())) {
             return ResultUtil.errorOperation("密码不能为空");
         }
@@ -136,14 +140,13 @@ public class UserAppController {
         if (user.getActive() == 0) {
             return ResultUtil.errorOperation("注册失败");
         }
-//        Subject subject=SecurityUtils.getSubject();
-//        UsernamePasswordToken token = new UsernamePasswordToken(user.getUserEmail(),user.getUserPwd());
-//        subject.login(token);
         User newUser = userService.queryUserByEmail(user.getUserEmail());
         if (newUser == null || !newUser.getUserPwd().equals(userHashPwd.toString())) {
             return ResultUtil.errorOperation("注册失败");
         }
         student.setUserId(user.getUserId());
+        wallet.setUserId(user.getUserId());
+        walletService.saveWallet(user.getUserId());
         studentService.saveStudent(student);
         session.setAttribute(SysConstant.CURRENT_USER, newUser);
         return ResultUtil.actionSuccess("注册成功", newUser);
@@ -179,24 +182,6 @@ public class UserAppController {
         if (!exist.getUserPwd().equals(userHashNewPwd.toString())) {
             return ResultUtil.errorOperation("密码错误,请重新输入");
         }
-//        Subject subject= SecurityUtils.getSubject();
-//        if (!subject.isAuthenticated()){
-//            UsernamePasswordToken token = new UsernamePasswordToken(user.getUserEmail(),user.getUserPwd());
-//            try {
-//                subject.login(token);
-//                //认证成功
-//                System.out.println("认证成功!");
-//                session.setAttribute(SysConstant.CURRENT_USER, user);
-//                Result result=ResultUtil.actionSuccess("登录成功",user);
-//                return ResultUtil.actionSuccess("登录成功",user);
-//            } catch (UnknownAccountException uae) {
-//                return ResultUtil.errorOperation("账号不正确,请重新输入账号");
-//            } catch (IncorrectCredentialsException ice) {
-//                return ResultUtil.errorOperation("密码不正确,请重新输入密码");
-//            } catch (AuthenticationException ae) {
-//                return ResultUtil.errorOperation("登录失败");
-//            }
-//        }
         session.setAttribute(SysConstant.CURRENT_USER, exist);
         return ResultUtil.actionSuccess("登录成功", exist);
     }
@@ -346,7 +331,7 @@ public class UserAppController {
     @RequestMapping("/regByPhone")
     @ResponseBody
     public Result regByPhone(@RequestBody User user, HttpSession session,
-                             Student student, Coach coach) {
+                             Student student, Coach coach,Wallet wallet) {
         if ("".equals(user.getUserPwd())) {
             return ResultUtil.errorOperation("密码不能为空");
         }
@@ -372,14 +357,10 @@ public class UserAppController {
         user.setSalt(CodeUtil.userNumber());
         SimpleHash userHashPwd = new SimpleHash("MD5", user.getUserPwd(), user.getSalt(), 2);
         user.setUserPwd(userHashPwd.toString());
-//        Role role=roleService.findByRoleName(roleName);
-//        if (role == null){
-//            return ResultUtil.errorOperation("职业选择错误，请重新选择职业");
-//        }
-
-//        user.setRoleId(role.getRoleId());
         user.setUserNickname(NickNameUtil.getRandomNickName());
         user.setActive(1);
+        wallet.setUserId(user.getUserId());
+        walletService.saveWallet(user.getUserId());
         userService.saveUser(user);
         if (user.getActive() == 0) {
             return ResultUtil.errorOperation("注册失败");
@@ -392,9 +373,6 @@ public class UserAppController {
             coach.setUserId(user.getUserId());
             coachService.saveCoach(coach);
         }
-//        Subject subject=SecurityUtils.getSubject();
-//        UsernamePasswordToken token = new UsernamePasswordToken(user.getUserPhone(),user.getUserPwd());
-//        subject.login(token);
         User newUser = userService.queryUserByPhone(user.getUserPhone());
         if (newUser == null || !newUser.getUserPwd().equals(userHashPwd.toString())) {
             return ResultUtil.errorOperation("注册失败");
@@ -468,10 +446,6 @@ public class UserAppController {
         if (!stringRedisTemplate.opsForValue().get(user.getUserPhone()).equals(user.getUserVerifyCode())) {
             return ResultUtil.errorOperation("验证码错误，请重新输入");
         }
-//        PhoneToken token = new PhoneToken(user.getUserPhone());
-//        Subject subject = SecurityUtils.getSubject();
-//        subject.login(token);
-//        user = (User) subject.getPrincipal();
         session.setAttribute(SysConstant.CURRENT_USER, exist);
         return ResultUtil.actionSuccess("登录成功", exist);
 
