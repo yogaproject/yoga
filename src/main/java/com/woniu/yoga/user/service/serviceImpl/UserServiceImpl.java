@@ -5,14 +5,17 @@ import com.woniu.yoga.manage.pojo.Coupon;
 import com.woniu.yoga.user.dao.CoachMapper;
 import com.woniu.yoga.user.dao.OrderMapper;
 import com.woniu.yoga.user.dao.UserMapper;
+import com.woniu.yoga.user.dto.InteractionDTO;
 import com.woniu.yoga.user.dto.OrderDTO;
 import com.woniu.yoga.user.dto.SearchConditionDTO;
+import com.woniu.yoga.user.dto.UserDTO;
 import com.woniu.yoga.user.pojo.Order;
 import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.repository.UserRepository;
 import com.woniu.yoga.user.service.UserService;
 import com.woniu.yoga.user.util.*;
 import com.woniu.yoga.user.vo.*;
+import org.apache.ibatis.jdbc.SQL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -28,7 +31,7 @@ import java.util.concurrent.TimeUnit;
  * @ClassName StudentService
  * @Date 2019/4/18 15:30
  * @Version 1.0
- * @Description TODO
+ * @Description 处理用户交互
  **/
 @Service
 public class UserServiceImpl implements UserService {
@@ -142,20 +145,26 @@ public class UserServiceImpl implements UserService {
             if (coachDetailInfoVO.getAuthentication() == 1) {
                 coachDetailInfoVO.setVenueName(coachMapper.getVenueByCoachId(coachId));
             }
+
+            //如果学员和瑜伽师不是好友，隐藏个人信息；或者瑜伽师设置保密
+            if ((coachDetailInfoVO.getPrivacy() == 0) || (coachDetailInfoVO.getPrivacy() == 1 && !(isFriend(userId, coachId)))) {
+                coachDetailInfoVO.setQq(null);
+                coachDetailInfoVO.setWechat(null);
+                coachDetailInfoVO.setPhone(null);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException();
-        }
-        //如果学员和瑜伽师不是好友，隐藏个人信息；或者瑜伽师设置保密
-        if ((coachDetailInfoVO.getPrivacy() == 0) || (coachDetailInfoVO.getPrivacy() == 1 && !("学员和瑜伽师是好友" == ""))) {
-            coachDetailInfoVO.setQq(null);
-            coachDetailInfoVO.setWechat(null);
-            coachDetailInfoVO.setPhone(null);
         }
         //如果是官方认证，设置venueName：平台认证
         if (coachDetailInfoVO.getAuthentication() == 2) {
             coachDetailInfoVO.setVenueName("平台认证");
         }
+        InteractionDTO interactionDTO = this.getInteractionByUserId(coachId);
+        coachDetailInfoVO.setFans(interactionDTO.getFans());
+        coachDetailInfoVO.setFocus(interactionDTO.getFocus());
+        coachDetailInfoVO.setComments(interactionDTO.getComments());
+        coachDetailInfoVO.setInfo(interactionDTO.getInfo());
         System.out.println("coach detail " + coachDetailInfoVO);
         return ResultUtil.actionSuccess("查询成功", coachDetailInfoVO);
     }
@@ -232,4 +241,96 @@ public class UserServiceImpl implements UserService {
         return true;
 
     }
+
+    @Override
+    public Result getVenueDetailInfoByUserId(Integer userId) {
+        try {
+            VenueDetailInfoVO venueDetailInfoVO = userMapper.getVenueDetailInfoByUserId(userId);
+            InteractionDTO interactionDTO = this.getInteractionByUserId(userId);
+            venueDetailInfoVO.setFans(interactionDTO.getFans());
+            venueDetailInfoVO.setFocus(interactionDTO.getFocus());
+            venueDetailInfoVO.setInfo(interactionDTO.getInfo());
+            return ResultUtil.actionSuccess("查询成功", venueDetailInfoVO);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public Result getAllMyInfos(Integer userId) {
+        List infos = null;
+        try {
+            infos = userMapper.selectAllMyInfos(userId);
+            return ResultUtil.actionSuccess("查询成功", infos);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public Result getAllMyFans(Integer userId) {
+        List fans = null;
+        try {
+            fans = userMapper.selectAllMyFans(userId);
+            return ResultUtil.actionSuccess("查询成功", fans);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public Result getAllMyFocus(Integer userId) {
+        List focus = null;
+        try {
+            focus = userMapper.selectAllMyFocus(userId);
+            return ResultUtil.actionSuccess("查询成功", focus);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public Result getAllMyComments(Integer userId) {
+        List comments = null;
+        try {
+            comments = userMapper.selectAllMyComments(userId);
+            return ResultUtil.actionSuccess("查询成功", comments);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public List<Coupon> selectCouponByUserId(int userId) {
+        return userMapper.selectCouponByUserId(userId);
+    }
+
+    InteractionDTO getInteractionByUserId(int userId) throws RuntimeException {
+        InteractionDTO interactionDTO = new InteractionDTO();
+        try {
+            interactionDTO.setFocus(userMapper.selectFocusByUserId(userId));
+            interactionDTO.setFans(userMapper.selectFansByUserId(userId));
+            interactionDTO.setInfo(userMapper.selectInfoByUserId(userId));
+            interactionDTO.setComments((userMapper.selectCommentsByUserId(userId)));
+            return interactionDTO;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    boolean isFriend(Integer userId, Integer friendId) throws SQLException {
+        Integer followId = userMapper.selectOneFocus(userId, friendId);
+        Integer followId2 = userMapper.selectOneFocus(friendId, userId);
+        if (followId != null && followId2 != null) {
+            return true;
+        }
+        return false;
+    }
+
 }

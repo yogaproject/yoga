@@ -59,4 +59,15 @@ public interface UserService {
     //注册，登录发送验证码（密码），并插入redis lxy
     boolean sendPhoneMessage(User user,Integer templateId);
 
+    Result getVenueDetailInfoByUserId(Integer userId) throws RuntimeException;
+
+    Result getAllMyInfos(Integer userId);
+
+    Result getAllMyFans(Integer userId);
+
+    Result getAllMyFocus(Integer userId);
+
+    Result getAllMyComments(Integer userId);
+
+    List<Coupon> selectCouponByUserId(int userId);
 }
