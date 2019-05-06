@@ -707,7 +707,6 @@ public class UserAppController {
     @RequestMapping("/updateStudentInfo")
     @ResponseBody
     public Result updateStudentInfo(@RequestBody User user, HttpSession session) {
-        System.out.println(user + "修改信息------------------------");
         if ("".equals(user.getRealName())) {
             return ResultUtil.errorOperation("请完善真实名字");
         }
@@ -793,7 +792,7 @@ public class UserAppController {
         if ("".equals(user.getUserHeadimg())&& null != user.getIdcard()) {
             return ResultUtil.errorOperation("头像为空,请上传头像");
         }
-        if ("".equals(user.getRealName())&& null != user.getIdcard()) {
+        if ("".equals(user.getRealName())&& null != user.getRealName()) {
             return ResultUtil.errorOperation("请完善真实名字");
         }
         if ("".equals(user.getIdcard()) && null != user.getIdcard()) {
@@ -802,19 +801,11 @@ public class UserAppController {
         if (!user.getIdcard().matches(RegexpUtil.RegExp_ID)) {
             return ResultUtil.errorOperation("身份证格式不匹配，请重新输入");
         }
-//        if (userReal == null) {
-//            userReal = userService.queryUserByPhone(user.getUserPhone());
-//        }
 
         Integer row = userService.updateUser(user);
         if (row < 0 || row == 0) {
             return ResultUtil.errorOperation("修改失败");
         }
-
-//        Coach coachReal = coachService.findCoachByUserId(userId);
-//        if (coachReal == null) {
-//            return ResultUtil.errorOperation("系统错误，请联系管理员");
-//        }
         coach.setUserId(userId);
         coach.setCoachStyle(userCoach.getCoachStyle());
         coach.setCoachStatus(userCoach.getCoachStatus());
