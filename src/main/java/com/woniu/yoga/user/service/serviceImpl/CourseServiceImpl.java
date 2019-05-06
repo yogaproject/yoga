@@ -1,5 +1,6 @@
 package com.woniu.yoga.user.service.serviceImpl;
 
+import com.woniu.yoga.commom.utils.ExceptionUtil;
 import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.user.dao.CourseMapper;
 import com.woniu.yoga.user.service.CourseService;
@@ -31,7 +32,7 @@ public class CourseServiceImpl implements CourseService {
             return ResultUtil.actionSuccess("查询成功", course);
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 }

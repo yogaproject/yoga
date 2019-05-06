@@ -1,6 +1,7 @@
 package com.woniu.yoga.user.service.serviceImpl;
 
 import com.woniu.yoga.commom.utils.Attributes;
+import com.woniu.yoga.commom.utils.ExceptionUtil;
 import com.woniu.yoga.commom.utils.OrderIdUtil;
 import com.woniu.yoga.commom.utils.UserLevelUtil;
 import com.woniu.yoga.commom.vo.Result;
@@ -96,7 +97,7 @@ public class StudentServiceImpl implements StudentService {
             return ResultUtil.actionSuccess("已下单，等待处理中...", orderVOS);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -130,7 +131,7 @@ public class StudentServiceImpl implements StudentService {
             return ResultUtil.actionSuccess("订单信息更新，请确认...", order);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -184,7 +185,7 @@ public class StudentServiceImpl implements StudentService {
             return ResultUtil.actionSuccess("支付成功", order);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -225,7 +226,7 @@ public class StudentServiceImpl implements StudentService {
             return ResultUtil.actionSuccess("评论成功", comment);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -252,7 +253,7 @@ public class StudentServiceImpl implements StudentService {
             return ResultUtil.actionSuccess("已提交申请，等待客服处理中...", order);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -270,7 +271,7 @@ public class StudentServiceImpl implements StudentService {
             return ResultUtil.actionSuccess("订单已取消", order);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
 
     }
@@ -282,7 +283,7 @@ public class StudentServiceImpl implements StudentService {
             return ResultUtil.actionSuccess("查找成功", phone);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -298,7 +299,7 @@ public class StudentServiceImpl implements StudentService {
             return ResultUtil.actionSuccess("已下单，等待瑜伽师处理中...", repeatOrder);
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 

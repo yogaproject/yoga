@@ -5,6 +5,7 @@ import com.woniu.yoga.manage.pojo.Coupon;
 import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.vo.SearchConditionVO;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.List;
  * @Description
  **/
 @Service
+@Transactional
 public interface UserService {
 
     /*

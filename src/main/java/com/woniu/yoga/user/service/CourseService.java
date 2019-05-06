@@ -2,6 +2,7 @@ package com.woniu.yoga.user.service;
 
 import com.woniu.yoga.commom.vo.Result;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @Author liufeng
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
  * @Description 
  **/
 @Service
+@Transactional
 public interface CourseService {
 
 
