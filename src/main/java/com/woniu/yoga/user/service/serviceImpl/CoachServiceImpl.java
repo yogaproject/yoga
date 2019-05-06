@@ -14,6 +14,7 @@ import com.woniu.yoga.user.repository.CoachRepository;
 import com.woniu.yoga.user.service.CoachService;
 import com.woniu.yoga.user.util.OrderUtil;
 import com.woniu.yoga.user.util.ResultUtil;
+import com.woniu.yoga.user.vo.CoachDetailInfoVO;
 import com.woniu.yoga.user.vo.StudentVO;
 import com.woniu.yoga.venue.pojo.Recruitment;
 import com.woniu.yoga.venue.pojo.Venue;
@@ -262,6 +263,7 @@ public class CoachServiceImpl implements CoachService {
             throw ExceptionUtil.getDatabaseException();
         }
     }
+
 
 
     @Override
