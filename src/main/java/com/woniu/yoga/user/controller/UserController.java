@@ -1,9 +1,9 @@
 package com.woniu.yoga.user.controller;
 
 
+import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.service.UserService;
-import com.woniu.yoga.user.vo.Result;
 import com.woniu.yoga.user.vo.SearchConditionVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -69,9 +69,9 @@ public class UserController {
     })
     public Result listAroundCoachByAddress(@RequestBody SearchConditionVO searchConditionVO) {
 
-        System.out.println(searchConditionVO);
+        // System.out.println(searchConditionVO);
         Result result = userService.listAroundCoachs(searchConditionVO);
-        System.out.println(result);
+        // System.out.println(result);
         return result;
     }
 
@@ -179,6 +179,7 @@ public class UserController {
         }
         return userService.getVenueDetailInfoByUserId(venueId);
     }
+
     /*
      * @Author liufeng
      * @Date
@@ -198,6 +199,7 @@ public class UserController {
         }
         return userService.getAllMyInfos(userId);
     }
+
     @RequestMapping("getAllMyComments")
     @ResponseBody
     public Result getAllMyComments(HttpSession session) {
@@ -210,6 +212,7 @@ public class UserController {
         }
         return userService.getAllMyComments(userId);
     }
+
     @RequestMapping("getAllMyFocus")
     @ResponseBody
     public Result getAllMyFocus(HttpSession session) {
@@ -222,6 +225,7 @@ public class UserController {
         }
         return userService.getAllMyFocus(userId);
     }
+
     @RequestMapping("getAllMyFans")
     @ResponseBody
     public Result getAllMyFans(HttpSession session) {

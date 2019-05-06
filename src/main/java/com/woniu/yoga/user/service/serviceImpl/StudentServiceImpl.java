@@ -3,6 +3,7 @@ package com.woniu.yoga.user.service.serviceImpl;
 import com.woniu.yoga.commom.utils.Attributes;
 import com.woniu.yoga.commom.utils.OrderIdUtil;
 import com.woniu.yoga.commom.utils.UserLevelUtil;
+import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.communicate.dao.CommentMapper;
 import com.woniu.yoga.communicate.pojo.Comment;
 import com.woniu.yoga.manage.dao.CouponMapper;
@@ -13,17 +14,14 @@ import com.woniu.yoga.pay.pojo.Wallet;
 import com.woniu.yoga.pay.pojo.WalletRecord;
 import com.woniu.yoga.user.dao.*;
 import com.woniu.yoga.user.dto.OrderDTO;
-import com.woniu.yoga.user.dto.SearchConditionDTO;
 import com.woniu.yoga.user.pojo.*;
 import com.woniu.yoga.user.repository.StudentRepository;
 import com.woniu.yoga.user.service.StudentService;
 import com.woniu.yoga.user.util.ConvertVOToDTOUtil;
-import com.woniu.yoga.user.util.GetBmapDistanceUtil;
 import com.woniu.yoga.user.util.OrderUtil;
 import com.woniu.yoga.user.util.ResultUtil;
 import com.woniu.yoga.user.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -60,8 +58,6 @@ public class StudentServiceImpl implements StudentService {
     @Autowired
     private WalletRecordMapper walletRecordMapper;
     @Autowired
-    private RedisTemplate redisTemplate;
-    @Autowired
     private StudentRepository studentRepository;
 
     private static SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -80,8 +76,8 @@ public class StudentServiceImpl implements StudentService {
             order.setPayerId(userId);
             order.setAccepterId(orderVO.getAccepterId());
             order.setCourseId(course.getCourseId());
-            Wallet wallet = walletMapper.selectWalletByUserId(userId);
-            System.out.println(course.getCoursePrice().compareTo(wallet.getBalance()));
+            Wallet wallet = walletMapper.findWalletByUserId(userId);
+            //System.out.println(course.getCoursePrice().compareTo(wallet.getBalance()));
             if (!(course.getCoursePrice().compareTo(wallet.getBalance()) < 0)) {
                 return ResultUtil.errorOperation("余额不足，请充值");
             }
@@ -94,9 +90,9 @@ public class StudentServiceImpl implements StudentService {
 //            orderMapper.insertNewOrder(order);
             orderMapper.insertSelective(order);
             List<OrderDTO> orders = orderMapper.findStudentOrder(userId, null);
-            System.out.println("student service save order " + orders);
+//            System.out.println("student service save order " + orders);
             List<OrderVO> orderVOS = ConvertVOToDTOUtil.convertList(orders);
-            System.out.println("student service save order " + orderVOS);
+//            System.out.println("student service save order " + orderVOS);
             return ResultUtil.actionSuccess("已下单，等待处理中...", orderVOS);
         } catch (Exception e) {
             e.printStackTrace();
@@ -149,10 +145,10 @@ public class StudentServiceImpl implements StudentService {
             if (order.getOrderStatus() != OrderUtil.WAITTOPAY) {
                 return ResultUtil.errorOperation("订单状态错误，请联系管理员");
             }
-            System.out.println("student service order=" + order);
+            //System.out.println("student service order=" + order);
             User user = userMapper.selectByPrimaryKey(order.getPayerId());
             Wallet studentWallet = walletMapper.findWalletByUserId(user.getUserId());
-            System.out.println(studentWallet);
+            //System.out.println(studentWallet);
             //更新钱包余额
             if (studentWallet.getBalance().compareTo(order.getDiscount()) > 0) {
                 studentWallet.setBalance(studentWallet.getBalance().subtract(order.getDiscount()));
@@ -166,8 +162,8 @@ public class StudentServiceImpl implements StudentService {
             platfotmPayCourseRecord.setFromId(Attributes.PLATFORMNUMBER);
             //更新瑜伽师（场馆）钱包余额
             Wallet acceptWallet = walletMapper.findWalletByUserId(platfotmPayCourseRecord.getToId());
-            System.out.println("student service accept wallet=" + acceptWallet);
-            System.out.println("student service platfotm record =" + platfotmPayCourseRecord);
+            //System.out.println("student service accept wallet=" + acceptWallet);
+            //System.out.println("student service platfotm record =" + platfotmPayCourseRecord);
             BigDecimal accepterBalance = acceptWallet.getBalance().add(platfotmPayCourseRecord.getMoney());
             acceptWallet.setBalance(accepterBalance);
             //更新订单状态
@@ -334,7 +330,7 @@ public class StudentServiceImpl implements StudentService {
             acceptId = coachMapper.findVenueByVenueId(venueId);
         }
         platfotmPayCourseRecord.setToId(acceptId);//瑜伽师或场馆
-        System.out.println("student service toId=" + acceptId);
+        //System.out.println("student service toId=" + acceptId);
         platfotmPayCourseRecord.setMoney(order.getDiscount().subtract(new BigDecimal(Attributes.COMMISSION)));
         platfotmPayCourseRecord.setPayType(0);
         platfotmPayCourseRecord.setRecordType(4);

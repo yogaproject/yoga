@@ -1,5 +1,6 @@
 package com.woniu.yoga.user.controller;
 
+import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.user.constant.SysConstant;
 import com.woniu.yoga.user.pojo.Coach;
 import com.woniu.yoga.user.pojo.Role;
@@ -11,7 +12,6 @@ import com.woniu.yoga.user.service.StudentService;
 import com.woniu.yoga.user.service.UserService;
 import com.woniu.yoga.user.util.*;
 import com.woniu.yoga.user.vo.PhoneToken;
-import com.woniu.yoga.user.vo.Result;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;

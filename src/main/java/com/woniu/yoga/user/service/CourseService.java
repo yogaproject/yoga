@@ -1,6 +1,6 @@
 package com.woniu.yoga.user.service;
 
-import com.woniu.yoga.user.vo.Result;
+import com.woniu.yoga.commom.vo.Result;
 import org.springframework.stereotype.Service;
 
 /**

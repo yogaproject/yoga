@@ -1,6 +1,7 @@
 package com.woniu.yoga.user.util;
 
-import com.woniu.yoga.user.vo.Result;
+
+import com.woniu.yoga.commom.vo.Result;
 
 /**
  * @Author liufeng

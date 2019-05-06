@@ -1,5 +1,6 @@
 package com.woniu.yoga.user.controller;
 
+import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.user.constant.SysConstant;
 import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.service.UserService;
@@ -8,7 +9,6 @@ import com.woniu.yoga.user.util.NickNameUtil;
 import com.woniu.yoga.user.util.RegexpUtil;
 import com.woniu.yoga.user.util.ResultUtil;
 import com.woniu.yoga.user.vo.PhoneToken;
-import com.woniu.yoga.user.vo.Result;
 import com.woniu.yoga.venue.pojo.Venue;
 import com.woniu.yoga.venue.service.VenueService;
 import org.apache.shiro.SecurityUtils;

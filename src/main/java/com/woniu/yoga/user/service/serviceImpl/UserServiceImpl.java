@@ -1,5 +1,6 @@
 package com.woniu.yoga.user.service.serviceImpl;
 
+import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.manage.dao.CouponMapper;
 import com.woniu.yoga.manage.pojo.Coupon;
 import com.woniu.yoga.user.dao.CoachMapper;
@@ -165,7 +166,7 @@ public class UserServiceImpl implements UserService {
         coachDetailInfoVO.setFocus(interactionDTO.getFocus());
         coachDetailInfoVO.setComments(interactionDTO.getComments());
         coachDetailInfoVO.setInfo(interactionDTO.getInfo());
-        System.out.println("coach detail " + coachDetailInfoVO);
+        //System.out.println("coach detail " + coachDetailInfoVO);
         return ResultUtil.actionSuccess("查询成功", coachDetailInfoVO);
     }
 

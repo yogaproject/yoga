@@ -1,6 +1,7 @@
 package com.woniu.yoga.user.service.serviceImpl;
 
 import com.woniu.yoga.commom.utils.Attributes;
+import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.user.dao.CoachMapper;
 import com.woniu.yoga.user.dao.CourseMapper;
 import com.woniu.yoga.user.dao.OrderMapper;
@@ -11,7 +12,6 @@ import com.woniu.yoga.user.repository.CoachRepository;
 import com.woniu.yoga.user.service.CoachService;
 import com.woniu.yoga.user.util.OrderUtil;
 import com.woniu.yoga.user.util.ResultUtil;
-import com.woniu.yoga.user.vo.Result;
 import com.woniu.yoga.user.vo.StudentVO;
 import com.woniu.yoga.venue.pojo.Recruitment;
 import com.woniu.yoga.venue.pojo.Venue;

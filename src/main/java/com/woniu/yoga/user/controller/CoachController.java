@@ -1,11 +1,11 @@
 package com.woniu.yoga.user.controller;
 
+import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.user.pojo.Coach;
 import com.woniu.yoga.user.pojo.Course;
 import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.service.CoachService;
 import com.woniu.yoga.user.vo.DealOrder;
-import com.woniu.yoga.user.vo.Result;
 import com.woniu.yoga.venue.pojo.Recruitment;
 import com.woniu.yoga.venue.pojo.Venue;
 import io.swagger.annotations.Api;

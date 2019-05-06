@@ -1,11 +1,10 @@
 package com.woniu.yoga.user.service;
 
+import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.user.pojo.Coach;
 import com.woniu.yoga.user.pojo.Course;
 import com.woniu.yoga.venue.pojo.Recruitment;
 import com.woniu.yoga.venue.pojo.Venue;
-import com.woniu.yoga.user.vo.Result;
-import com.woniu.yoga.user.vo.StudentDetailVO;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

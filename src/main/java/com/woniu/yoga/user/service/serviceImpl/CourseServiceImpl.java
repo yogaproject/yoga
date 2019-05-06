@@ -1,10 +1,10 @@
 package com.woniu.yoga.user.service.serviceImpl;
 
+import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.user.dao.CourseMapper;
 import com.woniu.yoga.user.service.CourseService;
 import com.woniu.yoga.user.util.ResultUtil;
 import com.woniu.yoga.user.vo.CourseVO;
-import com.woniu.yoga.user.vo.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

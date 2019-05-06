@@ -1,7 +1,7 @@
 package com.woniu.yoga.user.service;
 
+import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.communicate.pojo.Comment;
-import com.woniu.yoga.user.pojo.Order;
 import com.woniu.yoga.user.pojo.Student;
 import com.woniu.yoga.user.vo.*;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,7 +26,7 @@ public interface StudentService {
 
 
 
-    Result saveOrder(Integer userId,OrderVO orderVO) throws RuntimeException;
+    Result saveOrder(Integer userId, OrderVO orderVO) throws RuntimeException;
 
 
     Result updateOrderWithCoupon(Integer userId,String orderId, @RequestParam(required = false) Integer couponId) throws RuntimeException;
