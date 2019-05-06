@@ -3,7 +3,36 @@
 <mapper namespace="com.woniu.yoga.venue.dao.ProductMapper">
 
   <select id="venueAllProductMapper" resultMap="BaseResultMap">
-    select * from product where venue_id = #{venueId}
+    select
+    p.product_id,
+    p.venue_id,
+    b.dict_item_name product_type,
+    p.product_price ,
+    p.product_detail,
+    p.total_time,
+    p.product_level,
+    p.start_time,
+    p.end_time,
+    p.consume_time
+    from product p left join  base_dict b
+    on p.product_type = b.dict_id
+     where p.venue_id = #{venueId}
+  </select>
+  <select id="findOneProduct" resultMap="BaseResultMap">
+     select
+    p.product_id,
+    p.venue_id,
+    b.dict_item_name product_type,
+    p.product_price ,
+    p.product_detail,
+    p.total_time,
+    p.product_level,
+    p.start_time,
+    p.end_time,
+    p.consume_time
+    from product p left join  base_dict b
+    on p.product_type = b.dict_id
+     where p.product_id = #{productId}
   </select>
 
     <insert id="addProduct" >
@@ -20,7 +49,7 @@
   <resultMap id="BaseResultMap" type="com.woniu.yoga.venue.pojo.Product">
     <id column="product_id" jdbcType="INTEGER" property="productId" />
     <result column="venue_id" jdbcType="INTEGER" property="venueId" />
-    <result column="product_type" jdbcType="INTEGER" property="productType" />
+    <result column="product_type" jdbcType="VARCHAR" property="productType" />
     <result column="product_price" jdbcType="DECIMAL" property="productPrice" />
     <result column="product_detail" jdbcType="VARCHAR" property="productDetail" />
     <result column="total_time" jdbcType="INTEGER" property="totalTime" />

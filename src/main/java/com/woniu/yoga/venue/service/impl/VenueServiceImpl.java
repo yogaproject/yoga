@@ -8,11 +8,11 @@ import com.woniu.yoga.venue.pojo.Recruitment;
 import com.woniu.yoga.venue.pojo.Venue;
 import com.woniu.yoga.venue.service.VenueService;
 import com.woniu.yoga.venue.vo.CoachInformationVO;
+import com.woniu.yoga.venue.vo.VenueInformationVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 @Service
 public class VenueServiceImpl implements VenueService{
@@ -20,9 +20,8 @@ public class VenueServiceImpl implements VenueService{
     private VenueMapper venueMapper;
 
     @Override
-    public List<Coach> findCoachByVagueConditions(Coach coach, BigDecimal up_expected_salary, BigDecimal down_expected_salary) {
-        List<Coach> listcoach = new ArrayList<>();
-        venueMapper.queryCoachByVagueConditions(coach,up_expected_salary,down_expected_salary);
+    public List<Coach> findCoachByVagueConditions(Coach coach, BigDecimal upExpectedSalary, BigDecimal downExpectedSalary) {
+        List<Coach> listcoach = venueMapper.queryCoachByVagueConditions(coach,upExpectedSalary,downExpectedSalary);
         return listcoach;
     }
 
@@ -36,7 +35,7 @@ public class VenueServiceImpl implements VenueService{
         return venueMapper.waitForSign(venueId,coachId);
     }
 
-    @Override
+/*    @Override
     public int coachSignService(Integer cv_id) {
         return venueMapper.coachSignMapper(cv_id);
     }
@@ -44,7 +43,7 @@ public class VenueServiceImpl implements VenueService{
     @Override
     public int coachRefuseService(int cv_id) {
         return venueMapper.coachRefuseMapper(cv_id);
-    }
+    }*/
 
     @Override
     public int venueAddRecruitService(Recruitment recruitment) {
@@ -81,6 +80,31 @@ public class VenueServiceImpl implements VenueService{
     @Override
     public int coachAddCourseService(Course course) {
         return venueMapper.coachAddCourseMapper(course);
+    }
+
+    @Override
+    public List<Coach> coachStyle() {
+        return venueMapper.coachStyle();
+    }
+
+    @Override
+    public List<Coach> coachType() {
+        return venueMapper.coachType();
+    }
+
+    @Override
+    public int getVenueIdByUserId(Integer userId) {
+        return venueMapper.getVenueIdByUserId(userId);
+    }
+
+    @Override
+    public int selectUserIdByVenueId(Integer venueId) {
+        return venueMapper.selectUserIdByVenueId(venueId);
+    }
+
+    @Override
+    public VenueInformationVO selectVenueVOByVenueId(Integer venueId) {
+        return venueMapper.selectVenueVOByVenueId(venueId);
     }
 
 

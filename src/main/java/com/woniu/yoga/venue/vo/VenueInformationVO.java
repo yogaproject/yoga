@@ -1,9 +1,9 @@
-package com.woniu.yoga.venue.pojo;
+package com.woniu.yoga.venue.vo;
 
 import lombok.Data;
 
 @Data
-public class Venue {
+public class VenueInformationVO {
     private Integer venueId;
 
     private Integer userId;
@@ -19,5 +19,16 @@ public class Venue {
     private String venueDetail;
 
     private Integer venueFlag;
+
+    private String userPhone;
+
+    private String userEmail;
+
+    private String userWechat;
+
+    private String userQq;
+
+    private String realName;
+
 
 }

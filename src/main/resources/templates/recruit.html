@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>findCoach</title>
+    <title>recruit</title>
 
     <!-- Custom fonts for this template-->
     <link href="../static/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -19,7 +18,8 @@
     <!-- Custom styles for this template-->
     <link href="../static/css/sb-admin.css" rel="stylesheet">
 </head>
-<body id="page-top">
+<body>
+
 //暂时没有userId
 <!--<div id="userId" th:text="${session.user.userId}"></div>-->
 
@@ -128,46 +128,24 @@
 
         <div class="container-fluid">
 
-            教练类型：<select id="selection1"></select>
-            教练流派：<select id="selection2"></select>
-            期望薪资：<input id="downExpectedSalary" type="number">元--至<input id="upExpectedSalary" type="number">元
-            搜索：<button type="submit" onclick="selectCoachByVagueConditions()">搜索</button>
-            <input type="hidden" id="venueId">
-            <input type="hidden" id="coachId">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            单个教练搜索：<button type="button" class="btn btn-primary" data-toggle="modal"
-                         data-target="#selectCoachByCoachId" onclick="selectCoachByCoachId(coachId)">查看教练详情</button>
+
 
 
             <!-- DataTables Example -->
             <div class="card mb-3">
                 <div class="card-header">
                     <i class="fas fa-table"></i>
-                  教练详情表格</div>
+                    场馆招聘信息</div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                            <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>教练类型</th>
-                                <th>教练流派</th>
-                                <th>期望薪资</th>
-                                <th>签约状态</th>
-                                <th>申请签约</th>
-                            </tr>
-                            </thead>
-                            <tfoot>
-                            <tr>
-                                <th>#</th>
-                                <th>教练类型</th>
-                                <th>教练流派</th>
-                                <th>期望薪资</th>
-                                <th>签约状态</th>
-                                <th>申请签约</th>
-                            </tr>
-                            </tfoot>
-                            <tbody id="coaches">
+                            教练类型：<select id="selection3"></select>
+                            教练流派：<select id="selection4"></select><br><br>
+                            最低薪资：<input id="downExpectedSalary" type="number">
+                            最高薪资：<input id="upExpectedSalary" type="number"><br><br>
+                                        <button id="applyRecruit" onclick="venueAddRecruit()">发布</button>
+
+                            <tbody id="recruit">
 
                             </tbody>
                         </table>
@@ -252,39 +230,8 @@
 <script src="../static/js/demo/datatables-demo.js"></script>
 <script src="../static/js/demo/chart-area-demo.js"></script>
 
-<script src="../static/js/venue/findCoach.js"></script>
+<script src="../static/js/venue/recruit.js"></script>
 
-//单个教练详情模态框
-<div class="modal fade" id="selectCoachByCoachId" tabindex="-1" role="dialog"
-     aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"
-                        aria-hidden="true">×</button>
-                <h4 class="modal-title" id="myModalLabel"></h4>
-            </div>
-            <div class="modal-body font-weight-bold" id="information"></div>
-            <table class="table table-hover">
-                <thead>
-                </tr>
-                </thead>
-                <tbody id="Message12">
-                <div id="iii"><img alt="" src=""></div>
-                </tbody>
-            </table>
-            <div class="modal-footer">
-                <div class="modal-body font-weight-bold" id="Message"></div>
-                <input type="hidden" id="accountInfo">
-                <input type="hidden" id="ridInfo">
-                <button type="button" class="btn btn-default" data-dismiss="modal">关闭
-                </button>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
 
 </body>
 </html>

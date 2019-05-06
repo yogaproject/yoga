@@ -16,7 +16,7 @@ public class ProductServiceImpl implements ProductService{
 
 
     @Override
-    public List<Product> venueAllProductService(Integer venueId) {
+    public List<Product> venueAllProductService(int venueId) {
         return productMapper.venueAllProductMapper(venueId);
     }
 
@@ -26,13 +26,13 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public int venueDeleteProductService(Integer productId) {
+    public int venueDeleteProductService(int productId) {
         return productMapper.venueDeleteProductMapper(productId);
     }
 
     @Override
-    public Product venueFindProduct(Integer productId) {
-        return productMapper.selectByPrimaryKey(productId);
+    public Product venueFindProduct(int productId) {
+        return productMapper.findOneProduct(productId);
     }
 
     @Override

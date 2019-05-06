@@ -2,23 +2,23 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.woniu.yoga.venue.dao.VenueMapper">
 
-  <select id="queryCoachByVagueConditions" resultMap="BaseResultMap">
+  <select id="queryCoachByVagueConditions" resultMap="BaseResultMap2">
     select
     c.coach_id,
     c.user_id,
     c.start_time,
     c.end_time,
-    t.dict_type_name coach_type,
-    s.dict_type_name coach_style,
-    c.coach_statu,
+    t.dict_item_name coach_type,
+    s.dict_item_name coach_style,
+    c.coach_status,
     c.full_class,
     c.expected_salary,
-    a.dict_type_name authentication,
+    a.dict_item_name authentication,
     c.deal_account,
     c.not_completed,
     c.good_comment,
     c.bad_comment,
-    c.comment_comment
+    c.common_comment
     from
     coach c left join
     base_dict t on
@@ -26,30 +26,32 @@
     left join base_dict s on
     c.coach_style = s.dict_id
     left join base_dict a on
-    c.coach_authentication = a.dict_id
-    /* where c.coach_type = #{coachType}*/
+    c.authentication = a.dict_id
     <where>
       <if test="coach.coachType != null and ''!=coach.coachType" >
-        and coach.coach_type like concat('%',coach.coach_type,'%')
+        and c.coach_type like concat('%',#{coach.coachType},'%')
       </if>
-      <if test="up_expectedSalary !=null" >
-        <if test="down_expectedSalary !=null">
-          and coach.expected_salary between down_expected_salary and up_expected_salary
+      <if test="coach.coachStyle != null and ''!=coach.coachStyle" >
+        and c.coach_style like concat('%',#{coach.coachStyle},'%')
+      </if>
+      <if test="upExpectedSalary !=null" >
+        <if test="downExpectedSalary !=null">
+          and c.expected_salary between #{downExpectedSalary} and #{upExpectedSalary}
         </if>
-        <if test="down_expected_salary == null">
-          <![CDATA[and coach.expected_salary < up_expected_salary]]>
+        <if test="downExpectedSalary == null">
+          <![CDATA[and c.expected_salary < #{upExpectedSalary}]]>
         </if>
       </if>
-      <if test="up_expected_salary == null">
-        <if test="down_expected_salary != null">
-          <![CDATA[and coach.expected < up_expected_salary]]>
+      <if test="upExpectedSalary == null">
+        <if test="downExpectedSalary != null">
+          <![CDATA[and c.expected_salary < #{upExpectedSalary}]]>
         </if>
       </if>
     </where>
   </select>
 
   <insert id="waitForSign" >
-  insert into venue_coach values (default ,#{0},#{1},0)
+  insert into venue_coach values (default ,#{venueId},#{coachId},0)
 </insert>
 
   <update id="coachSignMapper">
@@ -61,29 +63,46 @@
   </update>
 
   <insert id="venueAddRecruit">
-    insert into recruitment values (default ,#{recruit.venue_id},#{recruit.coach_type},#{recruit.coach_style},#{recruit.salary_up},#{recruit.salary_down},0)
+    insert into recruitment values (default ,#{recruit.venue_id},(SELECT dict_id FROM base_dict WHERE dict_item_name = #{recruit.coach_type}),(SELECT dict_id FROM base_dict WHERE dict_item_name = "#{recruit.coach_style}"),#{recruit.salary_up},#{recruit.salary_down},0)
   </insert>
 
   <select id="venueQueryCoach" resultMap="coachVOResultMap">
     select
-      c.coach_type,
-      c.coach_style,
+      t.dict_item_name coach_type,
+      s.dict_item_name coach_style,
       u.real_name,
       u.user_phone,
-      u.user_qq
-     from oach c left  join `user` u on
+      u.user_qq,
+      k.real_name venueName,
+      c.deal_account,
+      c.not_completed,
+      c.coach_detail,
+      c.good_comment,
+      c.bad_comment,
+      c.common_comment
+     from coach c left  join `user` u on
      c.user_id = u.user_id
+     left join base_dict t on c.coach_type = t.dict_id
+     left join base_dict s on c.coach_style = s.dict_id
+     left join venue v on c.venue_id = v.venue_id
+     left join `user` k on v.user_id = k.user_id
     <where>
       <if test="coachInformationVO.realName != null and ''!=coachInformationVO.realName">
-          and real_name like  concat('%',coachInformationVO.realName,'%')
+          and real_name like  concat('%',#{coachInformationVO.realName},'%')
       </if>
       <if test="coachInformationVO.coachType != null and ''!=coachInformationVO.coachType">
-          and coach_type like concat('%',coachInformationVO.coachType,'%')
+          and coach_type like concat('%',#{coachInformationVO.coachType},'%')
       </if>
-      <if test="coachInformationVO.coachStyle != null ''!=coachInformationVO.coachStyle">
-          and coach_style like concat('%',coachInformationVO.coachStyle,'%')
+      <if test="coachInformationVO.coachStyle != null and ''!=coachInformationVO.coachStyle">
+          and coach_style like concat('%',#{coachInformationVO.coachStyle},'%')
       </if>
-      and where c.venue_id = #{coachInformationVO.venueId}
+      <if test="coachInformationVO.coachId != 0 ">
+          and  c.coach_id = #{coachInformationVO.coachId}
+      </if>
+      <if test="coachInformationVO.venueName != null and ''!= coachInformationVO.venueName">
+        and  c.venue_id = #{coachInformationVO.venueId}
+      </if>
+
     </where>
   </select>
 
@@ -91,6 +110,24 @@
     update venue_coach set cv_status = 2 where coach_id = #{0}
   </update>
 
+  <resultMap id="BaseResultMap2" type="com.woniu.yoga.user.pojo.Coach">
+    <id column="coach_id" jdbcType="INTEGER" property="coachId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="coach_type" jdbcType="VARCHAR" property="coachType" />
+    <result column="coach_style" jdbcType="VARCHAR" property="coachStyle" />
+    <result column="coach_status" jdbcType="INTEGER" property="coachStatus" />
+    <result column="full_class" jdbcType="INTEGER" property="fullClass" />
+    <result column="expected_salary" jdbcType="DECIMAL" property="expectedSalary" />
+    <result column="authentication" jdbcType="VARCHAR" property="authentication" />
+    <result column="deal_account" jdbcType="INTEGER" property="dealAccount" />
+    <result column="not_completed" jdbcType="INTEGER" property="notCompleted" />
+    <result column="good_comment" jdbcType="INTEGER" property="goodComment" />
+    <result column="bad_comment" jdbcType="INTEGER" property="badComment" />
+    <result column="common_comment" jdbcType="INTEGER" property="commonComment" />
+    <result column="coach_flag" jdbcType="INTEGER" property="coachFlag" />
+  </resultMap>
 
   <resultMap id="coachVOResultMap" type="com.woniu.yoga.venue.vo.CoachInformationVO">
     <id column="coach_id" jdbcType="INTEGER" property="coachId"></id>
@@ -99,27 +136,52 @@
     <result column="coach_style" jdbcType="VARCHAR" property="coachStyle" />
     <result column="user_phone" jdbcType="VARCHAR" property="userPhone" />
     <result column="user_qq" jdbcType="VARCHAR" property="userQq" />
-    <result column="venue_id" jdbcType="INTEGER" property="venueId" />
+    <result column="venueName" jdbcType="VARCHAR" property="venueName" />
+    <result column="deal_account" jdbcType="INTEGER" property="dealAccount" />
+    <result column="not_completed" jdbcType="INTEGER" property="notCompleted" />
+    <result column="coach_detail" jdbcType="VARCHAR" property="coachDetail" />
+    <result column="good_comment" jdbcType="INTEGER" property="goodComment" />
+    <result column="bad_comment" jdbcType="INTEGER" property="badComment" />
+    <result column="common_comment" jdbcType="INTEGER" property="commonComment" />
   </resultMap>
 
   <update id="venuePerfectInformationMapper">
-    update venue
-    <set>
-      <if test="venue.img1 != null and ''!= venue.img1">
-        img1 = #{venue.img1}
-      </if>
-      <if test="venue.img2 != null and ''!= venue.img2">
-        img2 = #{venue.img2}
-      </if>
-      <if test="venue.img3 != null and ''!= venue.img3">
-        img3 = #{venue.img3}
-      </if>
-      <if test="venue.venueDetail != null and ''!= venue.venueDetail">
-        venue_detail = #{venue.venueDetail}
-      </if>
-    </set>
+    update venue set img1=#{venue.img1},img2=#{venue.img2},img3=#{venue.img3},venue_detail=#{venue.venueDetail}
     where venue_id = #{venue.venueId}
   </update>
+  <!--根据场馆id 查询场馆vo类信息-->
+  <select id="selectVenueVOByVenueId" resultMap="venueVO">
+    select
+    v.venue_id,
+    v.user_id,
+    v.clicks,
+    v.img1,
+    v.img2,
+    v.img3,
+    v.venue_detail,
+    u.user_phone,
+    u.user_email,
+    u.user_wechat,
+    u.user_qq,
+    u.real_name
+    from venue v left join `user` u
+    on v.user_id = u.user_id
+    where v.venue_id = #{venueId}
+  </select>
+  <resultMap id="venueVO" type="com.woniu.yoga.venue.vo.VenueInformationVO">
+    <id column="venue_id" jdbcType="INTEGER" property="venueId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="clicks" jdbcType="BIGINT" property="clicks" />
+    <result column="img1" jdbcType="VARCHAR" property="img1" />
+    <result column="img2" jdbcType="VARCHAR" property="img2" />
+    <result column="img3" jdbcType="VARCHAR" property="img3" />
+    <result column="venue_detail" jdbcType="VARCHAR" property="venueDetail" />
+    <result column="user_phone" jdbcType="VARCHAR" property="userPhone" />
+    <result column="user_email" jdbcType="VARCHAR" property="userEmail" />
+    <result column="user_wechat" jdbcType="VARCHAR" property="userWechat" />
+    <result column="user_qq" jdbcType="VARCHAR" property="userQq" />
+    <result column="real_name" jdbcType="VARCHAR" property="realName" />
+  </resultMap>
 
 
 

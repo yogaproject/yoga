@@ -10,8 +10,6 @@ import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.Column;
-import java.text.CollationElementIterator;
 import java.util.List;
 
 @Repository
@@ -90,4 +88,6 @@ public interface CoachMapper {
      **/
     @Select("select coach_id from coach,user where user.user_id = coach.user_id and coach.user_id = #{userId}")
     int findCoachIdByUserId(int userId);
+
+
 }

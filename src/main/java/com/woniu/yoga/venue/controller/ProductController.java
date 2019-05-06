@@ -50,7 +50,9 @@ public class ProductController {
     @RequestMapping("/venueSelectProduct")
     @ResponseBody
     public Product venueSelectProduct(Integer productId){
+        System.out.println(productId);
         Product product = productService.venueFindProduct(productId);
+        System.out.println(product);
         return product;
     }
     //4.改

@@ -9,7 +9,7 @@ import com.woniu.yoga.user.pojo.Order;
 import com.woniu.yoga.user.service.CoachService;
 import com.woniu.yoga.user.util.OrderUtil;
 import com.woniu.yoga.user.util.ResultUtil;
-import com.woniu.yoga.user.util.StudentVOUtil;
+import com.woniu.yoga.user.vo.CoachDetailInfoVO;
 import com.woniu.yoga.user.vo.Result;
 import com.woniu.yoga.user.vo.StudentVO;
 import com.woniu.yoga.venue.pojo.Recruitment;
@@ -136,6 +136,7 @@ public class CoachServiceImpl implements CoachService {
         }
         return ResultUtil.connectDatabaseFail();
     }
+
 
 
     @Override

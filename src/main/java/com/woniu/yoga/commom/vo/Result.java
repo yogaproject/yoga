@@ -21,15 +21,15 @@ public class Result {
     }
 
     public static Result success(String message,Object data){
-        return new Result(200, message, data);
+        return new Result(1, message, data);
     }
 
     public static Result success(String message){
-        return new Result(200, message);
+        return new Result(1, message);
     }
 
     public static Result error(String message){
-        return new Result(500, message);
+        return new Result(0, message);
     }
 
     public Integer getCode() {

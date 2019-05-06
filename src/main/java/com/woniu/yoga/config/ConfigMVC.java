@@ -31,6 +31,12 @@ public class ConfigMVC implements WebMvcConfigurer {
         registry.addViewController("/index.html").setViewName("index");
         registry.addViewController("/charts.html").setViewName("charts");
         registry.addViewController("/tables.html").setViewName("tables");
+        registry.addViewController("/findCoach.html").setViewName("findCoach");
+        registry.addViewController("/recruit.html").setViewName("recruit");
+        registry.addViewController("/signCoach.html").setViewName("signCoach");
+        registry.addViewController("/myProducts.html").setViewName("myProducts");
+        registry.addViewController("/perfectInformation.html").setViewName("perfectInformation");
+        registry.addViewController("/BaiDuMap.html").setViewName("BaiDuMap");
         // registry.addViewController("/house_list.html").setViewName("houseList");
         // registry.addViewController("/loupanchart.html").setViewName("loupanchart");
     }
@@ -40,7 +46,7 @@ public class ConfigMVC implements WebMvcConfigurer {
         InterceptorRegistration registration = registry.addInterceptor(resourceInterceptor);
         registration.addPathPatterns("/**");
         registration.order(1);
-    }*/
+    }
 
     /**
      * @Description 解决因springboot与thymeleaf在合作过程中的bug，该bug会导致static中的资源加载不完全
@@ -54,6 +60,7 @@ public class ConfigMVC implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/**").addResourceLocations(
                 ResourceUtils.CLASSPATH_URL_PREFIX + "/static/");
+        registry.addResourceHandler("/img/**").addResourceLocations("file:E:/img/");
         WebMvcConfigurer.super.addResourceHandlers(registry);
     }
 
