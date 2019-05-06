@@ -48,7 +48,7 @@ public class FollowServiceImpl implements FollowService {
     @Override
     public Result showFollowHomepage(HttpSession session) {
         User user = (User) session.getAttribute(SysConstant.CURRENT_USER);
-        List<HomepageVo> list = followMapper.queryFollowHomepages(1);
+        List<HomepageVo> list = followMapper.queryFollowHomepages(user.getUserId());
         for (int i = 0; i < list.size(); i++){
             HomepageVo vo = list.get(i);
             //用户设置权限为好友，如果不是相互关注，不能查看
