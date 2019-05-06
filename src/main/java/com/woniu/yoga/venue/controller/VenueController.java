@@ -1,7 +1,7 @@
 package com.woniu.yoga.venue.controller;
 
 import com.woniu.yoga.commom.vo.Result;
-import com.woniu.yoga.user.pojo.Coach;
+import com.woniu.yoga.venue.pojo.Coach;
 import com.woniu.yoga.user.pojo.Course;
 import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.venue.pojo.Recruitment;
@@ -81,6 +81,8 @@ public class VenueController {
     @ResponseBody
     public List<Coach> selectCoachByVagueConditions(Coach coach, BigDecimal upExpectedSalary,BigDecimal downExpectedSalary){
 
+        System.out.println(coach.getCoachStyle());
+        System.out.println(coach.getCoachType());
         List<Coach> listCoach = venueService.findCoachByVagueConditions(coach,upExpectedSalary,downExpectedSalary);
         System.out.println(listCoach);
         return listCoach;

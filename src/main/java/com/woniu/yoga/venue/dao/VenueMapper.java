@@ -1,6 +1,6 @@
 package com.woniu.yoga.venue.dao;
 
-import com.woniu.yoga.user.pojo.Coach;
+import com.woniu.yoga.venue.pojo.Coach;
 import com.woniu.yoga.user.pojo.Course;
 import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.venue.pojo.Recruitment;

@@ -29,10 +29,10 @@
     c.authentication = a.dict_id
     <where>
       <if test="coach.coachType != null and ''!=coach.coachType" >
-        and c.coach_type like concat('%',#{coach.coachType},'%')
+        and c.coach_type = (select dict_id from base_dict where dict_item_name = #{coach.coachType})
       </if>
       <if test="coach.coachStyle != null and ''!=coach.coachStyle" >
-        and c.coach_style like concat('%',#{coach.coachStyle},'%')
+        and c.coach_style =(select dict_id from base_dict where dict_item_name = #{coach.coachStyle})
       </if>
       <if test="upExpectedSalary !=null" >
         <if test="downExpectedSalary !=null">
@@ -110,7 +110,7 @@
     update venue_coach set cv_status = 2 where coach_id = #{0}
   </update>
 
-  <resultMap id="BaseResultMap2" type="com.woniu.yoga.user.pojo.Coach">
+  <resultMap id="BaseResultMap2" type="com.woniu.yoga.venue.pojo.Coach">
     <id column="coach_id" jdbcType="INTEGER" property="coachId" />
     <result column="user_id" jdbcType="INTEGER" property="userId" />
     <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />

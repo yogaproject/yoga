@@ -66,14 +66,14 @@ function selectCoachByVagueConditions(){
         url : "/venue/vagueConditions",
         type : "post",
         //dataType :"json",
-        contentType : "application/json;charset=utf-8",
-        data:JSON.stringify({
+        //contentType : "application/json;charset=utf-8",
+        data:{
             coachType:$("#selection1").val(),
             coachStyle:$("#selection2").val(),
             upExpectedSalary:$("#upExpectedSalary").val(),
             downExpectedSalary:$("#downExpectedSalary").val()
-        }),
-        dataType:"json",
+        },
+       // dataType:"json",
         success: function(result) {
                 var content = "";
                 for(var i =0; i <result.length;i++){
