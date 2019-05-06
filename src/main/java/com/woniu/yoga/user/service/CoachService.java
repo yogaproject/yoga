@@ -1,16 +1,17 @@
 package com.woniu.yoga.user.service;
 
+import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.user.pojo.Coach;
 import com.woniu.yoga.user.pojo.Course;
 import com.woniu.yoga.venue.pojo.Recruitment;
 import com.woniu.yoga.venue.pojo.Venue;
-import com.woniu.yoga.user.vo.Result;
-import com.woniu.yoga.user.vo.StudentDetailVO;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional
 public interface CoachService {
     //根据教练id，查询教练详细信息
     Coach findCoachByCoachId(Integer coachId) throws RuntimeException;

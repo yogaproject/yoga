@@ -1,6 +1,7 @@
 package com.woniu.yoga.user.controller;
 
 
+import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.communicate.pojo.Comment;
 import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.service.serviceImpl.StudentServiceImpl;

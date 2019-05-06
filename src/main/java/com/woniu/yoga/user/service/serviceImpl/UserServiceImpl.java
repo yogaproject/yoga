@@ -1,21 +1,19 @@
 package com.woniu.yoga.user.service.serviceImpl;
 
+import com.woniu.yoga.commom.utils.ExceptionUtil;
+import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.manage.dao.CouponMapper;
 import com.woniu.yoga.manage.pojo.Coupon;
 import com.woniu.yoga.user.dao.CoachMapper;
 import com.woniu.yoga.user.dao.OrderMapper;
 import com.woniu.yoga.user.dao.UserMapper;
 import com.woniu.yoga.user.dto.InteractionDTO;
-import com.woniu.yoga.user.dto.OrderDTO;
 import com.woniu.yoga.user.dto.SearchConditionDTO;
-import com.woniu.yoga.user.dto.UserDTO;
-import com.woniu.yoga.user.pojo.Order;
 import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.repository.UserRepository;
 import com.woniu.yoga.user.service.UserService;
 import com.woniu.yoga.user.util.*;
 import com.woniu.yoga.user.vo.*;
-import org.apache.ibatis.jdbc.SQL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -40,8 +38,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
     @Autowired
-    private CouponMapper couponMapper;
-    @Autowired
     private UserRepository userRepository;
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -63,7 +59,7 @@ public class UserServiceImpl implements UserService {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
         return ResultUtil.actionSuccess("查询成功", data);
     }
@@ -76,7 +72,7 @@ public class UserServiceImpl implements UserService {
             return ResultUtil.actionSuccess("查询成功", coupons);
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -95,7 +91,7 @@ public class UserServiceImpl implements UserService {
             data = ConvertVOToDTOUtil.convertCoachDTOtoVO(userMapper.listAroundCoach(searchConditionDTO));
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
         return ResultUtil.actionSuccess("查询成功", data);
     }
@@ -114,7 +110,7 @@ public class UserServiceImpl implements UserService {
             data = userMapper.listAroundVenue(searchConditionDTO);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
         return ResultUtil.actionSuccess("查询成功", data);
     }
@@ -126,7 +122,7 @@ public class UserServiceImpl implements UserService {
             coupons = userMapper.findCouponByUserId(userid);
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
         return coupons;
     }
@@ -154,7 +150,7 @@ public class UserServiceImpl implements UserService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
         //如果是官方认证，设置venueName：平台认证
         if (coachDetailInfoVO.getAuthentication() == 2) {
@@ -165,7 +161,7 @@ public class UserServiceImpl implements UserService {
         coachDetailInfoVO.setFocus(interactionDTO.getFocus());
         coachDetailInfoVO.setComments(interactionDTO.getComments());
         coachDetailInfoVO.setInfo(interactionDTO.getInfo());
-        System.out.println("coach detail " + coachDetailInfoVO);
+        //System.out.println("coach detail " + coachDetailInfoVO);
         return ResultUtil.actionSuccess("查询成功", coachDetailInfoVO);
     }
 
@@ -253,7 +249,7 @@ public class UserServiceImpl implements UserService {
             return ResultUtil.actionSuccess("查询成功", venueDetailInfoVO);
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -265,7 +261,7 @@ public class UserServiceImpl implements UserService {
             return ResultUtil.actionSuccess("查询成功", infos);
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -277,7 +273,7 @@ public class UserServiceImpl implements UserService {
             return ResultUtil.actionSuccess("查询成功", fans);
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -289,7 +285,7 @@ public class UserServiceImpl implements UserService {
             return ResultUtil.actionSuccess("查询成功", focus);
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -301,7 +297,7 @@ public class UserServiceImpl implements UserService {
             return ResultUtil.actionSuccess("查询成功", comments);
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -320,7 +316,7 @@ public class UserServiceImpl implements UserService {
             return interactionDTO;
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 

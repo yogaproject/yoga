@@ -3,13 +3,8 @@ package com.woniu.yoga.user.dao;
 
 import com.woniu.yoga.user.dto.OrderDTO;
 import com.woniu.yoga.user.pojo.Order;
-import com.woniu.yoga.user.util.UserMapperProviderUtil;
-import com.woniu.yoga.user.vo.Result;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
-
-import javax.naming.Name;
-import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
 

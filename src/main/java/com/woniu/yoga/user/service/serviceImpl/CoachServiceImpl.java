@@ -1,6 +1,8 @@
 package com.woniu.yoga.user.service.serviceImpl;
 
 import com.woniu.yoga.commom.utils.Attributes;
+import com.woniu.yoga.commom.utils.ExceptionUtil;
+import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.user.dao.CoachMapper;
 import com.woniu.yoga.user.dao.CourseMapper;
 import com.woniu.yoga.user.dao.OrderMapper;
@@ -11,7 +13,6 @@ import com.woniu.yoga.user.repository.CoachRepository;
 import com.woniu.yoga.user.service.CoachService;
 import com.woniu.yoga.user.util.OrderUtil;
 import com.woniu.yoga.user.util.ResultUtil;
-import com.woniu.yoga.user.vo.Result;
 import com.woniu.yoga.user.vo.StudentVO;
 import com.woniu.yoga.venue.pojo.Recruitment;
 import com.woniu.yoga.venue.pojo.Venue;
@@ -39,6 +40,7 @@ public class CoachServiceImpl implements CoachService {
         coachRepository.save(coach);
     }
 
+
     @Override
     public Coach findCoachByUserId(Integer userId) {
         return coachRepository.findCoachByUserId(userId);
@@ -50,7 +52,7 @@ public class CoachServiceImpl implements CoachService {
             return coach;
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -82,7 +84,7 @@ public class CoachServiceImpl implements CoachService {
             return ResultUtil.actionSuccess("已接单，请联系学员安排课程", order);
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -102,7 +104,7 @@ public class CoachServiceImpl implements CoachService {
             return ResultUtil.actionSuccess("查询成功", studentVOS);
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -120,7 +122,7 @@ public class CoachServiceImpl implements CoachService {
             return ResultUtil.actionSuccess("查询成功", data);
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -139,7 +141,7 @@ public class CoachServiceImpl implements CoachService {
             return ResultUtil.actionSuccess("更新成功", order);
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -156,7 +158,7 @@ public class CoachServiceImpl implements CoachService {
             return ResultUtil.actionSuccess("新建课程成功", course);
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -172,7 +174,7 @@ public class CoachServiceImpl implements CoachService {
             return ResultUtil.actionSuccess("已发出申请，等待场馆处理中...", null);
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -204,7 +206,7 @@ public class CoachServiceImpl implements CoachService {
             return ResultUtil.actionSuccess("处理成功", null);
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -217,7 +219,7 @@ public class CoachServiceImpl implements CoachService {
             return ResultUtil.actionSuccess("解约成功", null);
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -228,7 +230,7 @@ public class CoachServiceImpl implements CoachService {
             return ResultUtil.actionSuccess("删除成功", null);
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -241,7 +243,7 @@ public class CoachServiceImpl implements CoachService {
             return ResultUtil.actionSuccess("修改成功", course);
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 
@@ -253,7 +255,7 @@ public class CoachServiceImpl implements CoachService {
             return venueList;
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException();
+            throw ExceptionUtil.getDatabaseException();
         }
     }
 }

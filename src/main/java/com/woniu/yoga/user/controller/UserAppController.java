@@ -1,5 +1,6 @@
 package com.woniu.yoga.user.controller;
 
+import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.user.constant.SysConstant;
 import com.woniu.yoga.user.pojo.Coach;
 import com.woniu.yoga.user.pojo.Role;
@@ -11,7 +12,6 @@ import com.woniu.yoga.user.service.StudentService;
 import com.woniu.yoga.user.service.UserService;
 import com.woniu.yoga.user.util.*;
 import com.woniu.yoga.user.vo.PhoneToken;
-import com.woniu.yoga.user.vo.Result;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -729,24 +729,20 @@ public Result updateStudentInfo(@RequestBody User user,HttpSession session){
      */
     @RequestMapping("/showCoachInfo")
     @ResponseBody
-    public Map<String,Object> showCoachInfo(@RequestBody User user,@RequestBody Coach coach, String info,HttpSession session){
-        Map<String,Object> result=new HashMap<>();
+    public Result showCoachInfo(@RequestBody User user,@RequestBody Coach coach,HttpSession session){
         User userSession=(User)session.getAttribute(SysConstant.CURRENT_USER);
         if (userSession == null){
-            info="展现信息失败";
-            result.put(SysConstant.CURRENT_MESSAGE,info);
-            return result;
+            return ResultUtil.errorOperation("展现信息失败");
         }
         if ("".equals(userSession.getUserPhone())){
             user=userService.queryUserByEmail(userSession.getUserEmail());
         }
         user=userService.queryUserByPhone(userSession.getUserPhone());
         coach=coachService.findCoachByUserId(user.getUserId());
-        info="展现信息成功";
-        result.put(SysConstant.CURRENT_MESSAGE,info);
-        result.put(SysConstant.CURRENT_USER,user);
-        result.put(SysConstant.CURRENT_COACH,coach);
-        return result;
+        Map<String,Object> map=new HashMap<>();
+        map.put(SysConstant.CURRENT_USER,user);
+        map.put(SysConstant.CURRENT_COACH,coach);
+        return ResultUtil.actionSuccess("展现信息成功",map);
     }
 
 
@@ -761,36 +757,33 @@ public Result updateStudentInfo(@RequestBody User user,HttpSession session){
 
     @RequestMapping("/updateCoachInfo")
     @ResponseBody
-    public Map<String,Object> updateCoachInfo(@RequestBody User user,@RequestBody Coach coach,HttpSession session,String info){
+    public Result updateCoachInfo(@RequestBody User user,@RequestBody Coach coach,HttpSession session,String info){
         User userSession= (User) session.getAttribute(SysConstant.CURRENT_USER);
-        Map<String,Object> result=new HashMap<>();
         if (!"".equals(user.getUserEmail())){
             if (!user.getUserEmail().matches(RegexpUtil.RegExp_Mail)){
                 info="邮箱格式不匹配，请重新输入";
                 result.put(SysConstant.CURRENT_MESSAGE,info);
                 return result;
+            if (!RegexpUtil.RegExp_Mail.matches(user.getUserEmail())){
+                return ResultUtil.errorOperation("邮箱格式不匹配，请重新输入");
             }
             User exit=userService.queryUserByEmail(user.getUserEmail());
             if (exit!=userService.queryUserByEmail(userSession.getUserEmail())&& exit!=null){
-                info="该邮箱已经被绑定，请重新输入";
-                result.put(SysConstant.CURRENT_MESSAGE,info);
-                return result;
+                return ResultUtil.errorOperation("该邮箱已经被绑定，请重新输入");
             }
         }
         if ("".equals(user.getRealName())){
-            info="请完善真实名字";
-            result.put(SysConstant.CURRENT_MESSAGE,info);
-            return result;
+            return ResultUtil.errorOperation("请完善真实名字");
         }
         if ("".equals(user.getIdcard()) ){
-            info="请完善身份证信息";
-            result.put(SysConstant.CURRENT_MESSAGE,info);
-            return result;
+            return ResultUtil.errorOperation("请完善身份证信息");
         }
         if (!user.getIdcard().matches(RegexpUtil.RegExp_ID)){
             info="身份证格式不匹配，请重新输入";
             result.put(SysConstant.CURRENT_MESSAGE,info);
             return result;
+        if (!RegexpUtil.RegExp_ID.matches(user.getIdcard())){
+            return ResultUtil.errorOperation("身份证格式不匹配，请重新输入");
         }
 
         User userReal=userService.queryUserByEmail(user.getUserEmail());
@@ -810,9 +803,7 @@ public Result updateStudentInfo(@RequestBody User user,HttpSession session){
         userReal.setUserLocation(user.getUserLocation());
         Coach coachReal=coachService.findCoachByUserId(userReal.getUserId());
         if (coachReal==null){
-            info="系统错误，请联系管理员";
-            result.put(SysConstant.CURRENT_MESSAGE,info);
-            return result;
+            return ResultUtil.errorOperation("系统错误，请联系管理员");
         }
         coachReal.setCoachStyle(coach.getCoachStyle());
         coachReal.setAuthentication(coach.getAuthentication());
@@ -863,6 +854,11 @@ public Result updateStudentInfo(@RequestBody User user,HttpSession session){
 //        System.out.println("上传成功");
 //        return ResultUtil.actionSuccess("上传成功",user);
 //    }
+        Map<String,Object> map=new HashMap<>();
+        map.put(SysConstant.CURRENT_COACH,coachReal);
+        map.put(SysConstant.CURRENT_USER,userReal);
+        return ResultUtil.actionSuccess("成功完善信息",map);
+    }
 
     /**
      * 方法实现说明  展现个人隐私
