@@ -137,6 +137,11 @@ public class UserServiceImpl implements UserService {
         CoachDetailInfoVO coachDetailInfoVO = null;
         try {
             coachDetailInfoVO = userMapper.getDetailInfoByUserId(coachId);
+            User venue = userMapper.selectVenueByCoachId(coachDetailInfoVO.getCoachId());
+            if (venue != null) {
+                coachDetailInfoVO.setVenueId(venue.getUserId());
+                coachDetailInfoVO.setVenueName(venue.getRealName());
+            }
             //如果是场馆认证，设置venueName：场馆名
             if (coachDetailInfoVO.getAuthentication() == 1) {
                 coachDetailInfoVO.setVenueName(coachMapper.getVenueByCoachId(coachId));
@@ -304,6 +309,33 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<Coupon> selectCouponByUserId(int userId) {
         return userMapper.selectCouponByUserId(userId);
+    }
+
+    @Override
+    public Result getStudentInfo(Integer otherId) {
+        try {
+            UserDetailVO userDetailVO = userMapper.getStudentInfo(otherId);
+            InteractionDTO interactionDTO = this.getInteractionByUserId(otherId);
+            userDetailVO.setFocus(interactionDTO.getFocus());
+            userDetailVO.setFans(interactionDTO.getFans());
+            userDetailVO.setInfo(interactionDTO.getInfo());
+            return ResultUtil.actionSuccess("查询成功", userDetailVO);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw ExceptionUtil.getDatabaseException();
+        }
+    }
+
+    @Override
+    public User selectByPrimaryKey(Integer userId) {
+        User user = userMapper.selectByPrimaryKey(userId);
+        return user;
+    }
+
+    @Override
+    public Integer updateUser(User user) {
+        int row = userMapper.updateByPrimaryKeySelective(user);
+        return row;
     }
 
     InteractionDTO getInteractionByUserId(int userId) throws RuntimeException {

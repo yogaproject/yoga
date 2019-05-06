@@ -8,24 +8,24 @@
         </layout>
     </appender>
 
-    <appender name="fileInfoLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!--匹配是ERROR，不记录-->
-        <filter class="ch.qos.logback.classic.filter.LevelFilter">
-            <level>ERROR</level>
-            <onMatch>DENY</onMatch>
-            <onMismatch>ACCEPT</onMismatch>
-        </filter>
-        <encoder>
-            <pattern>
-                %msg%n
-            </pattern>
-        </encoder>
-        <!--滚动策略-->
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!--路径-->
-            <fileNamePattern>C:\yoga\log\info.%d.log</fileNamePattern>
-        </rollingPolicy>
-    </appender>
+    <!--<appender name="fileInfoLog" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+        <!--&lt;!&ndash;匹配是ERROR，不记录&ndash;&gt;-->
+        <!--<filter class="ch.qos.logback.classic.filter.LevelFilter">-->
+            <!--<level>ERROR</level>-->
+            <!--<onMatch>DENY</onMatch>-->
+            <!--<onMismatch>ACCEPT</onMismatch>-->
+        <!--</filter>-->
+        <!--<encoder>-->
+            <!--<pattern>-->
+                <!--%msg%n-->
+            <!--</pattern>-->
+        <!--</encoder>-->
+        <!--&lt;!&ndash;滚动策略&ndash;&gt;-->
+        <!--<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+            <!--&lt;!&ndash;路径&ndash;&gt;-->
+            <!--<fileNamePattern>C:\yoga\log\info.%d.log</fileNamePattern>-->
+        <!--</rollingPolicy>-->
+    <!--</appender>-->
 
     <appender name="fileErrorLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!--过滤info-->
@@ -40,16 +40,16 @@
         <!--滚动策略,按天创建-->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!--路径-->
-            <fileNamePattern>C:\yoga\log\error.%d.log</fileNamePattern>
+            <fileNamePattern>/usr/yogalog/error.%d.log</fileNamePattern>
         </rollingPolicy>
     </appender>
     <logger name="com.woniu.yoga.home.dao" level="Debug"/>
     <logger name="com.woniu.yoga.communicate.dao" level="Debug"/>
     <logger name="com.woniu.yoga.user.dao" level="Debug"/>
-    <root level="info">
+    <root level="error">
         <appender-ref ref="consoleLog"></appender-ref>
         <!--<appender-ref ref="STDOUT"></appender-ref>-->
-        <appender-ref ref="fileInfoLog"></appender-ref>
-        <appender-ref ref="fileErrorLog"></appender-ref>
+        <!--<appender-ref ref="fileInfoLog"></appender-ref>-->
+        <!--<appender-ref ref="fileErrorLog"></appender-ref>-->
     </root>
 </configuration>

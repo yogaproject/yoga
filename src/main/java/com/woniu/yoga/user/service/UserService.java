@@ -69,4 +69,10 @@ public interface UserService {
     Result getAllMyComments(Integer userId);
 
     List<Coupon> selectCouponByUserId(int userId);
+
+    Result getStudentInfo(Integer otherId) throws  RuntimeException;
+
+    User selectByPrimaryKey(Integer userId);
+
+    Integer updateUser(User user);
 }

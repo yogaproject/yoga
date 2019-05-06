@@ -56,7 +56,7 @@ public class ConfigMVC implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/**").addResourceLocations(
                 ResourceUtils.CLASSPATH_URL_PREFIX + "/static/");
-        registry.addResourceHandler("/img/**").addResourceLocations(rootSavePath);
+        registry.addResourceHandler("/img/**").addResourceLocations("file:"+rootSavePath);
         WebMvcConfigurer.super.addResourceHandlers(registry);
     }
 

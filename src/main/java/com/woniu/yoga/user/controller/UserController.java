@@ -1,7 +1,9 @@
 package com.woniu.yoga.user.controller;
 
 
+import com.woniu.yoga.commom.aspect.ControllerAOP;
 import com.woniu.yoga.commom.vo.Result;
+import com.woniu.yoga.user.constant.SysConstant;
 import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.service.UserService;
 import com.woniu.yoga.user.vo.SearchConditionVO;
@@ -113,7 +115,7 @@ public class UserController {
             @ApiImplicitParam(name = "orderStatus", value = "订单状态：未完成订单、已完成订单、所有订单")
     })
     public Result listOrder(HttpSession session, @RequestBody String orderStatus) {
-        User user = (User) session.getAttribute("user");
+        User user = (User) session.getAttribute(SysConstant.CURRENT_USER);
         Integer userId = user.getUserId();
         //Integer userId = 4;//教练
         return userService.listOrder(userId, orderStatus);
@@ -133,7 +135,7 @@ public class UserController {
     @RequestMapping("listCouponsByUserId")
     @ResponseBody
     public Result listCouponsByUserId(HttpSession session) {
-        User user = (User) session.getAttribute("user");
+        User user = (User) session.getAttribute(SysConstant.CURRENT_USER);
         Integer userId = user.getUserId();
         //Integer userId = 5;//学员
         return userService.listCouponsByUserId(userId);
@@ -156,8 +158,12 @@ public class UserController {
             @ApiImplicitParam(name = "coachId", value = "瑜伽师的用户ID", paramType = "integer"),
     })
     public Result getDetailInfoByUserId(HttpSession session, @RequestBody(required = false) Integer coachId) {
-        User user = (User) session.getAttribute("user");
-        Integer userId = user.getUserId();
+        Integer userId = null;
+        if (coachId == null) {
+            User user = (User) session.getAttribute(SysConstant.CURRENT_USER);
+            userId = user.getUserId();
+            coachId = userId;
+        }
 //        Integer userId = 2;
         return userService.getDetailInfoByUserId(userId, coachId);
     }
@@ -175,7 +181,7 @@ public class UserController {
     @ResponseBody
     public Result getVenueDetailInfoByUserId(HttpSession session, @RequestBody(required = false) Integer venueId) {
         if (venueId == null) {
-            User user = (User) session.getAttribute("user");
+            User user = (User) session.getAttribute(SysConstant.CURRENT_USER);
             Integer userId = user.getUserId();
             venueId = userId;
         }
@@ -194,7 +200,7 @@ public class UserController {
     public Result getAllMyInfos(HttpSession session) {
         //        Integer userId = null;
         //        try {
-        User user = (User) session.getAttribute("user");
+        User user = (User) session.getAttribute(SysConstant.CURRENT_USER);
         Integer userId = user.getUserId();
         //        } catch (Exception e) {
         //            userId = 1;
@@ -208,7 +214,7 @@ public class UserController {
     public Result getAllMyComments(HttpSession session) {
 //        Integer userId = null;
 //        try {
-        User user = (User) session.getAttribute("user");
+        User user = (User) session.getAttribute(SysConstant.CURRENT_USER);
         Integer userId = user.getUserId();
 //        } catch (Exception e) {
 //            userId = 4;
@@ -222,7 +228,7 @@ public class UserController {
     public Result getAllMyFocus(HttpSession session) {
         //        Integer userId = null;
         //        try {
-        User user = (User) session.getAttribute("user");
+        User user = (User) session.getAttribute(SysConstant.CURRENT_USER);
         Integer userId = user.getUserId();
         //        } catch (Exception e) {
         //            userId = 1;
@@ -236,12 +242,25 @@ public class UserController {
     public Result getAllMyFans(HttpSession session) {
         //        Integer userId = null;
         //        try {
-        User user = (User) session.getAttribute("user");
+        User user = (User) session.getAttribute(SysConstant.CURRENT_USER);
         Integer userId = user.getUserId();
         //        } catch (Exception e) {
         //            userId = 1;
         //        }
         return userService.getAllMyFans(userId);
+    }
+
+    @ApiOperation(value = "")
+    @RequestMapping("getStudentInfo")
+    @ResponseBody
+    public Result getStudentInfo(HttpSession session, @RequestBody(required = false) Integer otherId) {
+        if (otherId == null) {
+            User user = (User) session.getAttribute(SysConstant.CURRENT_USER);
+//            System.out.println("user controller user="+user);
+            Integer userId = user.getUserId();
+            otherId = userId;
+        }
+        return userService.getStudentInfo(otherId);
     }
 
 }

@@ -6,6 +6,7 @@ import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.user.dao.CoachMapper;
 import com.woniu.yoga.user.dao.CourseMapper;
 import com.woniu.yoga.user.dao.OrderMapper;
+import com.woniu.yoga.user.dao.UserMapper;
 import com.woniu.yoga.user.pojo.Coach;
 import com.woniu.yoga.user.pojo.Course;
 import com.woniu.yoga.user.pojo.Order;
@@ -45,6 +46,21 @@ public class CoachServiceImpl implements CoachService {
     public Coach findCoachByUserId(Integer userId) {
         return coachRepository.findCoachByUserId(userId);
     }
+
+    @Override
+    public Integer updateCoach(Coach coach) {
+        int row = 0;
+        try {
+            Integer coachId = coachMapper.findCoachIdByUserId(coach.getUserId());
+            coach.setCoachId(coachId);
+            row = coachMapper.updateByPrimaryKeySelective(coach);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw ExceptionUtil.getDatabaseException();
+        }
+        return row;
+    }
+
     @Override
     public Coach findCoachByCoachId(Integer coachId) {
         try {

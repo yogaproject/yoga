@@ -62,4 +62,6 @@ public interface CoachService {
     void saveCoach(Coach coach);
 
     Coach findCoachByUserId(Integer userId);
+
+    Integer updateCoach(Coach coach);
 }

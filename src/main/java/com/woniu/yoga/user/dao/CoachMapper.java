@@ -94,7 +94,7 @@ public interface CoachMapper {
      * @Author liufeng
      * @Description //在瑜伽师——场馆插入申请浅语的记录
      **/
-    @Insert("insert into venue_coach values(default,#{coachId},#{venueId},0)")
+    @Insert("insert into venue_coach values(default,#{venueId},#{coachId},0)")
     int applyForSign(Integer coachId, Integer venueId)throws SQLException;
     /*
      * @Author liufeng

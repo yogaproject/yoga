@@ -27,6 +27,9 @@ public class CoachDetailInfoVO {
     private String wechat;
     //    简介
     private String detail;
+
+    //coachId
+    private int coachId;
     //    流派
     private String style;
     //    认证方式 0未认证（默认），1 场馆认证（签约场馆），2官方认证

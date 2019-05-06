@@ -8,10 +8,7 @@ import com.woniu.yoga.user.dto.CoachDTO;
 import com.woniu.yoga.user.dto.SearchConditionDTO;
 import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.util.UserMapperProviderUtil;
-import com.woniu.yoga.user.vo.CoachDetailInfoVO;
-import com.woniu.yoga.user.vo.UserVO;
-import com.woniu.yoga.user.vo.VenueDetailInfoVO;
-import com.woniu.yoga.user.vo.VenueVOR;
+import com.woniu.yoga.user.vo.*;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.jdbc.SQL;
 import org.springframework.stereotype.Repository;
@@ -62,6 +59,7 @@ public interface UserMapper {
             @Result(column = "good_comment", property = "goodCommentCount"),
             @Result(column = "user_privacy", property = "privacy"),
             @Result(column = "user_level", property = "level"),
+            @Result(column = "coach_id",property = "coachId"),
 //            @Result(column = "coach_id", property = "courses", one = @One(
 //                    select = "com.woniu.yoga.user.dao.CoachMapper.findCourseByCoachId"
 //            )),
@@ -131,6 +129,11 @@ public interface UserMapper {
     //查看场馆的详细信息
     VenueDetailInfoVO getVenueDetailInfoByUserId(Integer userId) throws SQLException;
     //查看“userId”是否关注“followedId”，如果是返回followId
-    @Select("select follow_id followId from follow where user_id =#{userId} and followed_id =#{followedId} and follow_status = 1")
+    @Select("select follow_id followId from follow where user_id =#{userId} and followed_id =#{friendId} and follow_status = 1")
     Integer selectOneFocus(Integer userId, Integer friendId) throws SQLException;
+
+    UserDetailVO getStudentInfo(int userId) throws  SQLException;
+    //根据瑜伽师的瑜伽师ID查询场馆的，姓名和userId
+    @Select("select user_id userId,real_name realName from user where user_id =(select user_id from venue where venue_id =(select venue_id from venue_coach where coach_id = #{coachId} and cv_status = 1))")
+    User selectVenueByCoachId(int coachId);
 }

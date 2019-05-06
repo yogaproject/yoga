@@ -28,7 +28,7 @@ import java.util.Map;
  * @Author: lxy
  * @time: 2019/4/22 22:49
  */
-@Configuration
+//@Configuration
 public class ConfigShiro {
     //配置过滤器 lxy
     @Bean
