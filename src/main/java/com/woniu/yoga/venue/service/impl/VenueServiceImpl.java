@@ -6,18 +6,28 @@ import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.venue.dao.VenueMapper;
 import com.woniu.yoga.venue.pojo.Recruitment;
 import com.woniu.yoga.venue.pojo.Venue;
+import com.woniu.yoga.venue.repository.VenueRepository;
 import com.woniu.yoga.venue.service.VenueService;
 import com.woniu.yoga.venue.vo.CoachInformationVO;
 import com.woniu.yoga.venue.vo.VenueInformationVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
 @Service
+@Repository
 public class VenueServiceImpl implements VenueService{
     @Autowired
     private VenueMapper venueMapper;
+    @Autowired
+    private VenueRepository venueRepository;
+
+    @Override
+    public void saveVenue(Venue venue) {
+        venueRepository.save(venue);
+    }
 
     @Override
     public List<Coach> findCoachByVagueConditions(Coach coach, BigDecimal upExpectedSalary, BigDecimal downExpectedSalary) {

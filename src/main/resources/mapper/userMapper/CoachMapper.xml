@@ -60,7 +60,7 @@
     select 
     <include refid="Base_Column_List" />
     from coach
-    where coach_id = #{coachId,jdbcType=INTEGER}
+    where coach_id = #{coachId,jdbcType=INTEGER} and coach_flag = 0
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from coach
@@ -255,6 +255,6 @@
   </update>
 
   <select id="selectByCourseId" resultMap="BaseResultMap">
-    select * from coach where coach_id = (select coach_id from course where course_id = #{courseId})
+    select * from coach where coach_id = (select coach_id from course where course_id = #{courseId} and coach_flag = 0)
   </select>
 </mapper>

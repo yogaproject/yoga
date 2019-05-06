@@ -2,11 +2,11 @@ package com.woniu.yoga.home.service.impl;
 
 import com.github.pagehelper.PageInfo;
 import com.woniu.yoga.commom.utils.CommentUtil;
-import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.home.dao.HomepageMapper;
 import com.woniu.yoga.home.pojo.Homepage;
 import com.woniu.yoga.home.service.HomepageService;
 import com.woniu.yoga.home.vo.HomepageVo;
+import com.woniu.yoga.home.vo.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,15 +25,17 @@ public class HomepageServiceImpl implements HomepageService {
     private HomepageMapper homepageMapper;
 
     @Override
-    public Result selectHomepages(Float latitude, Float longitude, Integer currentPage, Integer pageSize) {
-        List<HomepageVo> list = homepageMapper.queryHomepages(latitude, longitude, currentPage, pageSize);
+    public Result selectHomepages(Float latitude, Float longitude) {
+        List<HomepageVo> list = homepageMapper.queryHomepages(latitude, longitude);
+        System.out.println(list.size());
         return dealWithList(list);
     }
 
     @Override
     public Result showHomepageDetail(Integer mid) {
-
         HomepageVo vo = homepageMapper.selectHomepageDetail(mid);
+        String publishTime = CommentUtil.publishTime(vo.getCreateTime());
+        vo.setPublishTime(publishTime);
         return Result.success("成功",vo);
     }
 
@@ -48,14 +50,12 @@ public class HomepageServiceImpl implements HomepageService {
     }
 
     @Override
-    public Result showOtherHomepage(Integer roleId, Float latitude, Float longitude, Integer currentPage, Integer pageSize) {
-
-        List<HomepageVo> list = homepageMapper.queryOtherHomepages(roleId,latitude, longitude, currentPage, pageSize);
+    public Result<List<HomepageVo>> showOtherHomepage(Integer roleId, Float latitude, Float longitude) {
+        List<HomepageVo> list = homepageMapper.queryOtherHomepages(roleId, latitude, longitude);
         return dealWithList(list);
     }
 
     private Result dealWithList(List<HomepageVo> list){
-        PageInfo pageInfo = new PageInfo(list);
         for (HomepageVo vo: list) {
             String publishTime = CommentUtil.publishTime(vo.getCreateTime());
             vo.setPublishTime(publishTime);

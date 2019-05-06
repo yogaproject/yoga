@@ -1,18 +1,24 @@
 package com.woniu.yoga.user.service;
 
+import com.woniu.yoga.commom.vo.Result;
+import com.woniu.yoga.manage.pojo.Coupon;
 import com.woniu.yoga.user.pojo.User;
-import com.woniu.yoga.user.vo.Result;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Param;
+import com.woniu.yoga.user.vo.SearchConditionVO;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 /**
  * @Author liufeng
  * @ClassName StudentService
  * @Date 2019/4/18 15:30
  * @Version 1.0
- * @Description TODO
+ * @Description
  **/
+@Service
+@Transactional
 public interface UserService {
 
     /*
@@ -33,30 +39,34 @@ public interface UserService {
      **/
     Result listCouponsByUserId(Integer userId);
 
-    //登录注册，插入用户信息 lxy
-    User saveUser(User user);
+    Result listAroundCoachs(SearchConditionVO searchConditionVO) throws RuntimeException;
+
+    Result listAroundVenues(SearchConditionVO searchConditionVO) throws RuntimeException;
+
+    Result getDetailInfoByUserId(Integer userId, Integer coachId) throws RuntimeException;
+    //查询用户优惠券
+    List<Coupon> fandCouponByUserId(int userid) throws RuntimeException;
+
+    //插入 lxy
+    void saveUser(User user);
     //邮箱注册验证 lxy
     boolean sendRegEmailCode(User user);
-    //登录注册手机，激活状态 lxy
-    boolean activeUserByPhone(String userPhone);
-    //登录注册邮箱，激活状态 lxy
-    boolean activeUserByEmail(String userEmail);
     //查询邮箱是否存在 lxy
     User queryUserByEmail(String userEmail);
-    //邮箱登录，查询邮箱和密码 lxy
-    User queryUserByEmailAndPwd(String userEmail,String userPwd);
-    //邮箱注册，查询邮箱和验证码 lxy
-    User queryUserByEmailAndCode(String userEmail, String userVerifyCode);
     //查询手机是否存在 lxy
     User queryUserByPhone(String userPhone);
-    //注册发送验证码，并插入 lxy
-    boolean sendRegPhonePwd(User user);
-    //已发送验证码，注册手机，查询用户名 lxy
-    User queryUserByPhoneAndPwd(String userPhone, String userPwd);
-    //登录发送验证码 lxy
-    boolean sendLoginMessage(User user);
-    //登录手机，查询验证手机和验证码 lxy
-    User queryUserByPhoneAndCode(String userPhone, String userVerifyCode);
+    //注册，登录发送验证码（密码），并插入redis lxy
+    boolean sendPhoneMessage(User user,Integer templateId);
 
+    Result getVenueDetailInfoByUserId(Integer userId) throws RuntimeException;
 
+    Result getAllMyInfos(Integer userId);
+
+    Result getAllMyFans(Integer userId);
+
+    Result getAllMyFocus(Integer userId);
+
+    Result getAllMyComments(Integer userId);
+
+    List<Coupon> selectCouponByUserId(int userId);
 }

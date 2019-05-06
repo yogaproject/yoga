@@ -1,9 +1,22 @@
 package com.woniu.yoga.venue.pojo;
 
 import lombok.Data;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
+import javax.persistence.*;
 
 @Data
+@Entity
+@DynamicUpdate
+@DynamicInsert
+@Table(name = "venue")
+
+
+
 public class Venue {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Integer venueId;
 
     private Integer userId;
@@ -19,5 +32,6 @@ public class Venue {
     private String venueDetail;
 
     private Integer venueFlag;
+
 
 }

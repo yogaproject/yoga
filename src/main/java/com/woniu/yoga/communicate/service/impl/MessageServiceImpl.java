@@ -2,19 +2,16 @@ package com.woniu.yoga.communicate.service.impl;
 
 import com.woniu.yoga.commom.enums.ResultEnum;
 import com.woniu.yoga.commom.exception.YogaException;
-import com.woniu.yoga.communicate.repository.MessageRepository;
+import com.woniu.yoga.communicate.dao.MessageMapper;
 import com.woniu.yoga.communicate.pojo.Message;
+import com.woniu.yoga.communicate.repository.MessageRepository;
 import com.woniu.yoga.communicate.service.MessageService;
-import com.woniu.yoga.user.pojo.User;
-import com.woniu.yoga.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Description 私信通知业务实现类
@@ -29,10 +26,13 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     private MessageRepository messageRepository;
 
+    @Autowired
+    private MessageMapper messageMapper;
+
     @Override
     @Transactional
     public int updateMsgStatusByFromIdAndToId(Integer fromId, Integer toId) {
-        return messageRepository.updateMsgStatusByFromIdAndToId(fromId,toId);
+        return messageMapper.updateMsgStatusByFromIdAndToId(fromId,toId);
     }
 
     @Override
@@ -43,13 +43,13 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     @Transactional
-    public Message sendMessage(Message message) {
+    public Integer sendMessage(Message message) {
         if(message == null || message.getFromId() == 0 || message.getToId() == 0 ||
                 message.getContent() == null || "".equals(message.getContent())){
             throw new YogaException(ResultEnum.MSG_TYPE_ERROR);
         }
         message.setConversationId(message.getFromId(),message.getToId());
-        return messageRepository.save(message);
+        return messageMapper.insert(message);
     }
 
     @Override
@@ -71,5 +71,10 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public Integer getUnreadCount(Integer userId,String conversationId) {
         return messageRepository.getUnreadCount(userId,conversationId);
+    }
+
+    @Override
+    public List<Message> getUnreadMsgs(Integer userId) {
+        return messageMapper.getUnreadMsgsByUserId(userId);
     }
 }

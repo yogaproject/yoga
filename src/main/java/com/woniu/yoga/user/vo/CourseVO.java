@@ -2,6 +2,8 @@ package com.woniu.yoga.user.vo;
 
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 /**
  * @Author liufeng
  * @ClassName CourseVO
@@ -14,15 +16,17 @@ public class CourseVO {
     //课程id
     private int courseId;
     //课程所属瑜伽师的用户id
-    private int userId;
+//    private int userId;
     //课程所属瑜伽师真实姓名
-    private String coachName;
+//    private String coachName;
     //课程名
     private String courseName;
     //课程描述信息
     private String detail;
     //课程图片
     private String img;
+    //课程价格
+    private BigDecimal price;
 
 
 

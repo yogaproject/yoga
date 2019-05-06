@@ -5,17 +5,42 @@
     <id column="order_id" jdbcType="VARCHAR" property="orderId" />
     <result column="payer_id" jdbcType="INTEGER" property="payerId" />
     <result column="accepter_id" jdbcType="INTEGER" property="accepterId" />
-    <result column="course_id" jdbcType="INTEGER" property="courseId" />
     <result column="order_money" jdbcType="DECIMAL" property="orderMoney" />
     <result column="order_status" jdbcType="INTEGER" property="orderStatus" />
-    <result column="pay_status" jdbcType="INTEGER" property="payStatus" />
+    <!--<result column="pay_status" jdbcType="INTEGER" property="payStatus" />-->
     <result column="course_count" jdbcType="INTEGER" property="courseCount" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="coupon_id" jdbcType="INTEGER" property="couponId" />
     <result column="discount" jdbcType="DECIMAL" property="discount" />
     <result column="order_flag" jdbcType="INTEGER" property="orderFlag" />
+    <result column="course_id" jdbcType="INTEGER" property="courseId"/>
+    <association property="course" column="course_id" javaType="com.woniu.yoga.user.pojo.Course" select="com.woniu.yoga.user.dao.CourseMapper.selectByPrimaryKey">
+    </association>
   </resultMap>
+  <resultMap id="mapPayerAndAccepter" type="com.woniu.yoga.user.dto.OrderDTO">
+    <id column="order_id" jdbcType="VARCHAR" property="orderId" />
+    <!--<result column="payer_id" jdbcType="INTEGER" property="payerId" />-->
+    <!--<result column="accepter_id" jdbcType="INTEGER" property="accepterId" />-->
+    <result column="order_money" jdbcType="DECIMAL" property="orderMoney" />
+    <result column="order_status" jdbcType="INTEGER" property="orderStatus" />
+    <!--<result column="pay_status" jdbcType="INTEGER" property="payStatus" />-->
+    <result column="course_count" jdbcType="INTEGER" property="courseCount" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="coupon_id" jdbcType="INTEGER" property="couponId" />
+    <result column="discount" jdbcType="DECIMAL" property="discount" />
+    <result column="order_flag" jdbcType="INTEGER" property="orderFlag" />
+    <association property="course" column="course_id" javaType="com.woniu.yoga.user.pojo.Course" select="com.woniu.yoga.user.dao.CourseMapper.selectByPrimaryKey">
+    </association>
+    <association property="payer" column="payer_id" javaType="com.woniu.yoga.user.vo.UserVO"
+                 select="com.woniu.yoga.user.dao.UserMapper.findBriefInfoByUserId">
+    </association>
+    <association property="accepter" column="accepter_id" javaType="com.woniu.yoga.user.vo.UserVO"
+                 select="com.woniu.yoga.user.dao.UserMapper.findBriefInfoByUserId">
+    </association>
+  </resultMap>
+
   <sql id="Base_Column_List">
     order_id, payer_id, accepter_id, course_id, order_money, order_status, pay_status, 
     course_count, update_time, create_time, coupon_id, discount, order_flag
@@ -23,15 +48,28 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from order
-    where order_id = #{orderId,jdbcType=VARCHAR}
+    from `order`
+    where order_id = #{orderId,jdbcType=VARCHAR} and order_flag = 0
+  </select>
+  <select id="findStudentOrder" resultMap="mapPayerAndAccepter">
+    select * from `order` where payer_id = #{param1}
+    <if test="status != null and status != '' ">
+    find_in_set(order_status,#{param2})
+    </if>
+  </select>
+  <select id="findCoachOrder" resultMap="mapPayerAndAccepter">
+    select * from `order` where accepter_id = #{param1}
+    <if test="status != null and status != '' ">
+      find_in_set(order_status,#{param2})
+    </if>
+    order by update_time
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from order
+    delete from `order`
     where order_id = #{orderId,jdbcType=VARCHAR}
   </delete>
   <insert id="insert" parameterType="com.woniu.yoga.user.pojo.Order">
-    insert into order (order_id, payer_id, accepter_id, 
+    insert into `order` (order_id, payer_id, accepter_id,
       course_id, order_money, order_status, 
       pay_status, course_count, update_time, 
       create_time, coupon_id, discount, 
@@ -42,8 +80,8 @@
       #{createTime,jdbcType=TIMESTAMP}, #{couponId,jdbcType=INTEGER}, #{discount,jdbcType=DECIMAL}, 
       #{orderFlag,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.woniu.yoga.user.pojo.Order">
-    insert into order
+  <insert id="insertSelective" parameterType="com.woniu.yoga.user.pojo.Order" >
+    insert into `order`
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="orderId != null">
         order_id,
@@ -128,7 +166,7 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.woniu.yoga.user.pojo.Order">
-    update order
+    update `order`
     <set>
       <if test="payerId != null">
         payer_id = #{payerId,jdbcType=INTEGER},
@@ -170,7 +208,7 @@
     where order_id = #{orderId,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.woniu.yoga.user.pojo.Order">
-    update order
+    update `order`
     set payer_id = #{payerId,jdbcType=INTEGER},
       accepter_id = #{accepterId,jdbcType=INTEGER},
       course_id = #{courseId,jdbcType=INTEGER},

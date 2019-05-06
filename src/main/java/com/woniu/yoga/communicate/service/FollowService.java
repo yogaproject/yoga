@@ -1,16 +1,20 @@
 package com.woniu.yoga.communicate.service;
 
-import com.woniu.yoga.commom.vo.Result;
+import com.woniu.yoga.home.vo.Result;
 
 import javax.servlet.http.HttpSession;
 
 public interface FollowService {
 
-    Result showFollowList(Integer state, Integer currentPage, Integer pageSize, HttpSession session);
+    Result showFollowList(Integer state, Integer userId);
 
-    Result showFollowHomepage(Integer currentPage, Integer pageSize, HttpSession session);
+    Result showFollowHomepage(HttpSession session);
 
     Result addFollow(Integer userId, HttpSession session);
 
     Result cancelFollow(Integer userId, HttpSession session);
+
+    Result searchFollow(String userNickName, Integer userId);
+
+    Result showMyself(Integer userId);
 }

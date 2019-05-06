@@ -17,10 +17,10 @@ public class CodeUtil {
         String userNumber = "";
         Random random = new Random();
         for (int i = 0; i < 6; i++) {
-
             userNumber += random.nextInt(10);
         }
         return userNumber;
     }
+
 
 }

@@ -17,7 +17,7 @@
     select 
     <include refid="Base_Column_List" />
     from course
-    where course_id = #{courseId,jdbcType=INTEGER}
+    where course_id = #{courseId,jdbcType=INTEGER} and course_flag = 0
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from course

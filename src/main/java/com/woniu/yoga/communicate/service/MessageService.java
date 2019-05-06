@@ -17,9 +17,8 @@ public interface MessageService {
      * @Author guochxi
      * @Date 17:59 2019/4/22
      * @Param [message]
-     * @return com.gcx.jap_mybatis_test.entity.Message
      **/
-    Message sendMessage(Message message);
+    Integer sendMessage(Message message);
 
     /**
      * @Description 查找userId的所有消息并按时间排序
@@ -65,4 +64,13 @@ public interface MessageService {
      * @return
      **/
     Integer getUnreadCount(Integer userId,String conversationId);
+
+    /**
+     * @Description 根据用户Id获取未读的所有消息
+     * @Author guochxi
+     * @Date 14:30 2019/4/30
+     * @Param [userId]
+     * @return java.util.List<com.woniu.yoga.communicate.pojo.Message>
+     **/
+    List<Message> getUnreadMsgs(Integer userId);
 }

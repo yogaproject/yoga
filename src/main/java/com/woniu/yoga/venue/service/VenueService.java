@@ -49,6 +49,8 @@ public interface VenueService {
     //教练添加课程
     int coachAddCourseService(Course course);
 
+    //lxy
+    void saveVenue(Venue venue);
     //查询下拉框使用的教练流派
     List<Coach> coachStyle();
 

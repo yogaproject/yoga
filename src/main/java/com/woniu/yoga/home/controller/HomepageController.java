@@ -1,19 +1,19 @@
 package com.woniu.yoga.home.controller;
 
-import com.woniu.yoga.commom.utils.JsonUtil;
-import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.communicate.constant.SysConstant;
 import com.woniu.yoga.home.pojo.Homepage;
 import com.woniu.yoga.home.service.HomepageService;
+import com.woniu.yoga.home.vo.Address;
+import com.woniu.yoga.home.vo.HomepageVo;
+import com.woniu.yoga.home.vo.Result;
 import com.woniu.yoga.user.pojo.User;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.spring.web.json.Json;
 
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.util.List;
 
 /**
  * @author huijie yan
@@ -30,9 +30,9 @@ public class HomepageController {
 
     /**
     * @Description 展示附近人发布的消息
-    * @param latitude 传入经纬度
-    * @param currentPage 查询当前页
-    * @param longitude 传入经纬度
+//    * @param latitude 传入经纬度
+//    * @param currentPage 查询当前页
+//    * @param longitude 传入经纬度
     * @param pageSize 每页多少条数据
     * @author huijie yan
     * @date 2019/4/22
@@ -40,16 +40,12 @@ public class HomepageController {
     */
     @ApiOperation(value = "展示附近用户发布的消息")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "latitude", value = "纬度", required = true, paramType = "path"),
-            @ApiImplicitParam(name = "longitude", value = "经度", required = true, paramType = "path"),
-            @ApiImplicitParam(name = "currentPage", value = "当前页",required = true, paramType = "path"),
-            @ApiImplicitParam(name = "currentPage", value = "每页查询数据条数",required = true, paramType = "path")
+            @ApiImplicitParam(name = "latitude", value = "纬度", required = true, paramType = "form",dataType = "Float"),
+            @ApiImplicitParam(name = "longitude", value = "经度", required = true, paramType = "form", dataType = "Float")
     })
-    @GetMapping("/{latitude}/{longitude}/{currentPage}/{pageSize}/showHomepage")
-    public String showHomepage(@PathVariable("latitude") Float latitude, @PathVariable("longitude") Float longitude,
-                               @PathVariable("currentPage") Integer currentPage, @PathVariable("pageSize") Integer pageSize){
-
-        return JsonUtil.toJson(homepageService.selectHomepages(latitude,longitude, currentPage, pageSize));
+    @PostMapping("/showHomepage")
+    public Result<List<HomepageVo>> showHomepage( @RequestBody Address address){
+        return homepageService.selectHomepages(address.getLatitude(),address.getLongitude());
     }
 
     /**
@@ -60,11 +56,10 @@ public class HomepageController {
     * @return com.woniu.yoga.commom.vo.Result
     */
     @ApiOperation(value = "根据动态内容id获取图文详情")
-    @ApiImplicitParam(name = "mid", value = "动态内容id", required = true, paramType = "path")
-    @GetMapping("/{mid}/showHomepageDetail")
-    public String showHomepageDetail(@PathVariable("mid") Integer mid){
-
-        return JsonUtil.toJson(homepageService.showHomepageDetail(mid));
+    @ApiImplicitParam(name = "mid", value = "动态内容id", required = true, paramType = "body")
+    @PostMapping("/showHomepageDetail")
+    public Result<HomepageVo> showHomepageDetail(@RequestBody Integer mid){
+        return homepageService.showHomepageDetail(mid);
     }
 
     /**
@@ -75,40 +70,39 @@ public class HomepageController {
     * @return com.woniu.yoga.commom.vo.Result
     */
     @ApiOperation(value = "新增动态")
-    @ApiImplicitParam(name = "homepage", value = "动态", required = true, paramType = "path")
-    @PostMapping("/{homepage}/pushHomepage")
-    public String pushHomepage(@PathVariable("homepage") Homepage homepage, HttpSession session){
+    @ApiImplicitParam(name = "homepage", value = "动态", required = true, paramType = "body")
+    @ApiResponse(code = 500, message = "未登录")
+    @PostMapping("/pushHomepage")
+    public Result pushHomepage(@RequestBody Homepage homepage, HttpSession session){
         User user = (User)session.getAttribute(SysConstant.CURRENT_USER);
-        if (user == null){
-            return JsonUtil.toJson(Result.error("未登录"));
+        if ("".equals(homepage.getContent()) || homepage.getContent() == null){
+            return Result.error("内容不能为空");
         }
-        return JsonUtil.toJson(homepageService.pushHomepage(homepage, user.getUserId()));
+        if ("".equals(homepage.getTitle()) || homepage.getTitle() == null){
+            return Result.error("标题不能为空");
+        }
+        if (user == null){
+            return Result.error("未登录");
+        }
+        return homepageService.pushHomepage(homepage, user.getUserId());
     }
 
     /**
     * @Description 根据roleId决定查询附近场馆动态还是教练动态
-    * @param roleId
-    * @param latitude
-    * @param longitude
-    * @param currentPage
-    * @param pageSize
+    * @param address
     * @author huijie yan
-    * @date 2019/4/26
-    * @return java.lang.String
+    * @date 2019/5/5
+    * @return com.woniu.yoga.home.vo.Result<java.util.List<com.woniu.yoga.home.vo.HomepageVo>>
     */
     @ApiOperation(value = "展示附近教练或者场馆发布的动态内容")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "roleId", value = "角色id", required = true, paramType = "path"),
-            @ApiImplicitParam(name = "latitude", value = "纬度", required = true, paramType = "path"),
-            @ApiImplicitParam(name = "longitude", value = "经度", required = true, paramType = "path"),
-            @ApiImplicitParam(name = "currentPage", value = "当前页",required = true, paramType = "path"),
-            @ApiImplicitParam(name = "currentPage", value = "每页查询数据条数",required = true, paramType = "path")
+            @ApiImplicitParam(name = "roleId", value = "角色id", required = true, paramType = "body"),
+            @ApiImplicitParam(name = "latitude", value = "纬度", required = true, paramType = "body"),
+            @ApiImplicitParam(name = "longitude", value = "经度", required = true, paramType = "body"),
     })
-    @GetMapping(value = "/{roleId}/{latitude}/{longitude}/{currentPage}/{pageSize}/showOtherHomepage")
-    public String showOtherHomepage(@PathVariable("roleId") Integer roleId, @PathVariable("latitude") Float latitude, @PathVariable("longitude") Float longitude,
-                                    @PathVariable("currentPage") Integer currentPage, @PathVariable("pageSize") Integer pageSize){
-
-        return JsonUtil.toJson(homepageService.showOtherHomepage(roleId,latitude, longitude, currentPage, pageSize));
+    @PostMapping(value = "/showOtherHomepage")
+    public Result<List<HomepageVo>> showOtherHomepage(@RequestBody Address address){
+        return homepageService.showOtherHomepage(address.getRoleId(),address.getLatitude(), address.getLongitude());
     }
 
     /**
@@ -119,9 +113,10 @@ public class HomepageController {
     * @return java.lang.String
     */
     @ApiOperation(value = "删除动态")
-    @ApiImplicitParam(name = "mid", value = "动态id", required = true, paramType = "path")
-    @DeleteMapping("/{mid}/deleteHomepage")
-    public String deleteHomepage(@PathVariable("mid") Integer mid){
-        return JsonUtil.toJson(homepageService.deleteHomepage(mid));
+    @ApiImplicitParam(name = "mid", value = "动态id", required = true, paramType = "body")
+    @ApiResponse(code = 200,message = "删除成功")
+    @DeleteMapping("/deleteHomepage")
+    public Result deleteHomepage(@RequestBody Integer mid){
+        return homepageService.deleteHomepage(mid);
     }
 }

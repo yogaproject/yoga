@@ -1,140 +1,44 @@
 package com.woniu.yoga.user.pojo;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 
-//@Entity
-//@Table
+@Data
 public class Order {
-    @Id
+    public Order(){
+        this.courseCount=1;
+    }
+    //订单编号
     private String orderId;
-    @Column(name = "payer_id")
+    //支付方的userId
     private Integer payerId;
-    @Column(name = "accepter_id")
+    //接收方的userId
     private Integer accepterId;
-    @Column(name = "course_id")
-    private Integer courseId;
-    @Column(name = "order_money")
+    //包含的课程
+    private Course course;
+    //订单金额
     private BigDecimal orderMoney;
-    @Column(name = "order_status")
+    //订单状态
     private Integer orderStatus;
-    @Column(name = "pay_status")
+
+    private Integer courseId;
+
     private Integer payStatus;
-    @Column(name = "course_count")
+    //课时数
     private Integer courseCount;
-    @Column(name = "update_time")
+    //更新时间
     private Date updateTime;
-    @Column(name = "create_time")
+    //创建时间
     private Date createTime;
-    @Column(name = "coupon_id")
+    //优惠券编号
     private Integer couponId;
-    @Column(name = "discount")
+    //付款金额
     private BigDecimal discount;
-    @Column(name = "order_flag")
+    //是否删除
     private Integer orderFlag;
 
-    public String getOrderId() {
-        return orderId;
-    }
 
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
-    }
-
-    public Integer getPayerId() {
-        return payerId;
-    }
-
-    public void setPayerId(Integer payerId) {
-        this.payerId = payerId;
-    }
-
-    public Integer getAccepterId() {
-        return accepterId;
-    }
-
-    public void setAccepterId(Integer accepterId) {
-        this.accepterId = accepterId;
-    }
-
-    public Integer getCourseId() {
-        return courseId;
-    }
-
-    public void setCourseId(Integer courseId) {
-        this.courseId = courseId;
-    }
-
-    public BigDecimal getOrderMoney() {
-        return orderMoney;
-    }
-
-    public void setOrderMoney(BigDecimal orderMoney) {
-        this.orderMoney = orderMoney;
-    }
-
-    public Integer getOrderStatus() {
-        return orderStatus;
-    }
-
-    public void setOrderStatus(Integer orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
-    public Integer getPayStatus() {
-        return payStatus;
-    }
-
-    public void setPayStatus(Integer payStatus) {
-        this.payStatus = payStatus;
-    }
-
-    public Integer getCourseCount() {
-        return courseCount;
-    }
-
-    public void setCourseCount(Integer courseCount) {
-        this.courseCount = courseCount;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Integer getCouponId() {
-        return couponId;
-    }
-
-    public void setCouponId(Integer couponId) {
-        this.couponId = couponId;
-    }
-
-    public BigDecimal getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(BigDecimal discount) {
-        this.discount = discount;
-    }
-
-    public Integer getOrderFlag() {
-        return orderFlag;
-    }
-
-    public void setOrderFlag(Integer orderFlag) {
-        this.orderFlag = orderFlag;
-    }
 }

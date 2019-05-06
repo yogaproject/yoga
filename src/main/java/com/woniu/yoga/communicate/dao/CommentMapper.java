@@ -24,5 +24,5 @@ public interface CommentMapper {
     int updateByPrimaryKey(Comment record);
 
     //查询动态内容下的评论
-    List<CommentVo> queryComments(@Param("mid") Integer mid, @Param("currentPage") Integer currentPage, @Param("pageSize") Integer pageSize);
+    List<CommentVo> queryComments(@Param("mid") Integer mid);
 }

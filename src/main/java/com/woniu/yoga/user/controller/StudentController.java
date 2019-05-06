@@ -1,21 +1,21 @@
 package com.woniu.yoga.user.controller;
 
 
+import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.communicate.pojo.Comment;
-import com.woniu.yoga.user.pojo.Order;
 import com.woniu.yoga.user.pojo.User;
 import com.woniu.yoga.user.service.serviceImpl.StudentServiceImpl;
 import com.woniu.yoga.user.util.ResultUtil;
 import com.woniu.yoga.user.vo.*;
-import net.bytebuddy.asm.Advice;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.Table;
 import javax.servlet.http.HttpSession;
-import java.util.List;
 
 /**
  * @Author liufeng
@@ -25,46 +25,13 @@ import java.util.List;
  * @Description 用于处理学员与后台的交互
  **/
 @Controller
+@RequestMapping("student")
+@Api
 public class StudentController {
     @Autowired
     private StudentServiceImpl studentService;
-    /*
-     * @Author liufeng
-     * @Date
-     * @Description //根据用户注册的地址或定位地址查询附近一定范围的教练、场馆(默认查找教练)
-     * @Param
-     *   SearchConditionVO:搜索条件封装的类，参数如下
-     *   //位置：经度
-     *   private float longitude;
-     *   //位置：纬度
-     *   private float latitude;
-     *   //距离“我”的距离，单位为米
-     *   private int round;
-     *   //搜索的条件：2为搜索教练，3为搜索场馆，其余不合法
-     *   private int coachStyle;
-     *   //教练认证方式，值为场馆或平台，其余不合法；场馆无需此项
-     *   private String authenticationMethod;
-     *   //教练空闲时间，值为不限、早、中、晚四选一；场馆无需此项
-     *   private String freeTime;
-     * @return
-     **/
-    public Result listAroundUserByIdOrAddress(SearchConditionVO searchConditionVO) {
-        return studentService.listAroundUserByAddress(searchConditionVO);
-    }
-    /*
-     * @Author liufeng
-     * @Date
-     * @Description //根据userId查询用户(瑜伽师，场馆)的详细信息
-     * @Param
-     *  HttpSession session:
-     * @return
-     *  封装了用户详细信息的数据类
-     **/
-    public Result getDetailInfoByUserId(HttpSession session,Integer coachId) {
-        User user = (User) session.getAttribute("user");
-        Integer userId = user.getUserId();
-        return studentService.getDetailInfoByUserId(userId,coachId);
-    }
+
+
     /*
      * @Author liufeng
      * @Date
@@ -74,8 +41,18 @@ public class StudentController {
      * @return
      *  通用返回类型
      **/
-    public Result saveOrder(Order order) {
-        return studentService.saveOrder(order);
+    @PostMapping("saveOrder")
+    @ResponseBody
+    @ApiOperation(value = "学员下单")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "order", value = "新的订单对象，无需传入用户ID", paramType = "pojo"),
+            @ApiImplicitParam(name = "session", value = "HttpSession"),
+    })
+    public Result saveOrder(HttpSession session, @RequestBody OrderVO orderVO) {
+        User user = (User) session.getAttribute("user");
+        Integer userId = user.getUserId();
+//        // Integer userId = 5;
+        return studentService.saveOrder(userId, orderVO);
     }
 
     /*
@@ -88,9 +65,20 @@ public class StudentController {
      * @return
      *  通用返回类型，包含处理完成的订单详细信息
      **/
-    public Result updateOrderWithCoupon(String orderId, Integer couponId) {
-        return studentService.updateOrderWithCoupon(orderId,couponId);
+    @PostMapping("updateOrderWithCoupon")
+    @ResponseBody
+    @ApiOperation(value = "学员选择要使用的优惠券，准备付款")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "session", value = "HttpSession"),
+            @ApiImplicitParam(name = "orderCoupon", value = "包含：订单ID，优惠券的ID", required = false, paramType = "Integer")
+    })
+    public Result updateOrderWithCoupon(HttpSession session, @RequestBody OrderCoupon orderCoupon) {
+        User user = (User) session.getAttribute("user");
+        Integer userId = user.getUserId();
+//        // Integer userId = 5;
+        return studentService.updateOrderWithCoupon(userId, orderCoupon.getOrderId(), orderCoupon.getCouponId());
     }
+
     /*
      * @Author liufeng
      * @Date
@@ -98,9 +86,20 @@ public class StudentController {
      * @Param
      * @return
      **/
-    public Result updateOrderForPay(String orderId) {
-        return studentService.updateOrderForPay(orderId);
+    @PostMapping("updateOrderForPay")
+    @ResponseBody
+    @ApiOperation(value = "学员付款")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "String"),
+            @ApiImplicitParam(name = "session", value = "HttpSession"),
+    })
+    public Result updateOrderForPay(HttpSession session, @RequestBody String orderId) {
+        User user = (User) session.getAttribute("user");
+        Integer userId = user.getUserId();
+//        // Integer userId = 5;
+        return studentService.updateOrderForPay(userId, orderId);
     }
+
     /*
      * @Author liufeng
      * @Date
@@ -108,9 +107,20 @@ public class StudentController {
      * @Param
      * @return
      **/
-    public Result updateOrderForRefund(String orderId){
-        return studentService.updateOrderForRefund(orderId);
+    @PutMapping("updateOrderForRefund")
+    @ResponseBody
+    @ApiOperation(value = "学员申请退款")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "String"),
+            @ApiImplicitParam(name = "session", value = "HttpSession"),
+    })
+    public Result updateOrderForRefund(HttpSession session, @RequestBody String orderId) {
+        User user = (User) session.getAttribute("user");
+        Integer userId = user.getUserId();
+//        // Integer userId = 5;
+        return studentService.updateOrderForRefund(userId, orderId);
     }
+
     /*
      * @Author liufeng
      * @Date
@@ -120,9 +130,24 @@ public class StudentController {
      * @return
      *  处理完成的评论
      **/
-    public Result saveComment(String orderId,Comment comment) {
-        return studentService.saveComment(orderId,comment);
+    @PostMapping("saveComment")
+    @ResponseBody
+    @ApiOperation(value = "学员发表订单评论")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "String"),
+            @ApiImplicitParam(name = "session", value = "HttpSession"),
+            @ApiImplicitParam(name = "comment", value = "一个新的评论对象")
+    })
+    public Result saveComment(HttpSession session, @RequestBody CommentVO commentVO) {
+        User user = (User) session.getAttribute("user");
+        Integer userId = user.getUserId();
+        // Integer userId = 5;
+        Comment comment = new Comment();
+        comment.setCommentDegree(commentVO.getRate());
+        comment.setCommentDetail(commentVO.getComment());
+        return studentService.saveComment(userId, commentVO.getOrderId(), comment);
     }
+
     /*
      * @Description //查询学员期望上课的所有的签约方式，因为数据比较少，因此保存在文件中；
      * @Date
@@ -130,9 +155,13 @@ public class StudentController {
      * @return
      *  返回签约方式的集合
      **/
+    @GetMapping("listAllCourseAppoint")
+    @ResponseBody
+    @ApiOperation(value = "学员查看所有的签约（下单）方式")
     public Result listAllCourseAppoint() {
         return studentService.listAllCourseAppoint();
     }
+
     /*
      * @Author liufeng
      * @Date
@@ -140,10 +169,18 @@ public class StudentController {
      * @Param
      * @return
      **/
-    public Result updateOrderForCancel(HttpSession session,String orderId){
+    @PostMapping("updateOrderForCancel")
+    @ResponseBody
+    @ApiOperation(value = "学员取消订单")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "orderId", value = "订单编号", paramType = "String"),
+            @ApiImplicitParam(name = "session", value = "HttpSession")
+    })
+    public Result updateOrderForCancel(HttpSession session, @RequestBody String orderId) {
         User user = (User) session.getAttribute("user");
         Integer userId = user.getUserId();
-        return studentService.updateOrderForCancel(userId,orderId);
+        // // Integer userId = 5;
+        return studentService.updateOrderForCancel(userId, orderId);
     }
 
     /*
@@ -153,9 +190,14 @@ public class StudentController {
      * @Param
      * @return
      **/
-    public Result findCoachPhoneByUserId(Integer userId){
+    @PostMapping("findCoachPhoneByUserId")
+    @ResponseBody
+    @ApiOperation(value = "学员申请线下签约，查询对应瑜伽师的电话号码")
+    @ApiImplicitParam(name = "userId", value = "瑜伽师的用户ID")
+    public Result findCoachPhoneByUserId(@RequestBody Integer userId) {
         return studentService.findCoachPhoneByUserId(userId);
     }
+
     /*
      * @Author liufeng
      * @Date
@@ -163,14 +205,23 @@ public class StudentController {
      * @Param
      * @return
      **/
-    public Result repeatOrder(HttpSession session,String orderId){
+    @PostMapping("repeatOrder")
+    @ResponseBody
+    @ApiOperation(value = "学员重复下单")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "session", value = "HttpSession"),
+            @ApiImplicitParam(name = "orderId", value = "旧的订单ID", paramType = "String")
+    })
+    public Result repeatOrder(HttpSession session, @RequestBody String orderId) {
         User user = (User) session.getAttribute("user");
         Integer userId = user.getUserId();
-        return studentService.repeatOrder(userId,orderId);
+        // // Integer userId = 5;
+        return studentService.repeatOrder(userId, orderId);
     }
+
     @RequestMapping("test")
     @ResponseBody
-    public String test(){
+    public String test() {
         return ResultUtil.connectDatabaseFail().toString();
     }
 }

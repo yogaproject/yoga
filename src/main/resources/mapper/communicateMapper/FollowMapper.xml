@@ -35,6 +35,12 @@
     <result column="follow_status" jdbcType="INTEGER" property="followStatus" />
   </resultMap>
 
+  <resultMap id="MyVoResultMap" type="com.woniu.yoga.home.vo.HomepageVo">
+    <result column="user_nickname" jdbcType="VARCHAR" property="userNickName" />
+    <result column="user_level" jdbcType="INTEGER" property="userLevel" />
+    <result column="user_headimg" jdbcType="VARCHAR" property="userHeadimg" />
+  </resultMap>
+
   <sql id="Base_Column_List">
     follow_id, user_id, followed_id, create_time, follow_status
   </sql>
@@ -44,7 +50,7 @@
     from follow
     where follow_id = #{followId,jdbcType=INTEGER}
   </select>
-  <select id="selectIfFollow" >
+  <select id="selectIfFollow" resultType="java.lang.Integer">
     select
     count(follow_id)
     from follow
@@ -79,25 +85,52 @@
   <update id="updateFollowStatus">
     update follow
     set follow_status=1
-    where user_id=#{user_id} and followed_id=#{followedId}
+    where user_id=#{userId} and followed_id=#{followedId}
   </update>
-  <select id="selectFollowStatus">
+  <select id="selectFollowStatus" resultType="java.lang.Integer">
     select
     follow_status
     from follow
-    where user_id=#{user_id} and followed_id=#{follwedId}
+    where user_id=#{userId} and followed_id=#{followedId}
+  </select>
+  <select id="queryFollowUser" resultMap="FollowVoResult">
+    select
+      follow_id, f.user_id, followed_id, create_time, follow_status,
+      user_level, user_headimg, user_nickname
+    from follow as f, `user` as u
+    where followed_id=u.user_id and #{userId}=f.user_id and user_nickname like "%${userNickName}%"
   </select>
   <update id="updateCancelFollowStatus">
     update follow
     set follow_status=0
-    where user_id=#{user_id} and followed_id=#{followedId}
+    where user_id=#{userId} and followed_id=#{followedId}
   </update>
 
   <update id="deleteByFlag">
     update follow
-    set follow_flag=1
-    where user_id=#{user_id} and followed_id=#{followedId}
+    set follow_flag=1 and follow_status=0
+    where user_id=#{userId} and followed_id=#{followedId}
   </update>
+  <select id="selectFansCount" resultType="java.lang.Integer">
+    select count(followed_id)
+    from follow
+    where user_id=#{userId} and follow_flag=0
+  </select>
+  <select id="selectFollowCount" resultType="java.lang.Integer">
+    select count(follow_id)
+    from follow
+    where followed_id=#{userId} and follow_flag=0
+  </select>
+  <select id="selectHomepageCount" resultType="java.lang.Integer">
+    select count(m_id)
+    from homepage
+    where user_id=#{userId} and homepage_flag=0
+  </select>
+  <select id="selectMyVo" resultMap="MyVoResultMap">
+    select user_nickname,user_headimg,user_level
+    from user
+    where user_id=#{userId}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from follow
     where follow_id = #{followId,jdbcType=INTEGER}

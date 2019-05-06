@@ -1,33 +1,22 @@
 package com.woniu.yoga.user.pojo;
 
+import lombok.Data;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
+import javax.persistence.*;
+
+@Data
+@DynamicInsert
+@DynamicUpdate
+@Entity
+@Table(name = "student")
 public class Student {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Integer studentId;
-
+    @Column(name = "user_id")
     private Integer userId;
-
+    @Column(nullable = false,name = "student_flag",columnDefinition = "int default 0")
     private Integer studentFlag;
-
-    public Integer getStudentId() {
-        return studentId;
-    }
-
-    public void setStudentId(Integer studentId) {
-        this.studentId = studentId;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public Integer getStudentFlag() {
-        return studentFlag;
-    }
-
-    public void setStudentFlag(Integer studentFlag) {
-        this.studentFlag = studentFlag;
-    }
 }

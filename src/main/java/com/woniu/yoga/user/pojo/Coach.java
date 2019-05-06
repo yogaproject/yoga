@@ -1,16 +1,21 @@
 package com.woniu.yoga.user.pojo;
 
 import lombok.Data;
+import lombok.Value;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
-@Entity
-@Table(name="coach")
 @Data
+@Entity
+@DynamicInsert
+@DynamicUpdate
+@Table(name = "coach")
 public class Coach {
-    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Integer coachId;
 
     private Integer userId;
@@ -19,17 +24,19 @@ public class Coach {
 
     private Date endTime;
 
-    private String coachType;
+    private Integer coachType;
 
-    private String coachStyle;
+    private Integer coachStyle;
 
     private Integer coachStatus;
+
+    private String coachDetail;
 
     private Integer fullClass;
 
     private BigDecimal expectedSalary;
 
-    private String authentication;
+    private Integer authentication;
 
     private Integer dealAccount;
 
@@ -40,8 +47,8 @@ public class Coach {
     private Integer badComment;
 
     private Integer commonComment;
+//    private List<C>
 
+    @Column(nullable = false,name = "coach_flag",columnDefinition ="int default 0")
     private Integer coachFlag;
-
-
 }

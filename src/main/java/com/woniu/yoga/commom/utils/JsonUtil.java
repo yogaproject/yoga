@@ -17,4 +17,8 @@ public class JsonUtil {
         Gson gson = gsonBuilder.create();
         return gson.toJson(object);
     }
+
+    public static Object toObject(String json, Class beanClass){
+        return new Gson().fromJson(json,beanClass);
+    }
 }

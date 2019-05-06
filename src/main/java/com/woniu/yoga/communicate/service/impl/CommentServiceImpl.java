@@ -2,19 +2,16 @@ package com.woniu.yoga.communicate.service.impl;
 
 import com.github.pagehelper.PageInfo;
 import com.woniu.yoga.commom.utils.CommentUtil;
-import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.communicate.dao.CommentMapper;
 import com.woniu.yoga.communicate.pojo.Comment;
 import com.woniu.yoga.communicate.service.CommentService;
 import com.woniu.yoga.communicate.vo.CommentVo;
+import com.woniu.yoga.home.vo.Result;
 import com.woniu.yoga.user.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -39,12 +36,11 @@ public class CommentServiceImpl implements CommentService {
     * @return com.woniu.yoga.commom.vo.Result
     */
     @Override
-    public Result showComments(Integer mid, Integer currentPage, Integer pageSize) {
+    public Result showComments(Integer mid) {
         if (mid == 0){
             return Result.error("未获取到动态内容id:m_id");
         }
-        List<CommentVo> list = commentMapper.queryComments(mid, currentPage, pageSize);
-        PageInfo pageInfo = new PageInfo(list);
+        List<CommentVo> list = commentMapper.queryComments(mid);
         for (CommentVo vo:list) {
             String publishTime = CommentUtil.publishTime(vo.getCommentCreateTime());
             vo.setPublishTime(publishTime);

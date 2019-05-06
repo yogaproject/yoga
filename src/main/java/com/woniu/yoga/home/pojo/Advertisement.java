@@ -1,65 +1,29 @@
 package com.woniu.yoga.home.pojo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
 import java.math.BigDecimal;
 
+@Data
+@ApiModel("广告")
 public class Advertisement {
+    @ApiModelProperty("id")
     private Integer adId;
 
+    @ApiModelProperty("图片")
     private String adImg;
 
+    @ApiModelProperty("详情")
     private String adDetail;
 
+    @ApiModelProperty("排序")
     private Integer adSort;
 
+    @ApiModelProperty("广告费用")
     private BigDecimal adPrice;
 
+    @ApiModelProperty("软删除")
     private Integer adFlag;
-
-    public Integer getAdId() {
-        return adId;
-    }
-
-    public void setAdId(Integer adId) {
-        this.adId = adId;
-    }
-
-    public String getAdImg() {
-        return adImg;
-    }
-
-    public void setAdImg(String adImg) {
-        this.adImg = adImg;
-    }
-
-    public String getAdDetail() {
-        return adDetail;
-    }
-
-    public void setAdDetail(String adDetail) {
-        this.adDetail = adDetail;
-    }
-
-    public Integer getAdSort() {
-        return adSort;
-    }
-
-    public void setAdSort(Integer adSort) {
-        this.adSort = adSort;
-    }
-
-    public BigDecimal getAdPrice() {
-        return adPrice;
-    }
-
-    public void setAdPrice(BigDecimal adPrice) {
-        this.adPrice = adPrice;
-    }
-
-    public Integer getAdFlag() {
-        return adFlag;
-    }
-
-    public void setAdFlag(Integer adFlag) {
-        this.adFlag = adFlag;
-    }
 }

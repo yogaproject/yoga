@@ -1,6 +1,9 @@
 package com.woniu.yoga.home.dao;
 
+import com.woniu.yoga.commom.vo.Result;
 import com.woniu.yoga.home.pojo.Advertisement;
+
+import java.util.List;
 
 public interface AdvertisementMapper {
     int deleteByPrimaryKey(Integer adId);
@@ -14,4 +17,6 @@ public interface AdvertisementMapper {
     int updateByPrimaryKeySelective(Advertisement record);
 
     int updateByPrimaryKey(Advertisement record);
+
+    List<Advertisement> queryAdvertisement();
 }
