@@ -2,6 +2,7 @@ package com.woniu.yoga.communicate.service.impl;
 
 import com.github.pagehelper.PageInfo;
 import com.woniu.yoga.commom.utils.CommentUtil;
+import com.woniu.yoga.communicate.constant.SysConstant;
 import com.woniu.yoga.communicate.dao.CommentMapper;
 import com.woniu.yoga.communicate.pojo.Comment;
 import com.woniu.yoga.communicate.service.CommentService;
@@ -10,6 +11,7 @@ import com.woniu.yoga.home.vo.Result;
 import com.woniu.yoga.user.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -58,12 +60,19 @@ public class CommentServiceImpl implements CommentService {
     * @return com.woniu.yoga.commom.vo.Result
     */
     @Override
+    @Transactional
     public Result addComment(Comment comment, HttpSession session) {
-        User user = (User) session.getAttribute("user");
+        User user = (User) session.getAttribute(SysConstant.CURRENT_USER);
         if (user.getUserPhone() == null){
             return Result.error("未绑定手机不能评论");
         }
         commentMapper.insertSelective(comment);
+        if (comment.getEntityType() == 1){
+            commentMapper.addHomepageCount(comment.getEntityId());
+        }else if (comment.getEntityType() == 2){
+            int homepageId = commentMapper.selectHomepageId(comment.getEntityId());
+            commentMapper.addHomepageCount(homepageId);
+        }
         return Result.success("添加成功");
     }
 
@@ -75,8 +84,18 @@ public class CommentServiceImpl implements CommentService {
     * @return com.woniu.yoga.commom.vo.Result
     */
     @Override
+    @Transactional
     public Result deleteComment(Integer commentId) {
+        Comment comment = commentMapper.selectByPrimaryKey(commentId);
+        if (comment.getEntityType() == 1){
+            commentMapper.reduceCommentCount(comment.getEntityId());
+        }else if (comment.getEntityType() == 2){
+            int homepageId = commentMapper.selectHomepageId(comment.getEntityId());
+            commentMapper.reduceCommentCount(homepageId);
+        }
         commentMapper.deleteByPrimaryKey(commentId);
         return Result.success("删除成功");
     }
+
+
 }

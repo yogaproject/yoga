@@ -17,7 +17,7 @@ public interface CommentMapper {
     //添加评论
     int insertSelective(Comment record);
 
-    Comment selectByPrimaryKey(Long commentId);
+    Comment selectByPrimaryKey(Integer commentId);
 
     int updateByPrimaryKeySelective(Comment record);
 
@@ -25,4 +25,10 @@ public interface CommentMapper {
 
     //查询动态内容下的评论
     List<CommentVo> queryComments(@Param("mid") Integer mid);
+
+    void addHomepageCount(@Param("mid") Integer entityId);
+
+    int selectHomepageId(@Param("commentId") Integer entityId);
+
+    void reduceCommentCount(@Param("mid") Integer entityId);
 }

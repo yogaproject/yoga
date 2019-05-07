@@ -56,7 +56,7 @@
   <sql id="Base_Column_List">
     comment_id, user_id, comment_detail, entity_id, entity_type, comment_degree, comment_flag
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from comment
@@ -66,6 +66,7 @@
     delete from comment
     where comment_id = #{commentId,jdbcType=INTEGER}
   </delete>
+
   <insert id="insert" parameterType="com.woniu.yoga.communicate.pojo.Comment">
     insert into comment (comment_id, user_id, comment_detail, 
       entity_id, entity_type, comment_degree, 
@@ -74,6 +75,15 @@
       #{entityId,jdbcType=INTEGER}, #{entityType,jdbcType=INTEGER}, #{commentDegree,jdbcType=INTEGER}, 
       #{commentFlag,jdbcType=INTEGER})
   </insert>
+  <update id="addHomepageCount">
+    update homepage set comment_count = comment_count + 1 where m_id=#{mid}
+  </update>
+  <update id="reduceCommentCount">
+    update homepage set comment_count = comment_count - 1 where m_id=#{mid}
+  </update>
+  <select id="selectHomepageId" resultType="java.lang.Integer">
+    select entity_id from comment where comment_id=#{commentId}
+  </select>
   <insert id="insertSelective" parameterType="com.woniu.yoga.communicate.pojo.Comment">
     insert into comment
     <trim prefix="(" suffix=")" suffixOverrides=",">
