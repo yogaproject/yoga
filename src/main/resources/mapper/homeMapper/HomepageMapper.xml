@@ -89,6 +89,16 @@
     ORDER BY create_time desc
   </select>
 
+  <select id="queryMyselfHomepage" resultMap="VoResultMap">
+    SELECT
+      m_id, title, img, h.user_id, comment_count,
+      user_nickname, user_level,create_time,content,role_name
+    FROM homepage as h,`user` as u, role as r
+    where h.user_id=u.user_id and homepage_flag = 0 and u.user_id=#{userId}
+    and u.role_id=r.role_id
+    ORDER BY create_time desc
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from homepage
     where m_id = #{mId,jdbcType=INTEGER}

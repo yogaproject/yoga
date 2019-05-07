@@ -119,4 +119,10 @@ public class HomepageController {
     public Result deleteHomepage(@RequestBody Integer mid){
         return homepageService.deleteHomepage(mid);
     }
+
+    @PostMapping("showMyselfHomepage")
+    public Result<List<HomepageVo>> showMyselfHomepage(HttpSession session){
+        User user = (User)session.getAttribute(SysConstant.CURRENT_USER);
+        return homepageService.showMyselfHomepage(user.getUserId());
+    }
 }

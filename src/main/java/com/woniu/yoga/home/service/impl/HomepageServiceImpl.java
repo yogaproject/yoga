@@ -68,4 +68,10 @@ public class HomepageServiceImpl implements HomepageService {
         homepageMapper.deleteByPrimaryKey(mid);
         return Result.success("删除成功");
     }
+
+    @Override
+    public Result<List<HomepageVo>> showMyselfHomepage(Integer userId) {
+        List<HomepageVo> list = homepageMapper.queryMyselfHomepage(userId);
+        return dealWithList(list);
+    }
 }

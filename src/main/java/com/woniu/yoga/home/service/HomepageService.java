@@ -16,4 +16,6 @@ public interface HomepageService {
     Result<List<HomepageVo>> showOtherHomepage(Integer roleId, Float latitude, Float longitude);
 
     Result deleteHomepage(Integer mid);
+
+    Result<List<HomepageVo>> showMyselfHomepage(Integer userId);
 }

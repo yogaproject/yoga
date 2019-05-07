@@ -28,4 +28,6 @@ public interface HomepageMapper {
 
     List<HomepageVo> queryOtherHomepages(@Param("roleId") Integer roleId, @Param("latitude") Float latitude,
                                          @Param("longitude") Float longitude);
+
+    List<HomepageVo> queryMyselfHomepage(@Param("userId") Integer userId);
 }
